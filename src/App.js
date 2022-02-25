@@ -31,7 +31,7 @@ function App({ checked }) {
       {checked && (
         <div className="app">
           <Switch>
-            <Route path="/" exact component={landingpage} />
+            <Route path="/" exact component={login} />
             <BasicRoute path="/login/:userEmail?" exact component={Login} />
             <BasicRoute
               path="/emailsent/:userEmail?/:reset?"
