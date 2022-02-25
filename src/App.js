@@ -27,11 +27,11 @@ import { connect } from "react-redux";
 
 function App({ checked }) {
   return (
-    <Router>
+    <Router basename="/oasisone_admin">
       {checked && (
         <div className="app">
           <Switch>
-            <Route path="/" exact component={Login} />
+            <Route path="/" exact component={landingpage} />
             <BasicRoute path="/login/:userEmail?" exact component={Login} />
             <BasicRoute
               path="/emailsent/:userEmail?/:reset?"
