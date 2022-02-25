@@ -27,7 +27,7 @@ function Login() {
             setLoading(true)
 
             const {data} = await axios.post(
-                'http://localhost:5000/admin/login',
+                'https://oasisone.herokuapp.com/tenant/login',
                 {
                     email,
                     password,
