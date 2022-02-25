@@ -1,0 +1,479 @@
+.inventorysection{
+    
+}
+.modalbox{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 497px;
+    height: 277px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 0px;
+    border-radius: 20px;
+    background-color: #fff;
+}
+
+.innerbox{
+    margin: 5%;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+}
+
+.productmodalbox{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 774px;
+    height: 602px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 0px;
+    border-radius: 20px;
+    background-color: #fff;
+}
+
+.modaltitle{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    color: #424242;
+}
+
+.modalform{
+    width: 100%;
+    margin-top: 2%;
+}
+
+.productinputrow{
+    display: flex;
+    justify-content: center;
+    
+}
+
+
+.productinputtext{
+    margin-right: 5%;
+}
+
+
+.inputlabel{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #c4c4c4;
+    margin-bottom: 2%;
+}
+
+.POC::before {
+
+      content: attr(data-placeholder);
+      position: absolute;
+ margin-top: 1%;
+ margin-left: 2%;
+      color: #aaa;
+  
+  }
+
+  .inputpricefile{
+    width: 418px;
+    height: 35px;
+    outline: none;
+    border: 0px;
+    border-radius: 10px;
+    background-color: #F8FAFB;
+    margin-bottom: 5%;
+    padding-left: 10%;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #424242;
+}
+
+.inputfile{
+    width: 418px;
+    height: 35px;
+    outline: none;
+    border: 0px;
+    border-radius: 10px;
+    background-color: #F8FAFB;
+    margin-bottom: 5%;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #424242;
+}
+
+.inputdetailfile{
+    width: 100%;
+    height: 90px;
+    outline: none;
+    border: 0px;
+    border-radius: 10px;
+    background-color: #F8FAFB;
+    margin-bottom: 5%;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #424242;
+}
+
+.productimage{
+    width: 230px;
+    height: 175px;
+    border-radius: 10px;
+    border: 0px solid #fff;
+    box-shadow: 0px;
+    outline: none;
+    background-color: #F8FAFB;
+}
+
+.imagebuttoncontainer{
+    width: 100%;
+    display: flex;
+justify-content: flex-end;
+margin-top: -12%;
+}
+.productimagebutton{
+height: 35px;
+width: 35px ;
+
+}
+
+
+input[class~=productinputfile]::file-selector-button {
+    border: 0.5px solid #E52C32;
+    padding: 10px 20px;
+    border-radius: 30px;
+    background-color: #fff;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #424242;
+    visibility: hidden;
+  }
+
+  input[class~=productinputfile]{
+    background-color: transparent;
+    border-radius: 30px;
+
+   color: transparent;
+   width: 337px;
+   margin: 0 0 5% 0;
+  }
+
+
+
+  .recommendcontainer{
+display: flex;
+align-items: center;
+margin-top: -4%;
+  }
+
+  .recommendtext{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #df3030;
+  }
+.modalbutton{
+    justify-content: flex-end;
+    align-items: flex-end;
+    display: flex;
+    margin-top: 5%;
+}
+
+.switchbutton{
+    margin-left: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.recommendimage{
+    height: 16px;
+}
+
+.cancelbutton{
+    width: auto;
+    height: 40px;
+    background-color: transparent;
+    border: 0px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #df3030;
+    margin-right: 10%;
+}
+
+.savebutton{
+    width: 150px;
+    height: 40px;
+    background-color: #df3030;
+    border: 0px;
+    border-radius: 5px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+}
+
+.inventorycontainergrid{
+    display: grid;
+grid-template-areas: "a a";
+    grid-gap: 40px;
+    margin-top: 2%;
+    margin-left: 4%;
+    margin-right: 4%;
+    
+    align-items: flex-start;
+}
+
+.tables{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #424242;
+
+}
+
+.categorycontainer{
+    width: 528px;
+}
+
+.inventorycatergoryheading{
+    display: flex;
+    flex-direction: row;
+}
+
+.categoryname{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #424242;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.categorynumber{
+    display: flex;
+    flex-direction: row;
+}
+
+.catupbutton{
+    background-color: transparent;
+    border: 0px;
+    color: #424242;
+}
+
+.catupbuttonactive{
+    background-color: transparent;
+    border: 0px;
+    color: #e52c32;
+}
+
+.catdownbutton{
+    background-color: transparent;
+    border: 0px;
+    color: #424242;
+}
+
+.catdownbuttonactive{
+    background-color: transparent;
+    border: 0px;
+    color: #e52c32;
+}
+.additem{
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 2%;
+}
+.add{
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 3%;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #E52C32;
+    background-color: transparent;
+    border: 0px;
+}
+
+.catmenucontainer{
+    border: 3px solid #e52c32;
+    margin-top: 2%;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.detailmenucontainer{
+    background-color: #fff;
+    width: 490px;
+    height: 80px;
+    border-radius: 10px;margin: 2%;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+}
+
+.catmenuimagecontainer{
+    margin: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90px;
+    height: 66px;
+}
+
+.catmenutext{
+display: flex;
+flex-direction: column;
+justify-content: center;
+margin-left: 2%;
+}
+
+.catmenutitle{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #424242;
+}
+
+.catmenuprice{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #424242;
+}
+
+.catquanbutton{
+    width: 90px;
+    height: 30px;
+    border-radius: 20px;
+    background-color: #c4c4c4;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.catquanbuttonactive{
+    width: 90px;
+    height: 30px;
+    border-radius: 20px;
+    background-color: #e52c32;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.decrement{
+    width:20px;
+    height:20px;
+    color: #e52c32;
+    background-color: #fff;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2%;
+}
+
+.negative{
+    width:20px;
+    color: #c4c4c4;
+    background-color: #fff;
+    border: 0px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.negativeactive{
+    width:20px;
+    color: #e52c32;
+    background-color: #fff;
+    border: 0px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.quanttext{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #fff;
+}
+
+.increment{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+   
+}
+
+.plus{
+    width:20px;
+    color: #c4c4c4;
+    background-color: #fff;
+    border: 0px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.plusactive{
+    width:20px;
+    color: #e52c32;
+    background-color: #fff;
+    border: 0px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.editbutton{
+display: flex;
+flex: 1;
+justify-content: flex-end;
+margin-right: 5%;
+}
+
+.edit{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #e52c32;
+    background-color: transparent;
+    border: 0px;
+}

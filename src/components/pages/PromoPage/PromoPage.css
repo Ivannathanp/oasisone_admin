@@ -1,0 +1,153 @@
+.promocontainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2%;
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+.form{
+    width: 100%;
+    align-items: center;
+    height: 850px ;
+    overflow-y: scroll;
+}
+
+.form::-webkit-scrollbar{
+  display: none;
+}
+.form-inline {  
+  width: 100%;
+  align-items: center;
+    border-style: solid;
+    border-color: #cacaca;
+    border-width: 0.5px;
+    border-radius: 20px;
+    background-color: #fff;
+    height: 300px;
+  align-items: center;
+  margin: 0 0 2% 0;
+}
+.promohead{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #E52C32;
+    margin: 1% 0 1% 4%;
+}
+
+  .row{
+      display: flex;
+      flex-direction: row;
+      margin: 0 2% 0 2%;
+  }
+
+  .preview{
+      background-color: #E6E6E6;
+      width: 690px;
+      height: 200px;
+      border-radius: 30px;
+      margin: 0 5% 0 0;
+  }
+  .bannerimage{
+      height: 100%;
+      width: 100%;
+      border-radius: 30px;
+  }
+
+  .title{
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #E52C32;
+    margin: 0 0 5% 0;
+  }
+
+
+  input[class~=promoinputfile]::file-selector-button {
+    border: 0.5px solid #E52C32;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #424242;
+  }
+
+  input[class~=promoinputfile] {
+background-color: #E6E6E6;
+border-radius: 5px;
+font-family: 'Nunito Sans', sans-serif;
+font-weight: 400;
+font-size: 14px;
+   color: #9B9B9B;
+   width: 337px;
+   margin: 0 0 5% 0;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 5%;
+  }
+
+  .buttonsubmit{
+    width: 200px;
+    height: 41px;
+    border-radius: 30px;
+    border: 0px solid;
+    background-color: #F10C0C;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .buttontext{
+    margin-left: 2%;
+    width: 100px;
+  }
+
+  .buttonremove{
+    background-color: transparent;
+    font-family: 'Nunito Sans', sans-serif;
+font-weight: 700;
+font-size: 14px;
+   color: #F10C0C;
+   border: 0px;
+   margin-left: 5%;
+  }
+
+  .desc{
+    justify-content: start;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .texts{
+    font-family: 'Nunito Sans', sans-serif;
+font-weight: 400;
+font-size: 14px;
+   color: #424242;
+  }
+  .addbutton{
+    display: flex;
+    justify-content: flex-end;
+    right: 0;
+  }
+
+  .buttonadd{
+    right: 0;
+    width: 100px;
+    height: 41px;
+    border-radius: 10px;
+    border: 0px solid;
+    background-color: #F10C0C;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #fff;
+  }
