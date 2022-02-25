@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/oasisone_admin/static/css/main.594a07a5.css",
+    "main.js": "/oasisone_admin/static/js/main.033b6f41.js",
+    "static/media/Banner1.jpg": "/oasisone_admin/static/media/Banner1.c260875b512b3989a64b.jpg",
+    "static/media/Gurame Asam Manis.png": "/oasisone_admin/static/media/Gurame Asam Manis.d18b888a63a0701fe90c.png",
+    "index.html": "/oasisone_admin/index.html",
+    "main.594a07a5.css.map": "/oasisone_admin/static/css/main.594a07a5.css.map",
+    "main.033b6f41.js.map": "/oasisone_admin/static/js/main.033b6f41.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.594a07a5.css",
+    "static/js/main.033b6f41.js"
+  ]
+}
