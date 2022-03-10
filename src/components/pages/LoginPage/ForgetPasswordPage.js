@@ -29,7 +29,7 @@ function ForgetPasswordPage({forgetpassword}) {
       <div className="containerforms">
 
       <Formik
-        initialValues={{ email: userEmail, redirectUrl: "http://localhost:4000/passwordreset"}}
+        initialValues={{ email: userEmail, redirectUrl: "https://ivannathanp.github.io/oasisone_admin/passwordreset"}}
         validationSchema={Yup.object().shape({
           email: Yup.string()
             .email("Invalid e-mail address")
