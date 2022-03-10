@@ -1,15 +1,17 @@
 {
   "files": {
-    "main.css": "/oasisone_admin/static/css/main.594a07a5.css",
-    "main.js": "/oasisone_admin/static/js/main.250ecdff.js",
-    "static/media/Banner1.jpg": "/oasisone_admin/static/media/Banner1.c260875b512b3989a64b.jpg",
-    "static/media/Gurame Asam Manis.png": "/oasisone_admin/static/media/Gurame Asam Manis.d18b888a63a0701fe90c.png",
-    "index.html": "/oasisone_admin/index.html",
-    "main.594a07a5.css.map": "/oasisone_admin/static/css/main.594a07a5.css.map",
-    "main.250ecdff.js.map": "/oasisone_admin/static/js/main.250ecdff.js.map"
+    "main.css": "/static/css/main.1dcc725c.css",
+    "main.js": "/static/js/main.9438148b.js",
+    "static/media/Banner1.jpg": "/static/media/Banner1.c260875b512b3989a64b.jpg",
+    "static/media/Gurame Asam Manis.png": "/static/media/Gurame Asam Manis.d18b888a63a0701fe90c.png",
+    "static/media/waitercall.svg": "/static/media/waitercall.d4ec144ab54fd9ecdacf9c29bd9f406b.svg",
+    "index.html": "/index.html",
+    "static/media/RemoveCat.svg": "/static/media/RemoveCat.7cfdaede989b987ab7bcc8bfbfef2a5d.svg",
+    "main.1dcc725c.css.map": "/static/css/main.1dcc725c.css.map",
+    "main.9438148b.js.map": "/static/js/main.9438148b.js.map"
   },
   "entrypoints": [
-    "static/css/main.594a07a5.css",
-    "static/js/main.250ecdff.js"
+    "static/css/main.1dcc725c.css",
+    "static/js/main.9438148b.js"
   ]
 }
