@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link,  useHistory, useParams } from "react-router-dom";
 import "./LoginPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,17 +10,16 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import Loader from "react-loader-spinner";
+import {BallTriangle} from "react-loader-spinner";
 import { PassTextField, TextField } from "../../Forms/FormLib";
 
 //auth
 import { connect } from "react-redux";
 import { loginUser } from "../../Auth/actions/userActions";
-import { useHistory, useParams } from "react-router-dom";
 
 function ValidateLoginPage({ loginUser }) {
   const [show, setShow] = useState(false);
-  const history = useHistory();
+  let history = useHistory();
   const { userEmail } = useParams();
 
   return (
@@ -72,7 +71,7 @@ function ValidateLoginPage({ loginUser }) {
                   {!isSubmitting && (
                     <button
                       type="submit"
-                      onClick={console.log("pressed", onsubmit)}
+                     
                       className="loginbutton"
                     >
                       {" "}
@@ -80,9 +79,9 @@ function ValidateLoginPage({ loginUser }) {
                     </button>
                   )}
                   {isSubmitting && (
-                    <Loader
-                      type="ThreeDots"
-                      color="#00BFFF"
+                    <BallTriangle
+      
+                      color="#f10c0c"
                       height={80}
                       width={80}
                     />
