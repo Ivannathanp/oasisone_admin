@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import {logoutUser} from "../Auth/actions/userActions";
 
 function SideBar({logoutUser}) {
-  const history = useHistory();
+  let history = useHistory();
 
   return (
     <>

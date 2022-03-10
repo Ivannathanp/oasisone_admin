@@ -6,7 +6,7 @@ import "./LoginPage.css";
 import { useHistory, useParams } from "react-router-dom";
 
 function EmailSentPage() {
-  const history = useHistory();
+  let history = useHistory();
   const { userEmail, reset } = useParams();
 
   return (

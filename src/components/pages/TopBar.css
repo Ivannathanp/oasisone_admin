@@ -28,6 +28,9 @@
   flex: 0.5;
   margin-right: 4%;
 }
+.imagecontainer{
+  margin-right: 2%;
+}
 
 .image{
   justify-content: center;
@@ -40,7 +43,7 @@
   height: 50px;
 }
 
-.text {
+.toptext {
   justify-content: center;
   align-items: center;
   display: flex;

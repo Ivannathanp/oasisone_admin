@@ -63,7 +63,7 @@
   margin: 0 0 5% 8%;
 }
 
-.time {
+.orderstatustime {
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 14px;
@@ -172,19 +172,20 @@
 }
 
 .buttoncontainer{
-    flex: 1;
     display:flex;
     justify-content: flex-end;
     align-items: flex-end;
 
 }
-.orderstatusbutton {
+
+.proceedstatusbutton {
   background-color: transparent;
-  border: 1px solid #1dab33;
+  border: 1px solid #4678BC;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 16px;
-  color: #1dab33;
+  line-height: 22px;
+  color: #4678BC;
   border-radius: 5px;
   padding: 15px 30px;
   width: 130px;
@@ -192,6 +193,56 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+.servestatusbutton {
+  background-color: transparent;
+  border: 1px solid #FFA800;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #FFA800;
+  border-radius: 5px;
+  padding: 15px 30px;
+  width: 130px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.completestatusbutton {
+  background-color: transparent;
+  border: 1px solid #1DAB33;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #1DAB33;
+  border-radius: 5px;
+  padding: 15px 30px;
+  width: 130px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.completedstatusbutton {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #fff;
+  border-radius: 5px;
+  padding: 15px 30px;
+  width: 130px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #1DAB33;
 }
 
 .icon{

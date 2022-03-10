@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import "../TopBar.css";
 import "./InventoryPage.css";
-import logo from "../../icons/Logo.png";
-import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import NumberFormat from "react-number-format";
 import recommended from "../../icons/Recommend.png";
 import inputimage from "../../icons/Edit Profile Pict.png";
+import removecat from "../../icons/RemoveCat.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@mui/material/Modal";
@@ -13,18 +12,16 @@ import Box from "@mui/material/Box";
 import Switch from "@material-ui/core/Switch";
 import { useIosSwitchStyles } from "./switch/index";
 
-import { useOutlineSelectStyles } from "./select/index";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
 
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
+import { connect } from "react-redux";
+import { useMinimalSelectStyles } from "./select/index";
 const UP = -1;
 const DOWN = 1;
 
-export default function FruitList() {
+function InventoryPage({ tenant }) {
   const items = [
     {
       id: 1,
@@ -145,11 +142,20 @@ export default function FruitList() {
   const [state, setState] = useState({ items });
   // set new state for bind key items
   const [value, setValue] = useState(1);
+  const [catname, setCatname] = useState(null);
   const [formValues, setFormValues] = useState("");
 
-  const [catopen, setCatopen] = useState(false);
-  const handleCatopen = () => setCatopen(true);
-  const handleCatclose = () => setCatopen(false);
+  const [addcatopen, setAddCatopen] = useState(false);
+  const handleAddCatopen = () => setAddCatopen(true);
+  const handleAddCatclose = () => setAddCatopen(false);
+
+  const [removecategoryopen, setRemoveCategoryOpen] = useState(false);
+
+  function handleRemoveCat(catname) {
+    setRemoveCategoryOpen(true);
+    setCatname(catname);
+  }
+  const handleRemoveCatClose = () => setRemoveCategoryOpen(false);
 
   const [A, setA] = useState(null);
   const [B, setB] = useState(null);
@@ -160,7 +166,14 @@ export default function FruitList() {
   const [edittoggled, setEdittoggled] = useState(null);
   const [productimage, setProductimage] = useState();
 
-  function handlePassInfoShow(name, price, recommend, description, picture, category) {
+  function handlePassInfoShow(
+    name,
+    price,
+    recommend,
+    description,
+    picture,
+    category
+  ) {
     setEdititemopen(true);
     setA(name);
     setB(price);
@@ -170,15 +183,13 @@ export default function FruitList() {
     setEdittoggled(recommend);
   }
 
-  console.log("pict", productimage)
+  console.log("pict", productimage);
 
   const handleEdititemclose = () => setEdititemopen(false);
 
   const [additemopen, setAdditemopen] = useState(false);
   const handleAdditemopen = () => setAdditemopen(true);
   const handleAdditemclose = () => setAdditemopen(false);
-
- 
 
   const [addtoggled, setAddtoggled] = useState(false);
 
@@ -215,7 +226,7 @@ export default function FruitList() {
     console.log("decrement clicked");
 
     {
-      fruitList.map((post, index) => {
+      categoryList.map((post, index) => {
         {
           if (post.id === i) {
             post.menu.map((posts, index) => {
@@ -243,7 +254,7 @@ export default function FruitList() {
     console.log("decrement clicked");
 
     {
-      fruitList.map((post, index) => {
+      categoryList.map((post, index) => {
         {
           if (post.id === i) {
             post.menu.map((posts, index) => {
@@ -274,6 +285,29 @@ export default function FruitList() {
     setFormValues({ value: e.target.value });
   }
 
+  function handlequantityvalChange(i,v,j){
+
+    {
+      categoryList.map((post, index) => {
+        {
+          if (post.id === i) {
+            post.menu.map((posts, index) => {
+              if (posts.id === v) {
+                posts.quantity = j.target.value;
+                return post;
+              } else {
+                return post;
+              }
+            });
+          }
+
+          console.log(post);
+          setItemval({ post });
+        }
+      });
+    }
+  }
+
   function imageHandler(e) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -284,16 +318,19 @@ export default function FruitList() {
     reader.readAsDataURL(e.target.files[0]);
   }
 
-  //select drop down
-  
+  function handleRemoveCategory(e) {
+    setRemoveCategoryOpen(false);
+    console.log("nani", e);
+  }
 
-  const outlineSelectClasses = useOutlineSelectStyles();
+  //select drop down
+  const minimalSelectClasses  = useMinimalSelectStyles();
 
   // moves the menu below the select input
   const menuProps = {
     classes: {
-      paper: outlineSelectClasses.paper,
-      list: outlineSelectClasses.list,
+      paper: minimalSelectClasses.paper,
+      list: minimalSelectClasses.list,
     },
     anchorOrigin: {
       vertical: "bottom",
@@ -309,7 +346,7 @@ export default function FruitList() {
   const iconComponent = (props) => {
     return (
       <ExpandMoreRoundedIcon
-        className={props.className + " " + outlineSelectClasses.icon}
+        className={props.className + " " + minimalSelectClasses.icon}
       />
     );
   };
@@ -318,7 +355,8 @@ export default function FruitList() {
     setVal(e.target.value);
   };
 
-  const fruitList = state.items;
+  const categoryList = state.items;
+
   const onMove = handleMove;
   return (
     <div className="container">
@@ -327,14 +365,14 @@ export default function FruitList() {
 
         <div className="right">
           <div className="imagecontainer">
-            <img src={logo} className="image" />
+            <img src={tenant.profileimage} className="image" />
           </div>
-          <div className="text">Telaga Seafood</div>
+          <div className="toptext">{tenant.name}</div>
         </div>
       </div>
 
       <div className="inventorysection">
-        <Modal open={catopen} onClose={handleCatclose}>
+        <Modal open={addcatopen}>
           <Box className="modalbox">
             <div className="innerbox">
               <div className="modaltitle">Category Name</div>
@@ -349,13 +387,14 @@ export default function FruitList() {
                 </form>
               </div>
 
+    
               <div className="modalbutton">
-                <button onClick={handleCatclose} className="cancelbutton">
+                <button onClick={handleAddCatclose} className="cancelbutton">
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  onClick={handleCatclose}
+                  onClick={handleAddCatclose}
                   className="savebutton"
                 >
                   Save Category
@@ -365,7 +404,7 @@ export default function FruitList() {
           </Box>
         </Modal>
 
-        <Modal open={additemopen} onClose={handleAdditemclose}>
+        <Modal open={additemopen}>
           <Box className="productmodalbox">
             <div className="innerbox">
               <div className="modaltitle">Product add</div>
@@ -380,9 +419,11 @@ export default function FruitList() {
                         onChange={handleChange}
                       />
                       <div className="inputlabel">Product Category</div>
+                      <div className="catselector">
                       <Select
+                            defaultValue=""
                         disableUnderline
-                        classes={{ root: outlineSelectClasses.select }}
+                        classes={{ root: minimalSelectClasses.select }}
                         MenuProps={menuProps}
                         IconComponent={iconComponent}
                         value={val}
@@ -392,16 +433,23 @@ export default function FruitList() {
                           <MenuItem value={index}>{post.name}</MenuItem>
                         ))}
                       </Select>
+                      </div>
                       <div className="inputlabel">Product Price</div>
-                      <input
-                        type="number"
-                        className="inputfile"
-                        onChange={handleChange}
-                      />
+                      <div class="POC" data-placeholder="Rp.">
+                        <input
+                          type="text"
+                          className="inputpricefile"
+                          onChange={handleChange}
+                          data-mask="000.000.000"
+                          data-mask-reverse="true"
+                        />
+                      </div>
                     </div>
                     <div className="productinputimage">
                       <div className="inputlabel">Product Picture</div>
+                      <div className="productimagepreview">
                       <img src={productimage} className="productimage" />
+                      </div>
                       <div className="imagebuttoncontainer">
                         <div className="productimagebutton">
                           <label for="file-input">
@@ -420,7 +468,7 @@ export default function FruitList() {
                   </div>
 
                   <div className="inputlabel">Product Detail</div>
-                  <input
+                  <textarea
                     type="text"
                     className="inputdetailfile"
                     onChange={handleChange}
@@ -458,9 +506,9 @@ export default function FruitList() {
           </Box>
         </Modal>
 
-        <Modal open={edititemopen} onClose={handleEdititemclose}>
+        <Modal open={edititemopen} >
           <Box className="productmodalbox">
-            <div className="innerbox">
+            <div className="productinnerbox">
               <div className="modaltitle">Product Edit</div>
               <div className="modalform">
                 <form onSubmit={handleSubmit}>
@@ -474,9 +522,10 @@ export default function FruitList() {
                         onChange={handleChange}
                       />
                       <div className="inputlabel">Product Category</div>
+                      <div className="catselector">
                       <Select
                         disableUnderline
-                        classes={{ root: outlineSelectClasses.select }}
+                        classes={{ root: minimalSelectClasses.select }}
                         MenuProps={menuProps}
                         IconComponent={iconComponent}
                         value={val}
@@ -486,6 +535,7 @@ export default function FruitList() {
                           <MenuItem value={index}>{post.name}</MenuItem>
                         ))}
                       </Select>
+                      </div>
                       <div className="inputlabel">Product Price</div>
                       <div class="POC" data-placeholder="Rp.">
                         <input
@@ -500,7 +550,9 @@ export default function FruitList() {
                     </div>
                     <div className="productinputimage">
                       <div className="inputlabel">Product Picture</div>
+                      <div className="productimagepreview">
                       <img src={productimage} className="productimage" />
+                      </div>
                       <div className="imagebuttoncontainer">
                         <div className="productimagebutton">
                           <label for="file-input">
@@ -519,7 +571,7 @@ export default function FruitList() {
                   </div>
 
                   <div className="inputlabel">Product Detail</div>
-                  <input
+                  <textarea
                     type="text"
                     className="inputdetailfile"
                     value={C}
@@ -539,6 +591,7 @@ export default function FruitList() {
                       <img src={recommended} className="recommendimage" />
                     </div>
                   </div>
+             
                 </form>
               </div>
 
@@ -558,13 +611,46 @@ export default function FruitList() {
           </Box>
         </Modal>
 
+        <Modal open={removecategoryopen}>
+          <Box className="removecatmodalbox">
+            <div className="removecatinnerbox">
+              <div className="removecatheading">
+                <img src={removecat} className="removecatimage" />
+                <div className="removecatmodaltitle">Remove Category</div>
+              </div>
+              <div className="removecatmodaltext">
+                Are you sure to remove the{" "}
+                <span style={{ color: "#f10c0c" }}>"{catname}"</span> category
+                in your menu?
+              </div>
+
+              <div className="removecatmodalbuttoncontainer">
+                <div>
+                  <button
+                    className="modalcancelbutton"
+                    onClick={handleRemoveCatClose}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <div>
+                  <button
+                    className="modalconfirmbutton"
+                    onClick={() => handleRemoveCategory({ catname })}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Box>
+        </Modal>
+
         <div className="inventorycontainergrid">
-          {fruitList.map((item, index) => (
+          {categoryList.map((item, index) => (
             <div className="categorycontainer" key={item.id}>
               <div className="inventorycatergoryheading">
-                <div className="categoryname">
-                  {item.name}
-                </div>
+                <div className="categoryname">{item.name}</div>
                 <div className="categorynumber">
                   <div className="catdown">
                     <button
@@ -590,6 +676,15 @@ export default function FruitList() {
                     </button>
                   </div>
                 </div>
+                <div className="categoryremove">
+                  <button
+                    className="buttonremove"
+                    onClick={() => handleRemoveCat(item.name)}
+                  >
+                    Remove
+                  </button>
+                </div>
+
                 <div className="additem">
                   <button className="add" onClick={handleAdditemopen}>
                     Add Item
@@ -603,7 +698,7 @@ export default function FruitList() {
                     <div className="catmenuimagecontainer">
                       <img
                         src={
-                          require("../../icons/Gurame Asam Manis.png").default
+                          require("../../icons/Gurame Asam Manis.png")
                         }
                         className="menuimage"
                       />
@@ -617,7 +712,7 @@ export default function FruitList() {
                       </div>
                       <div className="catmenuprice">
                         <NumberFormat
-                          value="121"
+                          value={post.price}
                           prefix="RP. "
                           decimalSeparator="."
                           thousandSeparator=","
@@ -637,12 +732,20 @@ export default function FruitList() {
                           className={
                             post.quantity <= 0 ? "negative" : "negativeactive"
                           }
+                          disabled={post.quantity <= 0? true : false}
                           onClick={handleDecrement.bind(this, item.id, post.id)}
                         >
                           -
                         </button>
                       </div>
-                      <div className="quanttext">{post.quantity}</div>
+                      <div className="quanttext">
+                      <input
+                    type="text"
+                    value=          {post.quantity}
+                    className="inputquantityfile"
+                    onChange={(e)=>handlequantityvalChange(item.id, post.id, post.quantity)}
+                  />
+                        </div>
                       <div className="increment">
                         <button
                           className={post.quantity <= 0 ? "plus" : "plusactive"}
@@ -663,7 +766,7 @@ export default function FruitList() {
                             post.recommended,
                             post.description,
                             post.uri,
-                            item.id,
+                            item.id
                           )
                         }
                       >
@@ -675,13 +778,20 @@ export default function FruitList() {
               </div>
             </div>
           ))}
-          <div className="addbutton">
-            <button className="buttonadd" type="button" onClick={handleCatopen}>
-              Add
+          
+        </div>
+        <div className="addbutton">
+            <button className="buttonadd" type="button" onClick={handleAddCatopen}>
+            + Add New Category
             </button>
           </div>
-        </div>
       </div>
     </div>
   );
 }
+
+const mapStateToProps = ({ session }) => ({
+  tenant: session.user,
+});
+
+export default connect(mapStateToProps)(InventoryPage);

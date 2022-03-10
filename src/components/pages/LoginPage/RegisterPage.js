@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link,  useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -12,18 +12,17 @@ import {
   faLocationDot,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import Loader from "react-loader-spinner";
+import {BallTriangle} from "react-loader-spinner";
 import "./LoginPage.css";
 
 //auth
 import { connect } from "react-redux";
 import { signupUser } from "../../Auth/actions/userActions";
-import { useHistory } from "react-router-dom";
 import { PassTextField, TextField } from "../../Forms/FormLib";
 
 function RegisterPage({ signupUser }) {
   const [show, setShow] = useState(false);
-  const history = useHistory();
+  let history = useHistory();
   const [ErrorMessage,seterrormessage] = useState();
 
   return (
@@ -141,9 +140,9 @@ function RegisterPage({ signupUser }) {
                     </button>
                   )}
                   {isSubmitting && (
-                    <Loader
-                      type="ThreeDots"
-                      color="#00BFFF"
+                    <BallTriangle
+      
+                    color="#f10c0c"
                       height={80}
                       width={80}
                     />

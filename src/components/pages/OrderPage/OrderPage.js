@@ -17,55 +17,13 @@ import NumberFormat from "react-number-format";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import recommended from "../../icons/Recommend.png";
+import { connect } from "react-redux";
 
-function TablePaginationActions(props) {
-  const theme = useTheme();
-  const { count, page, onPageChange } = props;
 
-  const handleBackButtonClick = (event) => {
-    onPageChange(event, page - 1);
-  };
 
-  const handleNextButtonClick = (event) => {
-    onPageChange(event, page + 1);
-  };
-
-  return (
-    <div className="containerbutton">
-      <button
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
-      >
-        {" "}
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </button>
-
-      <button
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / 8) - 1}
-        className={
-          page >= Math.ceil(count / 8) - 1
-            ? "rightdisabledbutton"
-            : "rightdisplaybutton"
-        }
-      >
-        <FontAwesomeIcon icon={faAngleRight} />
-      </button>
-    </div>
-  );
-}
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-function OrderPage() {
+function OrderPage({ tenant }) {
   const [page, setPage] = useState(0);
-  const rowsPerPage = 8;
+  const rowsPerPage = 7;
 
   const [formValues, setFormValues] = useState("");
   const [orderopen, setOrderopen] = useState(false);
@@ -76,8 +34,8 @@ function OrderPage() {
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [status, setStatus] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [customername, setCustomerName] = useState("");
+  const [customerphone, setCustomerPhone] = useState("");
   const [instruction, setInstruction] = useState("");
   const [table, setTable] = useState("");
   const [orderitems, setOrderitems] = useState([]);
@@ -85,11 +43,61 @@ function OrderPage() {
   const [subtotal, setSubtotal] = useState("");
   const [service, setService] = useState("");
   const [tax, setTax] = useState("");
+  const [index, setIndex] = useState(1);
+
+
+  function TablePaginationActions(props) {
+    const { count, page, onPageChange } = props;
+  
+    const handleBackButtonClick = (event) => {
+      onPageChange(event, page - 1);
+      setIndex(index - 7);
+    };
+  
+    const handleNextButtonClick = (event) => {
+      onPageChange(event, page + 1);
+  
+      setIndex(index + 7);
+    };
+  
+    return (
+      <div className="containerbutton">
+        <button
+          onClick={handleBackButtonClick}
+          disabled={page === 0}
+          className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
+        >
+          {" "}
+          <FontAwesomeIcon icon={faAngleLeft} style={page === 0? {color: "#BEBEBE"} : {color: "#949494"}}/>
+        </button>
+  
+        <button
+          onClick={handleNextButtonClick}
+          disabled={page >= Math.ceil(count / 7) - 1}
+          className={
+            page >= Math.ceil(count / 7) - 1
+              ? "rightdisabledbutton"
+              : "rightdisplaybutton"
+          }
+        >
+          <FontAwesomeIcon icon={faAngleRight} style={page >= Math.ceil(count / 7) - 1? {color: "#BEBEBE"} : {color: "#949494"}}/>
+        </button>
+      </div>
+    );
+  }
+  
+  TablePaginationActions.propTypes = {
+    count: PropTypes.number.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
+    rowsPerPage: PropTypes.number.isRequired,
+  };
+
 
   function handlePassinginfo(
     status,
-    name,
-    phone,
+    customername,
+    customerphone,
     instruction,
     table,
     orderitems,
@@ -102,15 +110,15 @@ function OrderPage() {
     //setTime(time)
     //setDate(date)
     setStatus(status);
-    setName(name);
-    setPhone(phone);
+    setCustomerName(customername);
+    setCustomerPhone(customerphone);
     setInstruction(instruction);
     setTable(table);
     setOrderitems(orderitems);
     setItemtotal(itemtotal);
     setSubtotal(subtotal);
-    setService(service)
-    setTax(tax)
+    setService(service);
+    setTax(tax);
   }
 
   function handleSubmit(e) {
@@ -132,8 +140,8 @@ function OrderPage() {
       status: 1,
       orderplaced: 30,
       accepted: 1,
-      name: "Chris",
-      phone: "0899872679",
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -181,11 +189,11 @@ function OrderPage() {
       time: "59 minutes ago",
       table_ID: 12,
       totalprice: 110000,
-      status: 4,
+      status: 3,
       orderplaced: 30,
-      accepted: 2,
-      name: "John",
-      phone: "0899872679",
+      accepted: 4,
+      customername: "John",
+      customerphone: "0899872679",
       instruction: "no sambal",
       menu: [
         {
@@ -215,11 +223,11 @@ function OrderPage() {
       time: "59 minutes ago",
       table_ID: 12,
       totalprice: 110000,
-      status: 3,
+      status: 2,
       orderplaced: 30,
-      accepted: 3,
-      name: "Angel",
-      phone: "0899872679",
+      accepted: 2,
+      customername: "Angel",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -249,11 +257,11 @@ function OrderPage() {
       time: "59 minutes ago",
       table_ID: 12,
       totalprice: 110000,
-      status: 2,
+      status: 1,
       orderplaced: 30,
       accepted: 1,
-      name: "Jesslyn",
-      phone: "0899872679",
+      customername: "Jesslyn",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -283,11 +291,11 @@ function OrderPage() {
       time: "59 minutes ago",
       table_ID: 12,
       totalprice: 110000,
-      status: 1,
+      status: 2,
       orderplaced: 30,
       accepted: 2,
-      name: "Lina",
-      phone: "0899872679",
+      customername: "Lina",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -317,11 +325,11 @@ function OrderPage() {
       time: "59 minutes ago",
       table_ID: 12,
       totalprice: 110000,
-      status: 3,
+      status: 4,
       orderplaced: 30,
       accepted: 3,
-      name: "Ivan",
-      phone: "0899872679",
+      customername: "Ivan",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -351,11 +359,11 @@ function OrderPage() {
       time: "59 minutes ago",
       table_ID: 12,
       totalprice: 110000,
-      status: 2,
+      status: 5,
       orderplaced: 30,
-      accepted: 1,
-      name: "Farah",
-      phone: "0899872679",
+      accepted: 4,
+      customername: "Farah",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -387,9 +395,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 1,
       orderplaced: 30,
-      accepted: 3,
-      name: "Pia",
-      phone: "0899872679",
+      accepted: 1,
+      customername: "Pia",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -422,8 +430,8 @@ function OrderPage() {
       status: 1,
       orderplaced: 30,
       accepted: 1,
-      name: "Chris",
-      phone: "0899872679",
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -455,9 +463,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 4,
       orderplaced: 30,
-      accepted: 2,
-      name: "Chris",
-      phone: "0899872679",
+      accepted: 3,
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -489,9 +497,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 3,
       orderplaced: 30,
-      accepted: 3,
-      name: "Chris",
-      phone: "0899872679",
+      accepted: 4,
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -523,9 +531,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 2,
       orderplaced: 30,
-      accepted: 1,
-      name: "Chris",
-      phone: "0899872679",
+      accepted: 2,
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -557,9 +565,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 1,
       orderplaced: 30,
-      accepted: 2,
-      name: "Chris",
-      phone: "0899872679",
+      accepted: 1,
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -591,9 +599,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 3,
       orderplaced: 30,
-      accepted: 3,
-      name: "Chris",
-      phone: "0899872679",
+      accepted: 4,
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -625,9 +633,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 2,
       orderplaced: 30,
-      accepted: 1,
-      name: "Chris",
-      phone: "0899872679",
+      accepted: 2,
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -659,9 +667,9 @@ function OrderPage() {
       totalprice: 110000,
       status: 1,
       orderplaced: 30,
-      accepted: 3,
-      name: "Chris",
-      phone: "0899872679",
+      accepted: 1,
+      customername: "Chris",
+      customerphone: "0899872679",
       instruction: "no onions",
       menu: [
         {
@@ -702,9 +710,9 @@ function OrderPage() {
 
         <div className="right">
           <div className="imagecontainer">
-            <img src={logo} className="image" />
+            <img src={tenant.profileimage} className="image" />
           </div>
-          <div className="text">Telaga Seafood</div>
+          <div className="toptext">{tenant.name}</div>
         </div>
       </div>
 
@@ -730,19 +738,20 @@ function OrderPage() {
           <div className="orderrendercontainer">
             <Modal open={orderopen}>
               <Box className="ordermodalbox">
+                <div className="modalclose">
+                  <button
+                    className="modalclosebutton"
+                    onClick={handleOrderclose}
+                  >
+                    <FontAwesomeIcon
+                      className="closebuttonicon"
+                      icon={faCircleXmark}
+                    />
+                  </button>
+                </div>
+
                 <div className="innermodalbox">
-                  <div className="ordermodalclose">
-                    <button
-                      className="ordermodalclosebutton"
-                      onClick={handleOrderclose}
-                    >
-                      <FontAwesomeIcon
-                        className="closebuttonicon"
-                        icon={faCircleXmark}
-                      />
-                    </button>
-                  </div>
-                  <div className="ordermodaltitle">Telaga Seafood</div>
+                  <div className="ordermodaltitle">{tenant.name}</div>
                   <div className="ordermodalsubtitle">
                     <div className="ordermodaldate">
                       <div className="ordertime">
@@ -761,11 +770,13 @@ function OrderPage() {
                         {status == 1 ? (
                           <div className="orderplaced">ORDER PLACED</div>
                         ) : status == 2 ? (
-                          <div className="processing">PROCESSING</div>
+                          <div className="ready">READY TO SERVE</div>
                         ) : status == 3 ? (
-                          <div className="ready">READY</div>
-                        ) : status == 4 ? (
                           <div className="rejected">REJECTED</div>
+                        ) : status == 4 ? (
+                          <div className="payment">PAYMENT</div>
+                        ) : status == 5 ? (
+                          <div className="complete">COMPLETE</div>
                         ) : null}
                       </div>
                     </div>
@@ -773,17 +784,22 @@ function OrderPage() {
                   <div className="ordermodalitems">
                     <div className="ordermodalform">
                       <form onSubmit={handleSubmit}>
-                        <div className="ordermodalinputlabel">Name</div>
+                        <div className="ordermodalinputlabel">
+                          Name <span style={{ color: "#E52C32" }}>*</span>
+                        </div>
                         <input
                           type="text"
-                          value={name}
+                          value={customername}
                           className="ordermodalinputfile"
                           onChange={handleChange}
                         />
-                        <div className="ordermodalinputlabel">Phone Number</div>
+                        <div className="ordermodalinputlabel">
+                          Phone Number
+                          <span style={{ color: "#E52C32" }}>*</span>
+                        </div>
                         <input
                           type="text"
-                          value={phone}
+                          value={customerphone}
                           className="ordermodalinputfile"
                           onChange={handleChange}
                         />
@@ -812,16 +828,12 @@ function OrderPage() {
                         {orderitems.map((post, index) => (
                           <div className="ordermenucontainer">
                             <div className="ordermenuimagecontainer">
-                              <img
-                                src={
-                                  require("../../icons/Gurame Asam Manis.png")
-                                    .default
-                                }
-                                className="menuimage"
-                              />
+                              <img src={post.uri} className="menuimage" />
                             </div>
                             <div className="orderdetailsmenutext">
-                              <div className="orderdetailsmenutitle">{post.name}</div>
+                              <div className="orderdetailsmenutitle">
+                                {post.name}
+                              </div>
                               <div className="recommended">
                                 {post.recommended === true ? (
                                   <img src={recommended} />
@@ -886,22 +898,6 @@ function OrderPage() {
                           </div>
                         </div>
                       </div>
-
-                      <div className="ordermodalbutton">
-                        <button
-                          onClick={handleOrderclose}
-                          className="ordercancelbutton"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          onClick={handleOrderclose}
-                          className="orderconfirmbutton"
-                        >
-                          Confirm
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -914,10 +910,10 @@ function OrderPage() {
                   page * rowsPerPage + rowsPerPage
                 )
               : OrderData
-            ).map((post, index) => (
-              <div className={index != 7 ? "bordered" : "noborder"}>
+            ).map((post, i) => (
+              <div className={i != 7 ? "bordered" : "noborder"}>
                 <div className="orderrendergrid">
-                  <div className="ordertext">{post.id}</div>
+                  <div className="ordertext">{i + index}</div>
                   <div className="ordertext">{post.order_ID}</div>
                   <div className="ordertext">
                     {" "}
@@ -934,11 +930,13 @@ function OrderPage() {
                     {post.status == 1 ? (
                       <div className="orderplaced">ORDER PLACED</div>
                     ) : post.status == 2 ? (
-                      <div className="processing">PROCESSING</div>
+                      <div className="ready">READY TO SERVE</div>
                     ) : post.status == 3 ? (
-                      <div className="ready">READY</div>
-                    ) : post.status == 4 ? (
                       <div className="rejected">REJECTED</div>
+                    ) : post.status == 4 ? (
+                      <div className="payment">PAYMENT</div>
+                    ) : post.status == 5 ? (
+                      <div className="complete">COMPLETE</div>
                     ) : null}
                   </div>
                   <div className="ordertext">
@@ -947,15 +945,17 @@ function OrderPage() {
                   <div className="ordertablenumber">{post.table_ID}</div>
                   <div className="acceptreject">
                     {post.accepted == 1 ? (
-                      <div className="complete">COMPLETE</div>
+                      <div className="proceed">PROCEED</div>
                     ) : post.accepted == 2 ? (
-                      post.status == 4 ? (
-                        <div className="completedr">COMPLETED</div>
+                      <div className="serve">SERVE</div>
+                    ) : post.accepted == 3 ? (
+                      <div className="serve">COMPLETE</div>
+                    ) : post.accepted == 4 ? (
+                      post.status == 3 ? (
+                        <div className="completedR">COMPLETED</div>
                       ) : (
                         <div className="completed">COMPLETED</div>
                       )
-                    ) : post.accepted == 3 ? (
-                      <div className="readytoserve">READY TO SERVE</div>
                     ) : null}
                   </div>
                   <div className="vieworder">
@@ -965,8 +965,9 @@ function OrderPage() {
                         handleOrderopen();
                         handlePassinginfo(
                           post.status,
-                          post.name,
-                          post.phone,
+                          post.customername,
+                          post.customerphone,
+
                           post.instruction,
                           post.table_ID,
                           post.menu,
@@ -996,9 +997,12 @@ function OrderPage() {
           </div>
         </div>
       </div>
-  
     </div>
   );
 }
 
-export default OrderPage;
+const mapStateToProps = ({ session }) => ({
+  tenant: session.user,
+});
+
+export default connect(mapStateToProps)(OrderPage);

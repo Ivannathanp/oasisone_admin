@@ -88,10 +88,10 @@ export const signupUser = (
                 setFieldError("name", message);
               } else if (message.includes("email")) {
                 setFieldError("email", message);
-              }else if (message.includes("address")) {
-                setFieldError("address", message);
-              }else if (message.includes("phonenumber")) {
-                setFieldError("phonenumber", message);
+              // }else if (message.includes("address")) {
+              //   setFieldError("address", message);
+              // }else if (message.includes("phonenumber")) {
+              //   setFieldError("phonenumber", message);
               }else if (message.includes("password")) {
                 setFieldError("password", message);
               }else if (message.includes("confirmPassword")) {

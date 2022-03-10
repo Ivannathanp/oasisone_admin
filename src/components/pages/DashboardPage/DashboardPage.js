@@ -4,9 +4,10 @@ import "./DashboardPage.css";
 import logo from "../../icons/Logo.png";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 
-function DashboardPage({tenant}) {
-
+function DashboardPage({ tenant }) {
+  let history = useHistory();
 
   const RestaurantData = [
     {
@@ -263,6 +264,18 @@ function DashboardPage({tenant}) {
     },
   ];
 
+  function redirectinventory() {
+    history.push("/inventory");
+  }
+
+  function redirectorder() {
+    history.push("/orderstatus");
+  }
+
+  function redirectpromo() {
+    history.push("/promo");
+  }
+
   return (
     <div className="container">
       <div className="topbar">
@@ -270,9 +283,9 @@ function DashboardPage({tenant}) {
 
         <div className="right">
           <div className="imagecontainer">
-            <img src={logo} className="image" />
+            <img src={tenant.profileimage} className="image" />
           </div>
-          <div className="text">{tenant.name}</div>
+          <div className="toptext">{tenant.name}</div>
         </div>
       </div>
 
@@ -303,14 +316,14 @@ function DashboardPage({tenant}) {
             <div className="tablecolumn2">
               <div className="tablerow">
                 <div className="number">14</div>
-                <div className="text">
+                <div className="tablerowtext">
                   <div className="up">Table</div>
                   <div className="down">Occupied</div>
                 </div>
               </div>
               <div className="tablerow">
                 <div className="number2">12</div>
-                <div className="text">
+                <div className="tablerowtext">
                   <div className="up">Table</div>
                   <div className="down">Available</div>
                 </div>
@@ -325,40 +338,32 @@ function DashboardPage({tenant}) {
             <div className="invcolumn1">
               <div className="tablerow">
                 <div className="number">12</div>
-                <div className="text">
+                <div className="tablerowtext">
                   <div className="up">Menu</div>
                   <div className="down">Sold Out</div>
                 </div>
               </div>
               <div className="buttoncontainer">
-                <button className="button" onClick={console.log("hey")}>
+                <button className="button" onClick={redirectinventory}>
                   View Detail
                 </button>
               </div>
             </div>
             <div className="invcolumn2">
               <div className="headerrow">
-                <div className="text1">
-                  <div>No.</div></div>
+                <div className="text1">No.</div>
                 <div className="text2">Name</div>
                 <div className="text3">Available Stock</div>
               </div>
               <div className="list">
-                {InventoryData.map((post,index) => (
-                    <div className="inventorylistgrid">
-                      <div className="inventoryindex">
-                        <div className="index">
-                        {post.id}
-                        </div>
-                      </div>
-                      <div className="inventoryname">
-                        {post.name}
-                      </div>
-                      <div className="inventorystock">
-                        {post.stock}
-                      </div>
+                {InventoryData.map((post, index) => (
+                  <div className="inventorylistgrid">
+                    <div className="inventoryindex">
+                      <div className="index">{post.id}</div>
                     </div>
-        
+                    <div className="inventoryname">{post.name}</div>
+                    <div className="inventorystock">{post.stock}</div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -368,44 +373,51 @@ function DashboardPage({tenant}) {
         <div className="orderscreen">
           Order Screen
           <div className="outer">
-          <div className="dashboardouterborder">
-            <div className="ordergrid">
-              {OrderData.map((post) => {
-                return (
-                  <>
-                    <div className="orderdetails">
-                      <div className="orderID">{post.order_ID}</div>
-                      <div className="orderdetail">
-                        <div className="time">{post.time} -</div>
-                        <div className="tableID"> Table {post.table_ID}</div>
+            <div className="dashboardouterborder">
+              <div className="ordergrid">
+                {OrderData.map((post) => {
+                  return (
+                    <>
+                      <div className="orderdetails">
+                        <div className="orderID">{post.order_ID}</div>
+                        <div className="orderdetail">
+                          <div className="orderdetailtime">{post.time} -</div>
+                          <div className="tableID"> Table {post.table_ID}</div>
+                        </div>
+                        <div className="orderbuttoncontainer">
+                          <button
+                            className="orderbutton"
+                            onClick={redirectorder}
+                          >
+                            View Detail
+                          </button>
+                        </div>
                       </div>
-                      <div className="buttoncontainer">
-                        <button
-                          className="orderbutton"
-                          onClick={console.log("hey")}
-                        >
-                          View Detail
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                );
-              })}
+                    </>
+                  );
+                })}
+              </div>
             </div>
-          </div>
           </div>
         </div>
         <div className="promo">
           Promo Banner
           <div className="dashboardpromocontainer">
             {RestaurantData.map((post) => {
-              return post.promo.map((posts) => {
+              return post.promo.map((posts, index) => {
                 return (
                   <div className="promodetails">
-                    <img
-                      src={require("../../icons/Banner1.jpg").default}
-                      className="picture"
-                    />
+                    <button
+                      key={index}
+                      className="promodetailbutton"
+                      type="button"
+                      onClick={redirectpromo}
+                    >
+                      <img
+                        src={require("../../icons/Banner1.jpg")}
+                        className="picture"
+                      />
+                    </button>
                   </div>
                 );
               });
@@ -417,8 +429,8 @@ function DashboardPage({tenant}) {
   );
 }
 
-const mapStateToProps = ({session}) => ({
-  tenant: session.user
-})
+const mapStateToProps = ({ session }) => ({
+  tenant: session.user,
+});
 
 export default connect(mapStateToProps)(DashboardPage);

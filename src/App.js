@@ -15,8 +15,6 @@ import Tables from "./components/pages/TablesPage/TablesPage";
 import Qr from "./components/pages/QrPage/QrPage";
 import Customer from "./components/pages/CustomerPage/CustomerPage";
 import Settings from "./components/pages/SettingsPage/SettingsPage";
-import landingpage from "./components/pages/LandingPage/LandingPage";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./App.css";
 
 //Auth & redux
@@ -27,7 +25,8 @@ import { connect } from "react-redux";
 
 function App({ checked }) {
   return (
-    <Router basename="/oasisone_admin">
+    //basename="/oasisone_admin"
+    <Router >
       {checked && (
         <div className="app">
           <Switch>

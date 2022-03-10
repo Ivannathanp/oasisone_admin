@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
 import "./LoginPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,7 +9,7 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import Loader from "react-loader-spinner";
+import {BallTriangle} from "react-loader-spinner";
 import { PassTextField } from "../../Forms/FormLib";
 
 //auth
@@ -19,7 +18,7 @@ import { resetPassword } from "../../Auth/actions/userActions";
 import { useHistory, useParams } from "react-router-dom";
 
 function PasswordResetPage({ resetPassword }) {
-  const history = useHistory();
+  let history = useHistory();
   const { userID, resetString } = useParams();
 
   return (
@@ -79,9 +78,9 @@ function PasswordResetPage({ resetPassword }) {
                     </button>
                   )}
                   {isSubmitting && (
-                    <Loader
-                      type="ThreeDots"
-                      color="#00BFFF"
+                   <BallTriangle
+      
+                   color="#f10c0c"
                       height={80}
                       width={80}
                     />
