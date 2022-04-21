@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory, NavLink } from "react-router-dom";
 import "./SideBar.css";
 import Dashboard from "../icons/Dashboard.png";
 import Cart from "../icons/Order Stat.png";
@@ -15,7 +15,7 @@ import Logout from "../icons/Logout.png";
 import { connect } from "react-redux";
 import {logoutUser} from "../Auth/actions/userActions";
 
-function SideBar({logoutUser}) {
+function SideBar({ logoutUser, tenant }) {
   let history = useHistory();
 
   return (
@@ -23,67 +23,67 @@ function SideBar({logoutUser}) {
       <nav className="sidebar">
         <div className="sidebar-container">
           <div className="sidebar-header">
-            Telaga Seafood <i className="fab fa-typo3"></i>
+            {tenant.name} <i className="fab fa-typo3"></i>
           </div>
           <ul className="side-menu">
             <li className="side-item">
-              <Link to="/dashboard" className="side-links">
+              <NavLink to="/dashboard" activeClassName='is-active' className="side-links">
                 <img src={Dashboard} className="icons2" /> Dashboard
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/orders" className="side-links">
+              <NavLink to="/orders" activeClassName='is-active' className="side-links">
                 <img src={Cart} className="icons" />
                 Orders
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/orderstatus" className="side-links">
+              <NavLink to="/orderstatus" activeClassName='is-active' className="side-links">
                 <img src={Chart} className="icons" />
                 Order Status Screen
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/promo" className="side-links">
+              <NavLink to="/promo" activeClassName='is-active' className="side-links">
                 <img src={Banner} className="icons" />
                 Promo Banner
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/inventory" className="side-links">
+              <NavLink to="/inventory" activeClassName='is-active' className="side-links">
                 <img src={Inventory} className="icons" />
                 Inventory
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/tables" className="side-links">
+              <NavLink to="/tables" activeClassName='is-active' className="side-links">
                 <img src={Tables} className="icons2" />
                 Tables
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/qr" className="side-links">
+              <NavLink to="/qr" activeClassName='is-active' className="side-links">
                 <img src={Qr} className="icons" />
                 Print QR Codes
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/customer" className="side-links">
+              <NavLink to="/customer" activeClassName='is-active' className="side-links">
                 <img src={People} className="icons2" />
                 Customer
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/settings" className="side-links">
+              <NavLink to="/settings" activeClassName='is-active' className="side-links">
                 <img src={Settings} className="icons" />
                 Settings
-              </Link>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="#" className="side-links" onClick={() => logoutUser(history)}>
+              <NavLink to="#" className="side-links" onClick={() => logoutUser(history)}>
                 <img src={Logout} className="icons" />
                 Logout
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </div>
@@ -92,7 +92,8 @@ function SideBar({logoutUser}) {
   );
 }
 
+const mapStateToProps = ({ session }) => ({
+  tenant: session.user,
+});
 
-
-
-export default connect(null, {logoutUser})(SideBar);
+export default connect(mapStateToProps, {logoutUser})(SideBar);

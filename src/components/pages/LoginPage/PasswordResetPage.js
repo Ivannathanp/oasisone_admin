@@ -73,8 +73,7 @@ function PasswordResetPage({ resetPassword }) {
                       onClick={console.log("pressed", onsubmit)}
                       className="loginbutton"
                     >
-                      {" "}
-                      Post Data{" "}
+                      Proceed
                     </button>
                   )}
                   {isSubmitting && (

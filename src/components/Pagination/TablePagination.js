@@ -24,7 +24,7 @@ const TablePaginationRoot = styled(TableCell, {
   slot: "Root",
   overridesResolver: (props, styles) => styles.root,
 })(({ theme }) => ({
-  overflow: "auto",
+  width:'100%',
   border: "none",
   color: theme.palette.text.primary,
   fontSize: theme.typography.pxToRem(14),

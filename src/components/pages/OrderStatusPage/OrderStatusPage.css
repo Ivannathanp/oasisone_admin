@@ -1,11 +1,28 @@
-.orderstatuscontainer {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 40px;
-  margin-top: 2%;
+.orderstatusoutercontainer{
   margin-left: 4%;
   margin-right: 4%;
+  margin-top: 5%;
+  align-items: center;
+  border-radius: 20px;
+  height: 75vh;
+  position: relative;
+  overflow: scroll;
 }
+
+.orderstatusoutercontainer::-webkit-scrollbar{
+  display: none;
+}
+
+.orderstatuscontainer {
+  margin: 1%;
+  display: grid;
+  grid-row-gap: 5%;
+  grid-column-gap: 5%;
+  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+}
+
+
 
 .orderstatuscard {
   width: 377px;
@@ -13,6 +30,13 @@
   background: #ffffff;
   border: 0.5px solid #9b9b9b;
   border-radius: 11px;
+  position: relative;
+
+}
+.closeordericon{
+position: absolute;
+top: 10px;
+right: 15px;
 }
 
 .orderscreen {
@@ -246,5 +270,82 @@
 }
 
 .icon{
-    margin-right: 3%;
+    margin-right: 10%;
+}
+
+.rejectorderbox{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 482px;
+  height: 365px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  border: none;
+  border-radius: 20px;
+  background-color: #fffaf4;
+}
+
+.radiogroupcontainer{
+  margin-top: 5%;
+}
+
+.notification{
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  position: absolute;
+  z-index: 3;
+  top: -30px;
+  right: 60px;
+  width: 227px;
+  height: 49px;
+  background-color: #E52C32;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 15px;
+}
+.hidden{
+  display: none;
+}
+.notificationtextcontainer{
+display: flex;
+width: 100%;
+  justify-content: flex-start;
+  align-content: center;
+  align-items: center;
+  margin-left: 8%;
+}
+.notificationtext{
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #fff;
+}
+.notificationclose{
+position: absolute;
+top: 5px;
+right: 8px;
+}
+.notifclosebutton{
+display: flex;
+justify-content: center;
+  align-content: center;
+  align-items: center;
+width: 16px;
+height: 16px;
+outline: none;
+background-color: transparent;
+border: 1px solid #fff;
+border-radius: 30px;
+box-shadow: none;
+color: #fff;
+font-size: 8px;
+padding: 0;
+
 }

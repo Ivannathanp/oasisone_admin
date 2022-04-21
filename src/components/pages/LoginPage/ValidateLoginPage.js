@@ -40,7 +40,6 @@ function ValidateLoginPage({ loginUser }) {
                 .max(30, "Password is too long"),
             })}
             onSubmit={(values, { setSubmitting, setFieldError }) => {
-              console.log(values);
               loginUser(values, history, setFieldError, setSubmitting);
             }}
           >

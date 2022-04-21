@@ -1,5 +1,8 @@
 .container {
+  width: 100%;
   background-color: #fffaf4;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .dashboardsection {

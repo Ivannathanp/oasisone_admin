@@ -32,9 +32,9 @@ function EmailSentPage() {
             <b className="emailtext">{userEmail}</b>
         
           <p>Check your email and come back to proceed!</p></div>
-          <button>
+          <button style={{outline:'none', backgroundColor: 'transparent', border:'none', justifyContent:'center', display:'flex'}}>
             {" "}
-            <Link to={`/login/${userEmail}`}>Proceed</Link>{" "}
+            {/* <Link className="resetbutton" to={`/login/${userEmail}`}>Proceed</Link>{" "} */}
           </button>
         </div>
       )}

@@ -4,9 +4,9 @@ import { sessionService } from "redux-react-session";
 
 // the remote endpoint and local
 
-const remoteUrl = "https://oasisone.herokuapp.com/";
+const remoteUrl = "https://oasisoneserver.herokuapp.com/";
 const localUrl = "http://localhost:5000/";
-const currentUrl = remoteUrl;
+const currentUrl = localUrl;
 
 export const loginUser = (
   credentials,
@@ -18,7 +18,7 @@ export const loginUser = (
 
   return () => {
     axios
-      .post(`${currentUrl}tenant/signin`, credentials, {
+      .post(`${currentUrl}api/tenant/signin`, credentials, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -71,7 +71,7 @@ export const signupUser = (
 ) => {
     return (dispatch) => {
         axios
-          .post(`${currentUrl}tenant/signup`, credentials, {
+          .post(`${currentUrl}api/tenant/signup`, credentials, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -132,7 +132,7 @@ export const forgetpassword = (
 
   return () => {
     axios
-      .post(`${currentUrl}tenant/passwordresetrequest`, credentials, {
+      .post(`${currentUrl}api/tenant/passwordresetrequest`, credentials, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -170,7 +170,7 @@ export const resetPassword = (
 
   return () => {
     axios
-      .post(`${currentUrl}tenant/passwordreset`, credentials, {
+      .post(`${currentUrl}api/tenant/passwordreset`, credentials, {
         headers: {
           "Content-Type": "application/json",
         },

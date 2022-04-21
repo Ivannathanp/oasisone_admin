@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../TopBar.css";
 import "./DashboardPage.css";
 import logo from "../../icons/Logo.png";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
+import sorter from "sort-nested-json";
 
 function DashboardPage({ tenant }) {
   let history = useHistory();
@@ -13,6 +14,53 @@ function DashboardPage({ tenant }) {
     {
       id: 1,
       name: "Telaga Seafood",
+      uri: require("../../icons/Logo.png"),
+      location:
+        "Jl. Raya Serpong Kav. Komersial No. 6, Bumi Serpong Damai, Jelupang, Lengkong Karya, Kec. Serpong Utara, Kota Tangerang Selatan, Banten.",
+      schedule: [
+        {
+          id: 1,
+          day: "Sunday",
+          open: "08:30",
+          close: "19:30",
+        },
+        {
+          id: 2,
+          day: "Monday",
+          open: "",
+          close: "",
+        },
+        {
+          id: 3,
+          day: "Tuesday",
+          open: "08:30",
+          close: "19:30",
+        },
+        {
+          id: 4,
+          day: "Wednesday",
+          open: "08:30",
+          close: "19:30",
+        },
+        {
+          id: 5,
+          day: "Thursday",
+          open: "08:30",
+          close: "19:30",
+        },
+        {
+          id: 6,
+          day: "Friday",
+          open: "08:30",
+          close: "20:30",
+        },
+        {
+          id: 7,
+          day: "Saturday",
+          open: "08:30",
+          close: "20:30",
+        },
+      ],
       table: [
         {
           id: 1,
@@ -175,6 +223,365 @@ function DashboardPage({ tenant }) {
           uri: "../../icons/Banner1.jpg",
         },
       ],
+      category: [
+        {
+          categoryId: 0,
+          categoryName: "menu",
+          menu: [],
+        },
+        {
+          categoryId: 1,
+          categoryName: "Gurame",
+          menu: [
+            {
+              menuId: 1,
+              name: "Gurame Bakar",
+              uri: require("../../icons/Gurame Bakar.png"),
+              duration: 15,
+              recommended: true,
+              description:
+                "Sweet and sour fish is a traditional Chinese dish made in Shandong Province primarily from carp. It is one of the representative dishes of Lu cuisine.",
+              price: 65000,
+              quantity: 10,
+              availability: true,
+              value: 0,
+            },
+            {
+              menuId: 2,
+              name: "Gurame Asam Manis",
+              uri: require("../../icons/Gurame Saus Tiram.png"),
+              duration: 15,
+              recommended: false,
+              description:
+                "Sweet and sour fish is a traditional Chinese dish made in Shandong Province primarily from carp. It is one of the representative dishes of Lu cuisine.",
+              price: 85000,
+              quantity: 10,
+              availability: true,
+              value: 0,
+            },
+          ],
+        },
+        {
+          categoryId: 2,
+          categoryName: "Kerapu",
+          menu: [
+            {
+              menuId: 1,
+              name: "Kerapu Kukus",
+              uri: require("../../icons/Kerapu Kukus.png"),
+              duration: 10,
+              recommended: true,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 15000,
+              quantity: 12,
+              availability: true,
+              value: 0,
+            },
+          ],
+        },
+        {
+          categoryId: 3,
+          categoryName: "Udang",
+          menu: [
+            {
+              menuId: 1,
+              name: "Udang Bakar",
+              uri: require("../../icons/Udang Bakar.png"),
+              duration: 10,
+              recommended: true,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 45000,
+              quantity: 30,
+              availability: true,
+              value: 0,
+            },
+            {
+              menuId: 2,
+              name: "Udang Galah Rebus",
+              uri: require("../../icons/Udang Galah Rebus.png"),
+              duration: 10,
+              recommended: true,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 45000,
+              quantity: 40,
+              availability: true,
+              value: 0,
+            },
+          ],
+        },
+        {
+          categoryId: 4,
+          categoryName: "Cumi",
+          menu: [
+            {
+              menuId: 1,
+              name: "Cumi Goreng",
+              uri: require("../../icons/Cumi Goreng.png"),
+              duration: 10,
+              recommended: true,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 15000,
+              quantity: 8,
+              availability: true,
+              value: 0,
+            },
+          ],
+        },
+        {
+          categoryId: 5,
+          categoryName: "Sayur",
+          menu: [
+            {
+              menuId: 1,
+              name: "Kailan Polos",
+              uri: require("../../icons/Kailan Polos.png"),
+              duration: 5,
+              recommended: false,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 30000,
+              quantity: 10,
+              availability: true,
+              value: 0,
+            },
+            {
+              menuId: 2,
+              name: "Sayur Asem",
+              uri: require("../../icons/Sayur Asem.png"),
+              duration: 10,
+              recommended: true,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 15000,
+              quantity: 90,
+              availability: true,
+              value: 0,
+            },
+          ],
+        },
+        {
+          categoryId: 6,
+          categoryName: "Minum",
+          menu: [
+            {
+              menuId: 1,
+              name: "Ice Vietnam Drip",
+              uri: require("../../icons/Ice Vietnam Drip.png"),
+              duration: 10,
+              recommended: true,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 15000,
+              quantity: 10,
+              availability: true,
+              value: 0,
+            },
+          ],
+        },
+        {
+          categoryId: 7,
+          categoryName: "Kerang",
+          menu: [
+            {
+              menuId: 1,
+              name: "Kerang",
+              uri: require("../../icons/Kerang.png"),
+              duration: 10,
+              recommended: true,
+              description:
+                "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+              price: 15000,
+              quantity: 100,
+              availability: true,
+              value: 0,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const category = [
+    {
+      categoryId: 0,
+      categoryName: "menu",
+      menu: [],
+    },
+    {
+      categoryId: 1,
+      categoryName: "Gurame",
+      menu: [
+        {
+          menuId: 1,
+          name: "Gurame Bakar",
+          uri: require("../../icons/Gurame Bakar.png"),
+          duration: 15,
+          recommended: true,
+          description:
+            "Sweet and sour fish is a traditional Chinese dish made in Shandong Province primarily from carp. It is one of the representative dishes of Lu cuisine.",
+          price: 65000,
+          quantity: 10,
+          availability: true,
+          value: 0,
+        },
+        {
+          menuId: 2,
+          name: "Gurame Asam Manis",
+          uri: require("../../icons/Gurame Saus Tiram.png"),
+          duration: 15,
+          recommended: false,
+          description:
+            "Sweet and sour fish is a traditional Chinese dish made in Shandong Province primarily from carp. It is one of the representative dishes of Lu cuisine.",
+          price: 85000,
+          quantity: 10,
+          availability: true,
+          value: 0,
+        },
+      ],
+    },
+    {
+      categoryId: 2,
+      categoryName: "Kerapu",
+      menu: [
+        {
+          menuId: 1,
+          name: "Kerapu Kukus",
+          uri: require("../../icons/Kerapu Kukus.png"),
+          duration: 10,
+          recommended: true,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 15000,
+          quantity: 12,
+          availability: true,
+          value: 0,
+        },
+      ],
+    },
+    {
+      categoryId: 3,
+      categoryName: "Udang",
+      menu: [
+        {
+          menuId: 1,
+          name: "Udang Bakar",
+          uri: require("../../icons/Udang Bakar.png"),
+          duration: 10,
+          recommended: true,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 45000,
+          quantity: 30,
+          availability: true,
+          value: 0,
+        },
+        {
+          menuId: 2,
+          name: "Udang Galah Rebus",
+          uri: require("../../icons/Udang Galah Rebus.png"),
+          duration: 10,
+          recommended: true,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 45000,
+          quantity: 40,
+          availability: true,
+          value: 0,
+        },
+      ],
+    },
+    {
+      categoryId: 4,
+      categoryName: "Cumi",
+      menu: [
+        {
+          menuId: 1,
+          name: "Cumi Goreng",
+          uri: require("../../icons/Cumi Goreng.png"),
+          duration: 10,
+          recommended: true,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 15000,
+          quantity: 8,
+          availability: true,
+          value: 0,
+        },
+      ],
+    },
+    {
+      categoryId: 5,
+      categoryName: "Sayur",
+      menu: [
+        {
+          menuId: 1,
+          name: "Kailan Polos",
+          uri: require("../../icons/Kailan Polos.png"),
+          duration: 5,
+          recommended: false,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 30000,
+          quantity: 90,
+          availability: true,
+          value: 0,
+        },
+        {
+          menuId: 2,
+          name: "Sayur Asem",
+          uri: require("../../icons/Sayur Asem.png"),
+          duration: 10,
+          recommended: true,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 15000,
+          quantity: 10,
+          availability: true,
+          value: 0,
+        },
+      ],
+    },
+    {
+      categoryId: 6,
+      categoryName: "Minum",
+      menu: [
+        {
+          menuId: 1,
+          name: "Ice Vietnam Drip",
+          uri: require("../../icons/Ice Vietnam Drip.png"),
+          duration: 10,
+          recommended: true,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 15000,
+          quantity: 10,
+          availability: true,
+          value: 0,
+        },
+      ],
+    },
+    {
+      categoryId: 7,
+      categoryName: "Kerang",
+      menu: [
+        {
+          menuId: 1,
+          name: "Kerang",
+          uri: require("../../icons/Kerang.png"),
+          duration: 10,
+          recommended: true,
+          description:
+            "Juicy prawns (shrimp) cooked on the grill then coated in a spicy garlic lemon butter sauce. Served with rice or crusty bread, this is a showstopper meal.",
+          price: 15000,
+          quantity: 100,
+          availability: true,
+          value: 0,
+        },
+      ],
     },
   ];
 
@@ -211,59 +618,6 @@ function DashboardPage({ tenant }) {
     },
   ];
 
-  const InventoryData = [
-    {
-      id: 1,
-      name: "Gurame Asem Manis",
-      stock: "12",
-    },
-    {
-      id: 2,
-      name: "Gurame Bakar",
-      stock: "8",
-    },
-    {
-      id: 3,
-      name: "Gurame Saus Tiram",
-      stock: "9",
-    },
-    {
-      id: 4,
-      name: "Gurame Saus Padang",
-      stock: "9",
-    },
-    {
-      id: 5,
-      name: "Udang Bakar",
-      stock: "7",
-    },
-    {
-      id: 6,
-      name: "Udang Saus Padang",
-      stock: "9",
-    },
-    {
-      id: 7,
-      name: "Soda Gembira",
-      stock: "12",
-    },
-    {
-      id: 8,
-      name: "Sayur Kangkung",
-      stock: "20",
-    },
-    {
-      id: 9,
-      name: "Kepiting",
-      stock: "10",
-    },
-    {
-      id: 10,
-      name: "Es Teh",
-      stock: "15",
-    },
-  ];
-
   function redirectinventory() {
     history.push("/inventory");
   }
@@ -283,7 +637,7 @@ function DashboardPage({ tenant }) {
 
         <div className="right">
           <div className="imagecontainer">
-            <img src={tenant.profileimage} className="image" />
+            <img src={"https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"} className="image" />
           </div>
           <div className="toptext">{tenant.name}</div>
         </div>
@@ -356,14 +710,22 @@ function DashboardPage({ tenant }) {
                 <div className="text3">Available Stock</div>
               </div>
               <div className="list">
-                {InventoryData.map((post, index) => (
-                  <div className="inventorylistgrid">
-                    <div className="inventoryindex">
-                      <div className="index">{post.id}</div>
-                    </div>
-                    <div className="inventoryname">{post.name}</div>
-                    <div className="inventorystock">{post.stock}</div>
-                  </div>
+                {category.map((post) => (
+                  post.menu.map((item) => (
+                    // const [first, setfirst] = useState({ item });
+                    // const array = sorter.sort(first).desc("quantity");
+                    // const [sorted, setsorted] = useState({ array });
+                    // console.log("arr", sorted);
+                   
+                      <div className="inventorylistgrid">
+                        <div className="inventoryindex">
+                          <div className="index">{item.menuId}</div>
+                        </div>
+                        <div className="inventoryname">{item.name}</div>
+                        <div className="inventorystock">{item.quantity}</div>
+                      </div>
+                 
+                  ))
                 ))}
               </div>
             </div>

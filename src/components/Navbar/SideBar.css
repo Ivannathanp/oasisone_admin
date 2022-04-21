@@ -52,7 +52,7 @@
     box-shadow: none;
   }
 
-  .side-links:focus{
+  .is-active{
     height: auto;
     padding: 10px 15px;
     align-items: center;

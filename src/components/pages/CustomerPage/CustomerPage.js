@@ -237,11 +237,9 @@ const CustomerData = [
             <div className="customerheadertitle">NAME</div>
             <div className="customerheadertitle">PHONE NUMBER</div>
             <div className="customerheadertitle">LAST ORDER</div>
-            <div className="customerheadertitle">STATUS</div>
           </div>
 
           <div className="customerrendercontainer">
-    
             {(rowsPerPage > 0
               ? CustomerData.slice(
                   page * rowsPerPage,
@@ -259,18 +257,12 @@ const CustomerData = [
                   <div className="customertext">{post.lastorder}
                    
                    </div>
-                  <div className="status">
-                    {" "}
-                    {post.status == 1 ? (
-                      <div className="atrestaurant">At restaurant</div>
-                    ) : post.status == 2 ? (
-                      <div className="notinrestaurant">Not in here</div>
-                    ) : null}
-                  </div>
+                  
                 </div>
               </div>
             ))}
           </div>
+          
           <div className="footer">
             <TablePagination
               colSpan={3}

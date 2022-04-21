@@ -1,6 +1,67 @@
 .inventorysection{
-    
+    margin-left: 4%;
+    margin-right: 8%;
+    margin-top: 4%;
+    align-items: center;
+    height: 80vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
+
+.inventoryoutercontainer{
+    height: 960px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.inventoryoutercontainer::-webkit-scrollbar{
+    display: none;
+}
+
+.inventorycontainergrid{
+    margin: 10px;
+    column-gap: 5px;
+    column-count: 2;
+}
+  
+
+.categorycontainer{
+    width: 90%;
+    display: inline-block;
+    /* Optional */
+    position: static;
+    margin-bottom: 2%;
+    border-radius: 3px;
+    color: #424242;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.inventorycatergoryheading{
+    display: flex;
+    flex-direction: row;
+    width: 530px;
+}
+  
+.catmenucontainer{
+    width: 530px;
+    border: 3px solid #e52c32;
+    margin-top: 2%;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.buttongrid{
+    margin: 10px;
+    column-gap: 5px;
+    column-count: 2;
+}
+
 .modalbox{
     position: absolute;
     top: 50%;
@@ -273,16 +334,18 @@ margin-top: -4%;
     height: 229px;
     display: flex;
     flex-direction: column;
-    align-content: center;
     justify-content: center;
-    align-items: center;
+    align-content: center;
     border: none;
     border-radius: 20px;
     background-color: #fffaf4;
   }
   
   .removecatinnerbox {
-    padding: 5% 5% 0 5%;
+    margin: 0 5% 0 5%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
   }
 
   .removecatheading{
@@ -319,19 +382,8 @@ margin-top: -4%;
     justify-content: flex-end;
     align-items: center;
     margin-top: 10%;
-    padding-bottom: 5%;
   }
-.inventorycontainergrid{
-    display: grid;
-grid-template-areas: "a a";
-    grid-gap: 40px;
-    margin-top: 2%;
-    margin-left: 4%;
-    margin-right: 4%;
-    
-    align-items: flex-start;
 
-}
 
 .tables{
     font-family: 'Nunito Sans', sans-serif;
@@ -341,14 +393,8 @@ grid-template-areas: "a a";
 
 }
 
-.categorycontainer{
-    width: 530px;
-}
 
-.inventorycatergoryheading{
-    display: flex;
-    flex-direction: row;
-}
+
 
 .categoryname{
     font-family: 'Nunito Sans', sans-serif;
@@ -408,15 +454,6 @@ grid-template-areas: "a a";
     border: 0px;
 }
 
-.catmenucontainer{
-    border: 3px solid #e52c32;
-    margin-top: 2%;
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
 
 .detailmenucontainer{
     background-color: #fff;
@@ -440,10 +477,10 @@ grid-template-areas: "a a";
 }
 
 .catmenutext{
-display: flex;
-flex-direction: column;
-justify-content: center;
-margin-left: 2%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 2%;
 }
 
 .catmenutitle{
@@ -611,17 +648,30 @@ margin-right: 5%;
     border: 0px;
 }
 
-.addbutton{
+.inventorybuttoncontainer{
     display: flex;
-    margin-top: 2%;
-    margin-left: 4%;
-    margin-right: 14%;
-    justify-content: flex-end;
+    margin-top: 8%;
+    justify-content: flex-start;
 }
 
 .buttonadd {
     right: 0;
     width: 190px;
+    height: 41px;
+    border-radius: 100px;
+    border: 0px solid;
+    background-color: #f10c0c;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    color: #fff;
+    margin-right: 5%;
+  }
+
+  .buttonedit {
+    right: 0;
+    width: 135px;
     height: 41px;
     border-radius: 100px;
     border: 0px solid;

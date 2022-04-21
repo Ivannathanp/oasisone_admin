@@ -1,8 +1,7 @@
 .tablescontainer {
-  margin-top: 2%;
+  margin-top: 4%;
   margin-left: 4%;
   margin-right: 4%;
-  padding-bottom: 2%;
   align-items: center;
   border-style: solid;
   border-color: #cacaca;
@@ -10,6 +9,25 @@
   border-radius: 20px;
   background-color: #fff;
   height: auto;
+  position: relative;
+}
+
+.tablesnotification{
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  position: absolute;
+  z-index: 3;
+  top: -30px;
+  right: 0px;
+  width: 300px;
+  height: 55px;
+  background-color: #E52C32;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 40px;
+  padding-left: 15px;
 }
 
 .tables {
@@ -21,10 +39,14 @@
 
 .tablecontainergrid {
   display: grid;
+  grid-row-gap: 5%;
+  grid-column-gap: 5%;
   grid-template-columns: repeat(5, 1fr);
   margin: 5% 5% 2% 5%;
-  height:680px;
+  height: 60vh;
   overflow-y: scroll;
+  padding: 2% 0 0 0;
+
 }
 
 .tablecontainergrid::-webkit-scrollbar{
@@ -36,7 +58,7 @@
     height: 100%;
     display: flex;
     justify-content: space-evenly;
-    margin: 2% 0 -10% 0;
+    margin: 0 0 -10% 0;
 }
 
 
@@ -425,6 +447,7 @@
   flex-direction: row;
   justify-content: end;
   margin-right: 8%;
+  margin-bottom: 2%;
 }
 
 .addtablecontainer{

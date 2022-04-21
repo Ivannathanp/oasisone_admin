@@ -1,14 +1,41 @@
-.container {
-  height: 100vh;
+.settingsoutercontainer{
+  margin-top: 4%;
+  margin-left: 4%;
+  margin-right: 4%;
+  position: relative;
 }
+
 .settingscontainer {
   display: grid;
   height: auto;
   grid-template-columns: 1fr 1fr;
+  grid-column-gap: 5%;
   background-color: #fffaf4;
-  margin-top: 2%;
+  margin-top: 6%;
   margin-left: 4%;
   margin-right: 4%;
+  overflow: scroll;
+}
+
+.settingscontainer::-webkit-scrollbar{
+  display: none;
+}
+
+.settingsnotification{
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  position: absolute;
+  z-index: 5;
+  top: -50px;
+  right: 0px;
+  width: 227px;
+  height: 49px;
+  background-color: #E52C32;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 15px;
 }
 
 .settingsheader {
@@ -70,6 +97,8 @@
 .profilecolor {
   display: flex;
   flex-direction: row;
+  margin-top: 4%;
+  margin-left: 2%;
 }
 
 .profilecolortext {
@@ -199,6 +228,9 @@
   margin-bottom: 2%;
 }
 .openright {
+  display: flex;
+  align-items: center;
+  align-content: center;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 14px;
@@ -627,4 +659,14 @@ input::-webkit-inner-spin-button {
 .semicolonactive {
   margin: 0 10% 0 10%;
   color: #000;
+}
+
+.edithouricon{
+  width: 16px;
+  height: 13px;
+  color: #E52C32;
+  margin-left: 2%;
+}
+.hidden{
+  display: none;
 }

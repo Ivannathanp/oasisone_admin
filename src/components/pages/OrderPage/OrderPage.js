@@ -18,10 +18,33 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import recommended from "../../icons/Recommend.png";
 import { connect } from "react-redux";
-
-
+import { jsPDF } from 'jspdf'
 
 function OrderPage({ tenant }) {
+
+  const generatePdf = () => {
+ 
+    const doc = new jsPDF('p', 'pt');
+ 
+    // doc.text(20, 20, 'This is the first page title.')
+ 
+    // doc.setFont('helvetica')
+    // doc.setFontType('normal')
+    // doc.text(20, 60, 'This is the content area.')
+    // doc.addPage() // this code creates new page in pdf document
+    // doc.setFont('helvetica')
+    // doc.setFontType('normal')
+    // doc.text(20, 100, 'This is the second page.')
+ 
+ 
+    // doc.save('sample-file.pdf')
+    doc.text("Hello world!", 10, 10);
+doc.save("a4.pdf");
+  }
+ 
+
+  const localUrl = process.env.tenantUrl;
+
   const [page, setPage] = useState(0);
   const rowsPerPage = 7;
 
@@ -45,21 +68,20 @@ function OrderPage({ tenant }) {
   const [tax, setTax] = useState("");
   const [index, setIndex] = useState(1);
 
-
   function TablePaginationActions(props) {
     const { count, page, onPageChange } = props;
-  
+
     const handleBackButtonClick = (event) => {
       onPageChange(event, page - 1);
       setIndex(index - 7);
     };
-  
+
     const handleNextButtonClick = (event) => {
       onPageChange(event, page + 1);
-  
+
       setIndex(index + 7);
     };
-  
+
     return (
       <div className="containerbutton">
         <button
@@ -68,9 +90,12 @@ function OrderPage({ tenant }) {
           className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
         >
           {" "}
-          <FontAwesomeIcon icon={faAngleLeft} style={page === 0? {color: "#BEBEBE"} : {color: "#949494"}}/>
+          <FontAwesomeIcon
+            icon={faAngleLeft}
+            style={page === 0 ? { color: "#BEBEBE" } : { color: "#949494" }}
+          />
         </button>
-  
+
         <button
           onClick={handleNextButtonClick}
           disabled={page >= Math.ceil(count / 7) - 1}
@@ -80,19 +105,25 @@ function OrderPage({ tenant }) {
               : "rightdisplaybutton"
           }
         >
-          <FontAwesomeIcon icon={faAngleRight} style={page >= Math.ceil(count / 7) - 1? {color: "#BEBEBE"} : {color: "#949494"}}/>
+          <FontAwesomeIcon
+            icon={faAngleRight}
+            style={
+              page >= Math.ceil(count / 7) - 1
+                ? { color: "#BEBEBE" }
+                : { color: "#949494" }
+            }
+          />
         </button>
       </div>
     );
   }
-  
+
   TablePaginationActions.propTypes = {
     count: PropTypes.number.isRequired,
     onPageChange: PropTypes.func.isRequired,
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
   };
-
 
   function handlePassinginfo(
     status,
@@ -721,7 +752,7 @@ function OrderPage({ tenant }) {
           <div className="orderheader">
             <div className="orderleft">All Orders</div>
             <div className="orderright">
-              <button className="downloadbutton">Download as PDF</button>
+              <button className="downloadbutton" onClick={generatePdf}>Download as PDF</button>
             </div>
           </div>
           <div className="orderheadertitlegrid">
@@ -770,7 +801,7 @@ function OrderPage({ tenant }) {
                         {status == 1 ? (
                           <div className="orderplaced">ORDER PLACED</div>
                         ) : status == 2 ? (
-                          <div className="ready">READY TO SERVE</div>
+                          <div className="ready">SERVED</div>
                         ) : status == 3 ? (
                           <div className="rejected">REJECTED</div>
                         ) : status == 4 ? (
@@ -819,6 +850,19 @@ function OrderPage({ tenant }) {
                           className="ordermodalinputfile"
                           onChange={handleChange}
                         />
+                        {status == 3 ? (
+                          <>
+                            {" "}
+                            <div className="ordermodalinputlabel">
+                              Reasons for rejecting
+                            </div>
+                            <div className="rejectreasontext">
+                              Consumer asks to be cancelled
+                            </div>
+                          </>
+                        ) : (
+                          null
+                        )}
                       </form>
                     </div>
 
@@ -930,7 +974,7 @@ function OrderPage({ tenant }) {
                     {post.status == 1 ? (
                       <div className="orderplaced">ORDER PLACED</div>
                     ) : post.status == 2 ? (
-                      <div className="ready">READY TO SERVE</div>
+                      <div className="ready">Served</div>
                     ) : post.status == 3 ? (
                       <div className="rejected">REJECTED</div>
                     ) : post.status == 4 ? (
@@ -944,18 +988,16 @@ function OrderPage({ tenant }) {
                   </div>
                   <div className="ordertablenumber">{post.table_ID}</div>
                   <div className="acceptreject">
-                    {post.accepted == 1 ? (
+                    {post.status == 1 ? (
                       <div className="proceed">PROCEED</div>
-                    ) : post.accepted == 2 ? (
+                    ) : post.status == 2 ? (
                       <div className="serve">SERVE</div>
-                    ) : post.accepted == 3 ? (
-                      <div className="serve">COMPLETE</div>
-                    ) : post.accepted == 4 ? (
-                      post.status == 3 ? (
-                        <div className="completedR">COMPLETED</div>
-                      ) : (
-                        <div className="completed">COMPLETED</div>
-                      )
+                    ) : post.status == 3 ? (
+                      <div className="completedR">COMPLETED</div>
+                    ) : post.status == 4 ? (
+                      <div className=" serve">COMPLETE</div>
+                    ) : post.status == 5 ? (
+                      <div className=" completed">COMPLETED</div>
                     ) : null}
                   </div>
                   <div className="vieworder">
@@ -967,7 +1009,6 @@ function OrderPage({ tenant }) {
                           post.status,
                           post.customername,
                           post.customerphone,
-
                           post.instruction,
                           post.table_ID,
                           post.menu,

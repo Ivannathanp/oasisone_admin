@@ -12,7 +12,6 @@ import Box from "@mui/material/Box";
 import Switch from "@material-ui/core/Switch";
 import { useIosSwitchStyles } from "./switch/index";
 
-
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
@@ -137,7 +136,105 @@ function InventoryPage({ tenant }) {
         },
       ],
     },
+    {
+      id: 5,
+      name: "Apels",
+      menu: [
+        {
+          id: 1,
+          name: "Sayur Asam Manis",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 10,
+          description: "werwrewerwerwer",
+          recommended: true,
+        },
+        {
+          id: 2,
+          name: "Sayur Asam Pedas",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 10,
+          description: "asdasdadwqdwqdqwdq",
+          recommended: false,
+        },
+        {
+          id: 3,
+          name: "Sayur Asam Pedas",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 50,
+          description: "iuitutyutyututyuy",
+          recommended: true,
+        },
+        {
+          id: 4,
+          name: "Sayur Asam Pedas",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 10,
+          description: "iyuiyuiyuiyuiyuiyui",
+          recommended: true,
+        },
+      ],
+    },
+     {
+      id: 6,
+      name: "Apels",
+      menu: [
+        {
+          id: 1,
+          name: "Sayur Asam Manis",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 10,
+          description: "werwrewerwerwer",
+          recommended: true,
+        },
+        {
+          id: 2,
+          name: "Sayur Asam Pedas",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 10,
+          description: "asdasdadwqdwqdqwdq",
+          recommended: false,
+        },
+      ],
+    },
+    {
+      id: 7,
+      name: "Apels",
+      menu: [
+        {
+          id: 1,
+          name: "Sayur Asam Manis",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 10,
+          description: "werwrewerwerwer",
+          recommended: true,
+        }
+      ],
+    },
+    {
+      id: 8,
+      name: "Apels",
+      menu: [
+        {
+          id: 1,
+          name: "Sayur Asam Manis",
+          uri: "../../icons/Gurame Asam Manis.png",
+          price: 65000,
+          quantity: 10,
+          description: "werwrewerwerwer",
+          recommended: true,
+        }
+      ],
+    },
+
   ];
+
 
   const [state, setState] = useState({ items });
   // set new state for bind key items
@@ -216,14 +313,16 @@ function InventoryPage({ tenant }) {
     newItems.splice(position + direction, 0, item);
 
     setState({ items: newItems });
+  
   }
-
+  console.log("state",state)
   const [itemval, setItemval] = useState();
+console.log("item val", itemval)
 
   function handleIncrement(i, v) {
-    console.log("i is:", i);
-    console.log("v is:", v);
-    console.log("decrement clicked");
+    console.log("category is:", i);
+    console.log("menuID is:", v);
+    console.log("increment clicked");
 
     {
       categoryList.map((post, index) => {
@@ -244,13 +343,11 @@ function InventoryPage({ tenant }) {
         }
       });
     }
-
-    console.log("newdata is", itemval);
   }
 
   function handleDecrement(i, v) {
-    console.log("i is:", i);
-    console.log("v is:", v);
+    console.log("category is:", i);
+    console.log("menuID is:", v);
     console.log("decrement clicked");
 
     {
@@ -272,8 +369,6 @@ function InventoryPage({ tenant }) {
         }
       });
     }
-
-    console.log("newdata is", itemval);
   }
 
   function handleSubmit(e) {
@@ -285,28 +380,28 @@ function InventoryPage({ tenant }) {
     setFormValues({ value: e.target.value });
   }
 
-  function handlequantityvalChange(i,v,j){
+  // function handlequantityvalChange(i,v,j){
 
-    {
-      categoryList.map((post, index) => {
-        {
-          if (post.id === i) {
-            post.menu.map((posts, index) => {
-              if (posts.id === v) {
-                posts.quantity = j.target.value;
-                return post;
-              } else {
-                return post;
-              }
-            });
-          }
+  //   {
+  //     categoryList.map((post, index) => {
+  //       {
+  //         if (post.id === i) {
+  //           post.menu.map((posts, index) => {
+  //             if (posts.id === v) {
+  //               posts.quantity = j.target.value;
+  //               return post;
+  //             } else {
+  //               return post;
+  //             }
+  //           });
+  //         }
 
-          console.log(post);
-          setItemval({ post });
-        }
-      });
-    }
-  }
+  //         console.log(post);
+  //         //setItemval({ post });
+  //       }
+  //     });
+  //   }
+  // }
 
   function imageHandler(e) {
     const reader = new FileReader();
@@ -358,6 +453,7 @@ function InventoryPage({ tenant }) {
   const categoryList = state.items;
 
   const onMove = handleMove;
+  
   return (
     <div className="container">
       <div className="topbar">
@@ -646,7 +742,7 @@ function InventoryPage({ tenant }) {
           </Box>
         </Modal>
 
-        <div className="inventorycontainergrid">
+<div className="inventoryoutercontainer">  <div className="inventorycontainergrid" >
           {categoryList.map((item, index) => (
             <div className="categorycontainer" key={item.id}>
               <div className="inventorycatergoryheading">
@@ -743,7 +839,7 @@ function InventoryPage({ tenant }) {
                     type="text"
                     value=          {post.quantity}
                     className="inputquantityfile"
-                    onChange={(e)=>handlequantityvalChange(item.id, post.id, post.quantity)}
+                    //onChange={(e)=>handlequantityvalChange(item.id, post.id, post.quantity)}
                   />
                         </div>
                       <div className="increment">
@@ -779,13 +875,23 @@ function InventoryPage({ tenant }) {
             </div>
           ))}
           
-        </div>
-        <div className="addbutton">
+      </div>
+       </div>
+      
+
+      <div className="buttongrid">
+      <div className="categorycontainer"></div>
+           <div className="inventorybuttoncontainer">
             <button className="buttonadd" type="button" onClick={handleAddCatopen}>
             + Add New Category
             </button>
+            <button className="buttonedit" type="button" onClick={handleAddCatopen}>
+           Edit Category
+            </button>
           </div>
       </div>
+        </div>
+       
     </div>
   );
 }

@@ -24,9 +24,12 @@ import { connect } from "react-redux";
 
 
 function App({ checked }) {
+
+  {process.env.NODE_ENV === 'development' ? process.env.REACT_APP_DEV_MODE : process.env.REACT_APP_PRO_MODE}
+  
   return (
-    
-    <Router basename="/oasisone_tenant">
+    //basename="/oasisone_tenant"
+    <Router >
       {checked && (
         <div className="app">
           <Switch>

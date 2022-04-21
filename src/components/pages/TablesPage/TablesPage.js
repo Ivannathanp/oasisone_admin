@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import "../TopBar.css";
 import "./TablesPage.css";
 import logo from "../../icons/Logo.png";
@@ -12,7 +12,8 @@ import {
   faAngleRight,
   faAngleLeft,
   faCalendar,
-  faCashRegister,
+faXmark,
+faRightLong
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
 import NumberFormat from "react-number-format";
@@ -23,922 +24,928 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
 import { useOutlineSelectStyles } from "./select/index";
 
-function TablesPage({ tenant }) {
-  const TableData = [
-    {
-      id: 1,
-      table_ID: 1,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "Minta Garpu",
-      waitercall: true,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
+function TablesPage({ tenant }) {  
 
-    {
-      id: 2,
-      table_ID: 2,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "Minta Garpu",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 2,
-      totalitems: 2,
-    },
-    {
-      id: 3,
-      table_ID: 3,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "Minta Garpu",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 4,
-      table_ID: 4,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 4,
-      totalitems: 2,
-    },
-    {
-      id: 5,
-      table_ID: 5,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 2,
-      totalitems: 2,
-    },
-    {
-      id: 6,
-      table_ID: 6,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 7,
-      table_ID: 7,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 5,
-      totalitems: 2,
-    },
-    {
-      id: 8,
-      table_ID: 8,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 0,
+  
 
-      waitercall: false,
-    },
-    {
-      id: 9,
-      table_ID: 9,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 10,
-      table_ID: 10,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 2,
-      totalitems: 2,
-    },
-    {
-      id: 11,
-      table_ID: 11,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 0,
+  // const t = [
+  //   {
+  //     id: 1,
+  //     table_ID: 1,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Garpu",
+  //     isWaiterCalled: true,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
 
-      waitercall: false,
-    },
-    {
-      id: 12,
-      table_ID: 12,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 3,
-      totalitems: 2,
-    },
-    {
-      id: 13,
-      table_ID: 13,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 4,
-      totalitems: 2,
-    },
-    {
-      id: 14,
-      table_ID: 14,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 4,
-      waitercall: true,
-      customername: "Lena",
-      customerphone: "0891232232323",
-      instruction: "Minta Sendok",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 15,
-      table_ID: 15,
+  //   {
+  //     id: 2,
+  //     table_ID: 2,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Garpu",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 2,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 3,
+  //     table_ID: 3,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Garpu",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 4,
+  //     table_ID: 4,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 4,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 5,
+  //     table_ID: 5,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 2,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 6,
+  //     table_ID: 6,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 7,
+  //     table_ID: 7,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 5,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 8,
+  //     table_ID: 8,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 0,
 
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 1,
-      table_ID: 1,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "Minta Garpu",
-      waitercall: true,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
+  //     isWaiterCalled: false,
+  //   },
+  //   {
+  //     id: 9,
+  //     table_ID: 9,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 10,
+  //     table_ID: 10,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 2,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 11,
+  //     table_ID: 11,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 0,
 
-    {
-      id: 2,
-      table_ID: 2,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "Minta Garpu",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 2,
-      totalitems: 2,
-    },
-    {
-      id: 3,
-      table_ID: 3,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "Minta Garpu",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 4,
-      table_ID: 4,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 4,
-      totalitems: 2,
-    },
-    {
-      id: 5,
-      table_ID: 5,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 2,
-      totalitems: 2,
-    },
-    {
-      id: 6,
-      table_ID: 6,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 7,
-      table_ID: 7,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 5,
-      totalitems: 2,
-    },
-    {
-      id: 8,
-      table_ID: 8,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 0,
+  //     isWaiterCalled: false,
+  //   },
+  //   {
+  //     id: 12,
+  //     table_ID: 12,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 3,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 13,
+  //     table_ID: 13,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 4,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 14,
+  //     table_ID: 14,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 4,
+  //     isWaiterCalled: true,
+  //     customername: "Lena",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Sendok",
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 15,
+  //     table_ID: 15,
 
-      waitercall: false,
-    },
-    {
-      id: 9,
-      table_ID: 9,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 10,
-      table_ID: 10,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 2,
-      totalitems: 2,
-    },
-    {
-      id: 11,
-      table_ID: 11,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 0,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 1,
+  //     table_ID: 1,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Garpu",
+  //     isWaiterCalled: true,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
 
-      waitercall: false,
-    },
-    {
-      id: 12,
-      table_ID: 12,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 3,
-      totalitems: 2,
-    },
-    {
-      id: 13,
-      table_ID: 13,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 4,
-      totalitems: 2,
-    },
-    {
-      id: 14,
-      table_ID: 14,
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 4,
-      waitercall: true,
-      customername: "Lena",
-      customerphone: "0891232232323",
-      instruction: "Minta Sendok",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-    {
-      id: 15,
-      table_ID: 15,
+  //   {
+  //     id: 2,
+  //     table_ID: 2,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Garpu",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 2,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 3,
+  //     table_ID: 3,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Garpu",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 4,
+  //     table_ID: 4,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 4,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 5,
+  //     table_ID: 5,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 2,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 6,
+  //     table_ID: 6,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 7,
+  //     table_ID: 7,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 5,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 8,
+  //     table_ID: 8,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 0,
 
-      time_start: "11:00",
-      time_end: "11:30",
-      customer: 2,
-      customername: "John",
-      customerphone: "0891232232323",
-      instruction: "",
-      waitercall: false,
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      status: 1,
-      totalitems: 2,
-    },
-  ];
+  //     isWaiterCalled: false,
+  //   },
+  //   {
+  //     id: 9,
+  //     table_ID: 9,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 10,
+  //     table_ID: 10,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 2,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 11,
+  //     table_ID: 11,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 0,
+
+  //     isWaiterCalled: false,
+  //   },
+  //   {
+  //     id: 12,
+  //     table_ID: 12,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 3,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 13,
+  //     table_ID: 13,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 4,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 14,
+  //     table_ID: 14,
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 4,
+  //     isWaiterCalled: true,
+  //     customername: "Lena",
+  //     customerphone: "0891232232323",
+  //     instruction: "Minta Sendok",
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  //   {
+  //     id: 15,
+  //     table_ID: 15,
+
+  //     timeStart: "11:00",
+  //     time_end: "11:30",
+  //     customerCount: 2,
+  //     customername: "John",
+  //     customerphone: "0891232232323",
+  //     instruction: "",
+  //     isWaiterCalled: false,
+  //     menu: [
+  //       {
+  //         id: 1,
+  //         name: "Gurame Asam Manis",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 10,
+  //         description: "Lalala",
+  //         recommended: true,
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Gurame Asam Pedas",
+  //         uri: "../../icons/Gurame Asam Manis.png",
+  //         price: 65000,
+  //         quantity: 20,
+  //         description: "Lalalalalalalala",
+  //         recommended: false,
+  //       },
+  //     ],
+  //     status: 1,
+  //     totalitems: 2,
+  //   },
+  // ];
+
+  const localUrl = process.env.REACT_APP_TABLEURL;
+  
+  const [ tableData, setTableData ] = useState([]);
+  const [ tableRetrieved, setTableRetrieved ] = useState(false);
+
   const [tableOrderOpen, setTableOrderOpen] = useState(false);
   const handleTableOrderOpen = () => setTableOrderOpen(true);
   const handleTableOrderClose = () => setTableOrderOpen(false);
 
   const [duplicatetableOpen, setDuplicateTableOpen] = useState(false);
-  const handleDuplicateTableOpen = () => setDuplicateTableOpen(true);
-  const handleDuplicateTableClose = () => setDuplicateTableOpen(false);
+
 
   const [tableWaiterOpen, setTableWaiterOpen] = useState(false);
   const handleTableWaiterOpen = () => setTableWaiterOpen(true);
   const handleTableWaiterClose = () => setTableWaiterOpen(false);
 
   const [removetableOpen, setRemoveTableOpen] = useState(false);
-  const handleRemoveTableOpen = () => setRemoveTableOpen(true);
-  const handleRemoveTableClose = () => setRemoveTableOpen(false);
 
   const [restaurantname, setRestaurantname] = useState("");
   const [time, setTime] = useState("");
@@ -985,30 +992,10 @@ function TablesPage({ tenant }) {
     );
   };
 
-  //const [condition, setCondition] = useState(false);
-
   const [startval, setStartVal] = useState();
-  const catstartvalchange = (e) => {
-    setStartVal(e.target.value);
-    // setCondition(true);
-  };
-
   const [endval, setEndVal] = useState();
-  const catendvalchange = (e) => {
-    setEndVal(e.target.value);
-  };
-
-  // function handleerror() {
-  //   console.log(condition);
-  //   alert("please pick another table");
-  //   endval == null;
-  // }
 
   const [removeval, setRemoveVal] = useState();
-  const catremovevalchange = (e) => {
-    setRemoveVal(e.target.value);
-    // setCondition(true);
-  };
 
   const [edittable, setEditTable] = useState(false);
 
@@ -1051,8 +1038,26 @@ function TablesPage({ tenant }) {
     setWaiterInstruction(waiterinstruction);
   }
 
-  function handleaddtable() {
-   
+  async function handleaddtable() {
+    setAddTableNotif(true);
+    setTimeout(() => {
+      setAddTableNotif(false);
+    }, 5000);
+    setTableRetrieved(() => false); 
+
+    const url = localUrl + '/create/' + tenant.tenant_id;
+    fetch( url, {
+      method: 'POST',
+      headers: { "content-type": "application/JSON" },
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      if ( result.status === 'SUCCESS' ) {
+        console.log(result);
+      } else { 
+        console.log(result)
+      }
+    })
   }
 
   function handleedittable() {
@@ -1060,13 +1065,138 @@ function TablesPage({ tenant }) {
   }
 
   function handlesavetable() {
+    setTableSavedNotif(true);
+    setTimeout(() => {
+      setTableSavedNotif(false);
+    }, 3000);
     setEditTable(false);
-    setDeleteTable(false);
+    setDeleteTable(false)
   }
 
-  function handledeletetable(e) {
-    console.log("Table", e, "has been deleted!");
+  const [deletetabletext, setDeleteTableText] = useState();
+  async function handledeletetable(a,b) {
+    setRemoveTableNotif(true);
+    setDeleteTableText(a)
+    setTimeout(() => {
+      setRemoveTableNotif(false);
+   }, 3000);
+
+
+   const url = localUrl + '/remove/' + tenant.tenant_id;
+   const payload = JSON.stringify({
+    table_id : b,
+   })
+
+   fetch( url, {
+     method: 'POST',
+     body: payload,
+     headers: { "content-type": "application/JSON" },
+   })
+   .then((response) => response.json())
+   .then((result) => {
+     if ( result.status === 'SUCCESS' ) {
+       console.log(result);
+     } else { 
+       console.log(result)
+     }
+   })
+    
   }
+
+  async function handleduplicatetable(){
+    const url = localUrl + '/duplicate/' + tenant.tenant_id;
+    const payload = JSON.stringify({
+     or_table : startval,
+     de_table : endval,
+    })
+
+    fetch( url, {
+      method: 'POST',
+      body: payload,
+      headers: { "content-type": "application/JSON" },
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      if ( result.status === 'SUCCESS' ) {
+        console.log(result);
+        setStartVal();
+        setEndVal();
+      } else { 
+        console.log(result)
+      }
+    })
+  }
+
+  async function handleRemoveTableContent(){    
+    const url = localUrl + '/remove/content/' + tenant.tenant_id;
+    const payload = JSON.stringify({
+     table_index : removeval,
+    })
+
+    fetch( url, {
+      method: 'POST',
+      body: payload,
+      headers: { "content-type": "application/JSON" },
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      if ( result.status === 'SUCCESS' ) {
+        console.log(result);
+        setRemoveVal();
+      } else { 
+        console.log(result)
+      }
+    })
+  }
+
+  const [addtablenotif, setAddTableNotif] = useState(false);
+  const [removetablenotif, setRemoveTableNotif] = useState(false);
+  const [tablecallnotif, setTableCallNotif] = useState(false);
+  const [tablesavednotif, setTableSavedNotif] = useState(false);
+
+  function handlenotification() {
+    if (addtablenotif||removetablenotif||tablecallnotif||tablesavednotif) {
+      setAddTableNotif(false);
+      setRemoveTableNotif(false);
+      setTableCallNotif(false);
+      setTableSavedNotif(false);
+    }
+  }
+
+  function handleproceedwaitercall(){
+    setTableWaiterOpen(false);
+    // set waiter call false
+  }
+  
+  useEffect(() => {
+    let mounted = true;
+    console.log('called')
+
+    if ( mounted ) {
+      if ( tenant.tenant_id != undefined ) {
+        const url = localUrl + '/' + tenant.tenant_id;
+        console.log(url)
+
+        fetch( url, {
+          method: 'GET',
+          headers: { "content-type": "application/JSON" },
+        })
+        .then((response) => response.json())
+        .then((result) => {
+          if ( result.status === 'SUCCESS' ) {
+            console.log(result)
+            setTableData(() => result.data); 
+            setTableRetrieved(() => true);
+          } else { 
+            console.log(result);
+            setTableRetrieved(() => false); 
+          }
+        })
+      }
+    }
+
+    return () => { mounted = false }
+  }, [ tenant, tableRetrieved ])
 
   return (
     <div className="container">
@@ -1250,7 +1380,7 @@ function TablesPage({ tenant }) {
           <div className="modalclose">
             <button
               className="modalclosebutton"
-              onClick={handleTableWaiterClose}
+              onClick={handleproceedwaitercall}
             >
               <FontAwesomeIcon
                 className="closebuttonicon"
@@ -1258,7 +1388,7 @@ function TablesPage({ tenant }) {
               />
             </button>
           </div>
-          <div className="tablewaitermodaltitle">{tableid}</div>
+          <div className="tablewaitermodaltitle">T{tableid}</div>
           <div className="sideattributes">
             <div className="sidetexts">
               <div className="modaltexts">Name</div>
@@ -1309,11 +1439,16 @@ function TablesPage({ tenant }) {
                   MenuProps={menuProps}
                   IconComponent={iconComponent}
                   value={startval}
-                  onChange={catstartvalchange}
+                  onChange={(e)=>setStartVal(e.target.value)}
                 >
-                  {TableData.map((post, index) => (
-                   <MenuItem value={index}>T{post.table_ID}</MenuItem>
-                  ))}
+                 {tableRetrieved == true && 
+                    tableData.table.map((post, index) => {
+                      if ( post.id != endval ) {
+                        return (
+                          <MenuItem value={post.id}>T{(index + 1)}</MenuItem>
+                        )
+                      }
+                    })}
                 </Select>
               </div>
               <div
@@ -1323,8 +1458,7 @@ function TablesPage({ tenant }) {
                   justifyContent: "center",
                 }}
               >
-                {" "}
-                {">"}{" "}
+                <FontAwesomeIcon icon={faRightLong} style={{color:'#f10c0c'}}/>
               </div>
               <div className="tableselector2">
                 <Select
@@ -1334,12 +1468,16 @@ function TablesPage({ tenant }) {
                   MenuProps={menuProps}
                   IconComponent={iconComponent}
                   value={endval}
-                  //onChange={condition? (startval === endval? handleerror() : catendvalchange) : catendvalchange}
-                  onChange={catendvalchange}
+                  onChange={(e)=>setEndVal(e.target.value)}
                 >
-                  {TableData.map((post, index) => (
-                    <MenuItem value={index}>T{post.table_ID}</MenuItem>
-                  ))}
+                  { tableRetrieved == true && 
+                    tableData.table.map((post, index) => {
+                      if ( post.id != startval ) {
+                        return (
+                          <MenuItem value={post.id}>T{(index + 1)}</MenuItem>
+                        )
+                      }
+                    })}
                 </Select>
               </div>
             </div>
@@ -1347,7 +1485,11 @@ function TablesPage({ tenant }) {
               <div>
                 <button
                   className="modalcancelbutton"
-                  onClick={handleDuplicateTableClose}
+                  onClick={() => {
+                    setDuplicateTableOpen(false); 
+                    setStartVal();
+                    setEndVal();
+                  }}
                 >
                   Cancel
                 </button>
@@ -1355,7 +1497,7 @@ function TablesPage({ tenant }) {
               <div>
                 <button
                   className="modalconfirmbutton"
-                  onClick={handleDuplicateTableClose}
+                  onClick={handleduplicatetable}
                 >
                   Confirm
                 </button>
@@ -1379,10 +1521,10 @@ function TablesPage({ tenant }) {
                   MenuProps={menuProps}
                   IconComponent={iconComponent}
                   value={removeval}
-                  onChange={catremovevalchange}
+                  onChange={(e) => setRemoveVal(e.target.value)}
                 >
-                  {TableData.map((post, index) => (
-                    <MenuItem value={index}>T{post.table_ID}</MenuItem>
+                  { tableRetrieved == true && tableData.table.map((post, index) => (
+                    <MenuItem value={post.id}>T{(index + 1)}</MenuItem>
                   ))}
                 </Select>
               </div>
@@ -1391,7 +1533,10 @@ function TablesPage({ tenant }) {
               <div>
                 <button
                   className="modalcancelbutton"
-                  onClick={handleRemoveTableClose}
+                  onClick={()=>{
+                    setRemoveTableOpen(false);
+                    setRemoveVal()
+                  }}
                 >
                   Cancel
                 </button>
@@ -1399,7 +1544,7 @@ function TablesPage({ tenant }) {
               <div>
                 <button
                   className="modalconfirmbutton"
-                  onClick={handleRemoveTableClose}
+                  onClick={handleRemoveTableContent}
                 >
                   Confirm
                 </button>
@@ -1410,9 +1555,27 @@ function TablesPage({ tenant }) {
       </Modal>
 
       <div className="tablescontainer">
+      <div className={addtablenotif || removetablenotif || tablecallnotif || tablesavednotif ? "tablesnotification" : "hidden"}>
+              <div className="notificationtextcontainer">
+                <div className="notificationtext">
+                  {addtablenotif? "New table has been added" : 
+                  removetablenotif? "Table " + deletetabletext + " has been removed" : 
+                  tablecallnotif? "Table No. is calling" : 
+                  tablesavednotif? "Table edit has been saved" : null}</div>
+              </div>
+
+              <div className="notificationclose">
+                <button
+                  className="notifclosebutton"
+                  onClick={handlenotification}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              </div>
+            </div>
         <div className="tablecontainergrid">
-          {TableData.map((post, index) => {
-            if (post.customer === 0) {
+          { tableRetrieved == true && tableData.table.map((post, index) => {
+            if ( post.customerCount === 0 ) {
               return (
                 <div className="innergrid">
                   <div className="emptygrid">
@@ -1420,13 +1583,13 @@ function TablesPage({ tenant }) {
                     <button
                       className="deletetablebutton"
                       type="button"
-                      onClick={() => handledeletetable(post.table_ID)}
+                      onClick={() => handledeletetable((index + 1), post.id)}
                     >
                       Delete
                     </button>
                   </div>
                   <button className="tabledetails">
-                    <div className="tablenumberempty">T{post.table_ID}</div>
+                    <div className="tablenumberempty">T{(index + 1)}</div>
                     <div className="emptycenter">
                       <div className="tableempty">Empty</div>
                     </div>
@@ -1439,15 +1602,15 @@ function TablesPage({ tenant }) {
                 <div className="innergrid">
                 <button
                   className={
-                    post.waitercall ? "tablewaiteractive" : "tabledetailsactive"
+                    post.isWaiterCalled ? "tablewaiteractive" : "tabledetailsactive"
                   }
                   onClick={
-                    post.waitercall
+                    post.isWaiterCalled
                       ? () => {
                           handleTableWaiterOpen();
 
                           handlepasswaiterinfo(
-                            post.name,
+                            index + 1,
                             post.customername,
                             post.customerphone,
                             post.instruction
@@ -1466,33 +1629,34 @@ function TablesPage({ tenant }) {
                             post.servicecharge,
                             post.tax
                           );
+                          
                           handleTableOrderOpen();
                         }
                   }
                 >
                   <div
                     className={
-                      post.waitercall
+                      post.isWaiterCalled
                         ? "waitercalltablenumber"
                         : "tablenumberactive"
                     }
                   >
-                    T{post.table_ID}
+                    T{(index + 1)}
                   </div>
 
                   <div className="center">
                     <div className="imagecenter">
                       <img
-                        src={post.waitercall ? Waitercall : Customer}
+                        src={post.isWaiterCalled ? Waitercall : Customer}
                         className={
-                          post.waitercall ? "waiterimage" : "customerimage"
+                          post.isWaiterCalled ? "waiterimage" : "customerimage"
                         }
                       />
                     </div>
 
                     <div
                       className={
-                        post.waitercall
+                        post.isWaiterCalled
                           ? "waitercallactive"
                           : "tablecustomeractive"
                       }
@@ -1500,23 +1664,21 @@ function TablesPage({ tenant }) {
                       <img
                         src={Customer}
                         className={
-                          post.waitercall ? "customerwaiterimage" : "null"
+                          post.isWaiterCalled ? "customerwaiterimage" : "null"
                         }
                       />{" "}
-                      {post.customer} Customer
+                      {post.customerCount} Customer
                     </div>
                   </div>
-                  <div className={post.waitercall ? "waitertime" : "time"}>
+                  <div className={post.isWaiterCalled ? "waitertime" : "time"}>
                     <div
                       className={
-                        post.waitercall ? "waitertimestart" : "tabletimestart"
+                        post.isWaiterCalled ? "waitertimestart" : "tabletimestart"
                       }
                     >
-                      {post.time_start}
+                      {post.timeStart}
                     </div>
-                    <div className={post.waitercall ? "null" : "tabletimeend"}>
-                      {post.time_end}
-                    </div>
+                   
                   </div>
                 </button>
                 </div>
@@ -1545,7 +1707,7 @@ function TablesPage({ tenant }) {
                     : "duplicatetablebutton"
                   : "null"
               }
-              onClick={handleDuplicateTableOpen}
+              onClick={()=> setDuplicateTableOpen(true)}
             >
               Duplicate Table
             </button>
@@ -1559,7 +1721,7 @@ function TablesPage({ tenant }) {
                     : "removetablebutton"
                   : "null"
               }
-              onClick={handleRemoveTableOpen}
+              onClick={()=>setRemoveTableOpen(true)}
             >
               Remove Table
             </button>
