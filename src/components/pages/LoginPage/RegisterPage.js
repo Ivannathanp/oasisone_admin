@@ -58,7 +58,7 @@ function RegisterPage({ signupUser }) {
                 .required("Required"),
             })}
             onSubmit={(values, { setSubmitting, setFieldError }) => {
-              console.log("what",values);
+              console.log("what", values);
               signupUser(
                 values,
                 history,
@@ -135,7 +135,7 @@ function RegisterPage({ signupUser }) {
                       className="loginbutton"
                     >
                       {" "}
-                      Post Data{" "}
+                      Register{" "}
                     </button>
                   )}
                   {isSubmitting && (

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import "../TopBar.css";
+import React, { useState, useEffect, useContext } from "react";
 import "./SettingsPage.css";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -11,7 +10,7 @@ import {
   faEnvelope,
   faPhone,
   faPencil,
-  faXmark
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -24,11 +23,234 @@ import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
 import { useOutlineSelectStyles } from "./select2/index";
 import { useTimeSelectStyles } from "./select1/index";
 import { PostAddOutlined } from "@material-ui/icons";
+import TopBar from "../TopBar/TopBar";
+import { SocketContext } from "../../socketContext";
+import { sessionService } from "redux-react-session";
+import { ThreeDots } from "react-loader-spinner";
 
 function SettingsPage({ tenant }) {
-
   const localUrl = process.env.REACT_APP_TENANTURL;
-  console.log(localUrl)
+  const imageUrl = process.env.REACT_APP_IMAGEURL;
+
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+
+  // socket connection
+  const socket = useContext(SocketContext);
+  console.log("socket context:", SocketContext);
+  console.log("socket", socket);
+
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      console.log("mounted");
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('update user', (data) => handleUserUpdated(data));
+
+      console.log("I am setting socket",socket.on('update user', (data) => handleUserUpdated(data)) );
+    }
+  });
+
+  const [color, setColor] = useState();
+  const [profileName, setProfileName] = useState();
+  const [taxchargeedit, setTaxChargeEdit] = useState(false);
+  const [servicechargeedit, setServiceChargeEdit] = useState(false);
+  const [AddressTextEdit, setAddressTextEdit] = useState(false);
+  const [profileImage, setProfileImage] = useState();
+  const [taxChargeValue, setTaxChargeValue] = useState();
+  const [serviceChargeValue, setServiceChargeValue] = useState();
+  const [textAddress, setTextAddress] = useState();
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setColor(tenantData[0].profileColor);
+        setTextAddress(tenantData[0].address);
+        setTaxChargeValue(tenantData[0].taxCharge);
+        setServiceChargeValue(tenantData[0].serviceCharge);
+        console.log("Tenant Data socket is called");
+        setProfileImage(tenantData[0].profileImage);
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
+
+  function handleUserUpdated(user) {
+    console.log("update SOCKET IS CALLED!!!!!!!!!")
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+      console.log("INSIDE update SOCKET IS CALLED")
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
+      console.log("new data is", newData)
+    }
+    console.log("tenant new data is", tenantData)
+  }
+
+
+  async function HandleSaveProfile() {
+    setEditprofile(false);
+    setSettingSavedNotif(true);
+    setTimeout(() => {
+      setSettingSavedNotif(false);
+    }, 5000); //wait 5 seconds
+
+    const profileUrl = imageUrl + "/avatar/" + tenant.tenant_id;
+    var input = document.querySelector('input[type="file"]');
+    console.log(input);
+    console.log(input.files[0]);
+    let formData = new FormData();
+    formData.append("avatar", input.files[0]);
+    console.log(formData);
+    fetch(profileUrl, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.error("Error Upload Logo:", error);
+      });
+
+    const editUrl = localUrl + "/edit/" + tenant.tenant_id;
+
+    fetch(editUrl, {
+      method: "POST",
+      body: JSON.stringify({
+        tenant_id: tenant.tenant_id,
+        profileName: profileName,
+        profileColor: color,
+        profileImage: imageUrl + "/avatar/render/" + tenant.tenant_id + ".jpg",
+      }),
+      headers: { "content-type": "application/JSON" },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("settings data is:       ", result.data)
+        socket.emit('update user', result.data);
+        sessionService.saveUser(result.data);
+        console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('update user', result.data))
+      });
+  }
+
+  function handleUserDeleted(user) {
+    let tenantData = tenantData.slice();
+    tenantData = tenantData.filter((u) => {
+      return u._id !== user._id;
+    });
+    setTenantData({ tenantData });
+  }
+
+  async function handleTaxChargeEdit() {
+    setTaxChargeEdit(() => !taxchargeedit);
+
+    if (taxchargeedit == true) {
+      const url = localUrl + "/edit/taxcharges";
+      console.log("sent to backend, value : " + taxChargeValue);
+
+      await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          tenant_id: tenant.tenant_id,
+          charges: taxChargeValue,
+        }),
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+        });
+    }
+  }
+
+  async function handleServiceChargeEdit() {
+    setServiceChargeEdit(() => !servicechargeedit);
+
+    if (servicechargeedit == true) {
+      const url = localUrl + "/edit/servicecharges";
+      console.log("sent to backend, value : " + serviceChargeValue);
+
+      await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          tenant_id: tenant.tenant_id,
+          charges: serviceChargeValue,
+        }),
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+        });
+    }
+  }
+
+  async function imageHandler(e) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setProfileImage(reader.result);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  }
+
+  async function handleAddressTextEdit() {
+    setAddressTextEdit(() => !AddressTextEdit);
+
+    if (AddressTextEdit == true) {
+      const editUrl = localUrl + "/edit/" + tenant.tenant_id;
+
+      fetch(editUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          address: textAddress,
+        }),
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+        });
+    }
+  }
 
   const daysInAWeek = [
     {
@@ -68,18 +290,11 @@ function SettingsPage({ tenant }) {
     },
   ];
 
-  //put the current color
-  const [color, setColor] = useState();
-  const [profileName, setProfileName] = useState();
-
-  const [formValues, setFormValues] = useState("");
-
   const [OpenTimeEdit, setOpenTimeEdit] = useState(false);
 
   const [editprofile, setEditprofile] = useState(false);
   const handleEditprofileopen = () => setEditprofile(true);
   const handleEditProfileClose = () => setEditprofile(false);
-
 
   const [day, setDay] = useState();
   const [open24hrs, setOpen24hrs] = useState(false);
@@ -92,20 +307,6 @@ function SettingsPage({ tenant }) {
   const [closedtimetf, setClosedTimeTF] = useState();
   const [openhouredit, setOpenHourEdit] = useState(false);
   const neonStyles = useNeonCheckboxStyles();
-
-  const [ tenantRetrieved, setTenantRetrieved ] = useState(false);
-
-  useEffect(() => {
-    console.log('called')
-    if ( tenant != undefined ) {
-      console.log('retrieved', tenant.tenant_id)
-      setTenantRetrieved(() => true)
-    } else {
-      console.log('not retrieved', tenant.tenant_id)
-      setTenantRetrieved(() => false);
-    }
-  }, [tenant, tenantRetrieved])
-  
 
   function handleOpenHourEditOpen(
     day,
@@ -133,83 +334,86 @@ function SettingsPage({ tenant }) {
 
   function DateAndTimeModal() {
     const [daysSelected, setDaysSelected] = useState([]);
-    const url = 'http://localhost:5000/api/tenant/edit/openinghours/';
+    const url = localUrl + "/edit/openinghours";
 
     function handlesavehour() {
-
       function verifyTime() {
-        if ( closedtimetf == opentimetf ) { 
-          if ( closedtimehour == opentimehour ) {
-            if ( closedtimeminute <= opentimeminute ) { 
-              console.log('Closed time cant be earlier than open time');
+        if (closedtimetf == opentimetf) {
+          if (closedtimehour == opentimehour) {
+            if (closedtimeminute <= opentimeminute) {
+              console.log("Closed time cant be earlier than open time");
               return false;
-            };
-          } else if ( closedtimehour < opentimehour ) { 
-            console.log('Closed time cant be earlier than open time');
+            }
+          } else if (closedtimehour < opentimehour) {
+            console.log("Closed time cant be earlier than open time");
             return false;
           }
-        } else if ( closedtimetf == 'AM' && opentimetf == 'PM' ) {
-          console.log('Closed time cant be earlier than open time');
+        } else if (closedtimetf == "AM" && opentimetf == "PM") {
+          console.log("Closed time cant be earlier than open time");
           return false;
         } else {
           return true;
         }
       }
 
-      if ( verifyTime ) {
+      if (verifyTime) {
         setOpenHourEdit((state) => !state);
         daysSelected.map((item, index) => {
           const payload = JSON.stringify({
-            tenant_id : tenant.tenant_id,
-            day       : item,
-            is24Hours : open24hrs,
-            isClosed  : isclosed,
-            OpenHour  : opentimehour,
-            OpenMins  : opentimeminute,
-            OpenTF    : opentimetf,
-            CloseHour : closedtimehour,
-            CloseMins : closedtimeminute,
-            CloseTF   : closedtimetf,
+            tenant_id: tenant.tenant_id,
+            day: item,
+            is24Hours: open24hrs,
+            isClosed: isclosed,
+            OpenHour: opentimehour,
+            OpenMins: opentimeminute,
+            OpenTF: opentimetf,
+            CloseHour: closedtimehour,
+            CloseMins: closedtimeminute,
+            CloseTF: closedtimetf,
           });
 
-          console.log(payload)
-          
+          console.log(payload);
+
           fetch(url, {
             method: "POST",
-            body: payload,            
+            body: payload,
             headers: { "content-type": "application/JSON" },
           })
-          .then((response) => response.json())
-          .then((result) => {
-
-            console.log(result);  
-            setDaysSelected([]);
-          });
-        })
+            .then((response) => response.json())
+            .then((result) => {
+              console.log(result);
+              setDaysSelected([]);
+            });
+        });
       }
     }
-    
+
     // console.log(daysSelected);
     function renderButton(item, index) {
       const [selected, setSelected] = useState(false);
 
       useEffect(() => {
-        if ( item.name == day ) { 
+        if (item.name == day) {
           setSelected(true);
-          daysSelected.indexOf(item.name) === -1 ? 
-            daysSelected.push(item.name) : null;
+          daysSelected.indexOf(item.name) === -1
+            ? daysSelected.push(item.name)
+            : null;
         }
-      }, [day])
+      }, [day]);
 
       useEffect(() => {
-        if ( item.name == daysSelected ) { setSelected( true ) }
-        if ( item.name != daysSelected ) { setSelected( false ) }
-      }, [daysSelected])
+        if (item.name == daysSelected) {
+          setSelected(true);
+        }
+        if (item.name != daysSelected) {
+          setSelected(false);
+        }
+      }, [daysSelected]);
 
       return (
         <button
           type="button"
-          className={ selected ? "daysbutton" : "daysbuttonoff" }
+          className={selected ? "daysbutton" : "daysbuttonoff"}
           onClick={() => {
             setSelected((state) => !state);
             daysSelected.indexOf(item.name) === -1
@@ -243,7 +447,6 @@ function SettingsPage({ tenant }) {
     }
 
     return (
-
       <Modal open={openhouredit}>
         <Box className="openhourbox">
           <div className="openhourinnerbox">
@@ -286,7 +489,11 @@ function SettingsPage({ tenant }) {
 
                 <div className="time">
                   <div className="opentime">
-                    <div className={ open24hrs || isclosed ? "timelabel" : "timelabelactive" } >
+                    <div
+                      className={
+                        open24hrs || isclosed ? "timelabel" : "timelabelactive"
+                      }
+                    >
                       Open Time
                     </div>
                     <div className="timeinputcontainer">
@@ -340,7 +547,7 @@ function SettingsPage({ tenant }) {
                           }
                           MenuProps={timemenuProps}
                           value={opentimeminute}
-                          IconComponent={timeiconComponent}                  
+                          IconComponent={timeiconComponent}
                           onChange={(e) => setOpenTimeMinute(e.target.value)}
                         >
                           <MenuItem value="00">00</MenuItem>
@@ -369,7 +576,7 @@ function SettingsPage({ tenant }) {
                           }
                           MenuProps={menuProps}
                           value={opentimetf}
-                          IconComponent={iconComponent}            
+                          IconComponent={iconComponent}
                           onChange={(e) => setOpenTimeTF(e.target.value)}
                         >
                           <MenuItem value="AM">AM</MenuItem>
@@ -381,7 +588,7 @@ function SettingsPage({ tenant }) {
                   <div className="closetime">
                     <div
                       className={
-                        (open24hrs || isclosed) ? "timelabel" : "timelabelactive"
+                        open24hrs || isclosed ? "timelabel" : "timelabelactive"
                       }
                     >
                       Closed Time
@@ -399,7 +606,7 @@ function SettingsPage({ tenant }) {
                           }
                           MenuProps={timemenuProps}
                           value={closedtimehour}
-                          IconComponent={timeiconComponent}                      
+                          IconComponent={timeiconComponent}
                           onChange={(e) => setClosedTimeHour(e.target.value)}
                         >
                           <MenuItem value="00">00</MenuItem>
@@ -460,15 +667,15 @@ function SettingsPage({ tenant }) {
                         <Select
                           defaultValue={closedtimetf}
                           disableUnderline
-                          disabled={(open24hrs || isclosed) ? true : false}
+                          disabled={open24hrs || isclosed ? true : false}
                           classes={
-                            (open24hrs || isclosed)
+                            open24hrs || isclosed
                               ? { root: outlineSelectClasses.selectdisabled }
                               : { root: outlineSelectClasses.select }
                           }
                           MenuProps={menuProps}
                           value={closedtimetf}
-                          IconComponent={iconComponent}                       
+                          IconComponent={iconComponent}
                           onChange={(e) => setClosedTimeTF(e.target.value)}
                         >
                           <MenuItem value="AM">AM</MenuItem>
@@ -478,13 +685,13 @@ function SettingsPage({ tenant }) {
                     </div>
                   </div>
                 </div>
-              </div> 
+              </div>
             </form>
             <div className="openhourmodalbutton">
               <button
-                onClick={()=> { 
+                onClick={() => {
                   // setDay();
-                  setOpenHourEdit((state) => !state); 
+                  setOpenHourEdit((state) => !state);
                   setDaysSelected([]);
                 }}
                 className="cancelbutton"
@@ -505,7 +712,6 @@ function SettingsPage({ tenant }) {
       </Modal>
     );
   }
-
 
   //select inputs
 
@@ -567,176 +773,10 @@ function SettingsPage({ tenant }) {
     );
   };
 
-  //tax settings
-
-
-  const [taxchargeedit, setTaxChargeEdit] = useState(false);
-  const [servicechargeedit, setServiceChargeEdit] = useState(false);
-  const [AddressTextEdit, setAddressTextEdit] = useState(false);
-
-  const [taxChargeValue, setTaxChargeValue] = useState();
-  const [serviceChargeValue, setServiceChargeValue] = useState();
-  const [textAddress, setTextAddress] = useState();
-
-  
-  useEffect(() => {
-    if ( tenant != undefined ) {
-      console.log(tenant)
-      setProfileName(() => tenant.name);
-      setColor(() => tenant.profileColor);
-      setTextAddress(() => tenant.address);
-      setTaxChargeValue(() => tenant.taxCharge);
-      setServiceChargeValue(() => tenant.serviceCharge);
-    }
-  }, [tenant])
-
-  async function handleTaxChargeEdit() {
-    setTaxChargeEdit(() => !taxchargeedit);
-
-    if (taxchargeedit == true) {
-      const url = localUrl + "/edit/taxcharges";
-      console.log("sent to backend, value : " + taxChargeValue);
-
-      await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          tenant_id: tenant.tenant_id,
-          charges: taxChargeValue,
-        }),
-        headers: { "content-type": "application/JSON" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result);
-
-        });
-    }
-
-  }
-
-  async function handleServiceChargeEdit() {
-    setServiceChargeEdit(() => !servicechargeedit);
-
-    if (servicechargeedit == true) {
-      const url = localUrl + "/edit/servicecharges";
-      console.log("sent to backend, value : " + serviceChargeValue);
-
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          tenant_id: tenant.tenant_id,
-          charges: serviceChargeValue,
-        }),
-        headers: { "content-type": "application/JSON" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result);
-        });
-    }
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    alert(JSON.stringify(formValues));
-  }
-
-  function handleChangeAddressText(event) {
-    setTextAddress(event.target.value);
-  }
-
-  const [profileimage, setPofileimage] = useState(tenant.profileimage);
-
-  function imageHandler(e) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setPofileimage(reader.result);
-      }
-    };
-    reader.readAsDataURL(e.target.files[0]);
-  }
-
-  function handleOnSubmit(event) {
-    event.preventDefault();
-    alert("A name was submitted: " + profileName);
-  }
-
-  async function handleAddressTextEdit() {
-    setAddressTextEdit(() => !AddressTextEdit);
-
-    if (AddressTextEdit == true) {
-      const url = localUrl + "/edit/profileaddress";
-      console.log("sent to backend, value : " + textAddress);
-
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          tenant_id: tenant.tenant_id,
-          address: textAddress,
-        }),
-        headers: { "content-type": "application/JSON" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result);
-        });
-    }
-  }
-
-  function HandleSaveProfile() {
-    setEditprofile(false);
-    setSettingSavedNotif(true);
-    setTimeout(() => {
-      setSettingSavedNotif(false);
-    }, 5000); //wait 5 seconds
-
-    if (color != tenant.profileColor) {
-      const url = localUrl + "/edit/profilecolor";
-      console.log("sent to backend, value : " + color);
-
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          tenant_id: tenant.tenant_id,
-          profileColor: color,
-        }),
-        headers: { "content-type": "application/JSON" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result);
-        });
-    }
-
-    if (profileName != tenant.name) {
-      const url = localUrl + "/edit/profilename";
-      console.log("sent to backend, value : " + profileName);
-
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          tenant_id: tenant.tenant_id,
-          profileName: profileName,
-        }),
-        headers: { "content-type": "application/JSON" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result);
-        });
-    }
-  }
-
   const [settingsavednotif, setSettingSavedNotif] = useState(false);
   function handlenotification() {
     if (settingsavednotif) {
       setSettingSavedNotif(false);
-    } else {
-      setSettingSavedNotif(true);
-      setTimeout(() => {
-        setSettingSavedNotif(false);
-      }, 5000); //wait 5 seconds
     }
   }
 
@@ -745,17 +785,7 @@ function SettingsPage({ tenant }) {
       <div className="topbar">
         <div className="left">Settings</div>
 
-        <div className="right">
-          <div className="imagecontainer">
-            <img
-              src={
-                "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-              }
-              className="image"
-            />
-          </div>
-          <div className="toptext">{tenant.name}</div>
-        </div>
+        <TopBar />
       </div>
 
       {DateAndTimeModal()}
@@ -774,7 +804,7 @@ function SettingsPage({ tenant }) {
                       <input
                         type="text"
                         className="editprofileinputfile"
-                        defaultValue={tenant.name}
+                        defaultValue={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
                       />
                     </div>
@@ -795,7 +825,10 @@ function SettingsPage({ tenant }) {
                   <div className="editprofileinputimage">
                     <div className="editprofileinputlabel">Product Picture</div>
                     <div className="editprofileimagecontainer">
-                      <img src={profileimage} className="editprofileimage" />
+                      <img
+                        src={profileImage + "?time" + new Date()}
+                        className="editprofileimage"
+                      />
                     </div>
                     <div className="editprofileimagebuttoncontainer">
                       <div className="imagebuttoncontainer">
@@ -807,6 +840,8 @@ function SettingsPage({ tenant }) {
                           <input
                             id="file-input"
                             type="file"
+                            name="avatar"
+                            accept=".png, .jpg"
                             className="productinputfile"
                             onChange={imageHandler}
                           />
@@ -837,244 +872,264 @@ function SettingsPage({ tenant }) {
         </Box>
       </Modal>
 
-<div className="settingsoutercontainer">
-<div className={settingsavednotif ? "settingsnotification" : "hidden"}>
-              <div className="notificationtextcontainer">
-                <div className="notificationtext">Settings Saved</div>
-              </div>
-
-              <div className="notificationclose">
-                <button
-                  className="notifclosebutton"
-                  onClick={handlenotification}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-              </div>
+      {tenantRetrieved ? (
+        <div className="settingsoutercontainer">
+          <div
+            className={settingsavednotif ? "settingsnotification" : "hidden"}
+          >
+            <div className="notificationtextcontainer">
+              <div className="notificationtext">Settings Saved</div>
             </div>
-      <div className="settingscontainer">
-     
-            
-        <div className="settingsheader">
-          <div className="headertext">Profile</div>
-          <div className="settingscontent">
-            <div className="profilesettings">
-              <div className="profilecontainer">
-                <div className="profileimg">
-                  <img
-                    className="profilelogo"
-                    src={
-                      "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-                    }
-                  />
-                </div>
-                <div className="profilename">
-                  <div className="restaurantname">{ tenantRetrieved ? profileName : 'NULL' }</div>
-                  <div className="profilecolor">
-                    <div className="profilecolortext">Profile color: </div>
-                    <div
-                      className="profilecolorimg"
-                      style={{ background: tenant.profileColor }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="editprofile">
-                  <button
-                    className="editprofilebutton"
-                    onClick={handleEditprofileopen}
-                  >
-                    Edit Profile
-                  </button>
-                </div>
-              </div>
 
-              <div className="profilecontainer2">
-                <div className="profileaddressheader">
-                  <div className="profiletitle">Address</div>
-                  <div className="editcontainer">
-                    <button
-                      className={
-                        AddressTextEdit
-                          ? "editbuttoncontainer"
-                          : "editbuttoncontaineractive"
-                      }
-                      type="button"
-                      onClick={() => handleAddressTextEdit()}
-                    >
-                      {AddressTextEdit ? "Save" : "Edit"}
-                    </button>
-                  </div>
-                </div>
-                <form onSubmit={(event) => handleOnSubmit(event)}>
-                  { tenantRetrieved &&
-                    <textarea
-                      disabled={AddressTextEdit ? false : true}
-                      value={textAddress}
-                      className="profileaddress"
-                      onChange={handleChangeAddressText}
-                    />
-                  }     
-                </form>
-
-                <div className="profileopenheader">
-                  <div className="profiletitle">Opening Hour</div>
-                  <div className="editcontainer">
-                    <button
-                      className={
-                        OpenTimeEdit
-                          ? "editbuttoncontainer"
-                          : "editbuttoncontaineractive"
-                      }
-                      type="button"
-                      onClick={()=> setOpenTimeEdit((state)=> !state)}
-                    >
-                      {OpenTimeEdit ? "Save" : "Edit"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="profileopen">
-                { 
-                  tenantRetrieved == true && 
-                  tenant.openingDays.map((item, index) => {     
-                    // console.log(item)
-                    return (
-                      <div className="opentext">
-                        <div className="openleft">{item.day}</div>
-                        <div className="openright">
-                        {item.is24Hours ? (
-                          "Open 24 hours"
-                        ) : item.isClosed ? (
-                          "Closed"
-                        ) : (
-                          <>
-                            {item.OpenHour}:{item.OpenMins}&nbsp;{item.OpenTF}&nbsp;-&nbsp;
-                            {item.CloseHour}:{item.CloseMins}&nbsp;{item.CloseTF}
-                          </>
-                        )}
-                        <FontAwesomeIcon
-                          icon={faPencil}
-                          className={OpenTimeEdit ? "edithouricon" : "hidden"}
-                          onClick={() => {
-                            handleOpenHourEditOpen(
-                              item.day,
-                              item.is24Hours,
-                              item.isClosed,
-                              item.OpenHour,
-                              item.OpenMins,
-                              item.OpenTF,
-                              item.CloseHour,
-                              item.CloseMins,
-                              item.CloseTF
-                            );
-                          }}
-                        />
+            <div className="notificationclose">
+              <button className="notifclosebutton" onClick={handlenotification}>
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </div>
+          </div>
+          <div className="settingscontainer">
+            <div className="settingsheader">
+              <div className="headertext">Profile</div>
+              <div className="settingscontent">
+                <div className="profilesettings">
+                  <div className="profilecontainer">
+                    <div className="profileimg">
+                      <img
+                        className="profilelogo"
+                        src={profileImage + "?time" + new Date()}
+                      />
+                    </div>
+                    <div className="profilename">
+                      <div className="restaurantname">{profileName}</div>
+                      <div className="profilecolor">
+                        <div className="profilecolortext">Profile color: </div>
+                        <div
+                          className="profilecolorimg"
+                          style={{ background: color }}
+                        ></div>
                       </div>
                     </div>
-                    )
-                  })
-                }
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="settingsinsidegrid">
-          <div className="taxandservicecontainer">
-            <div className="headertext">Tax & Service Charge</div>
-            <div className="taxsettings">
-              <div className="taxcontents">
-                <div className="taxtext">Tax Charge</div>
-                <div className="taxdetails">
-                  <div className="percentagetext">
-                  { tenantRetrieved &&
-                    <div>
-                      <input
-                        type="number"
-                        className="percentageinput"
-                        disabled={taxchargeedit == true ? false : true}
-                        defaultValue={taxChargeValue}
-                        onChange={(e) => setTaxChargeValue(e.target.value)}
-                      />
-                      %
+                    <div className="editprofile">
+                      <button
+                        className="editprofilebutton"
+                        onClick={handleEditprofileopen}
+                      >
+                        Edit Profile
+                      </button>
                     </div>
-                  }
                   </div>
-                  <div className="taxedit">
-                    <button
-                      type="button"
-                      className="taxeditbutton"
-                      onClick={handleTaxChargeEdit}
-                    >
-                      {taxchargeedit ? "Save" : "Edit"}
-                    </button>
-                  </div>
-                </div>
-              </div>
 
-              <div className="taxcontents">
-                <div className="taxtext">Service Charge</div>
-                <div className="taxdetails">
-                  <div className="percentagetext">
-                    <input
-                      type="number"
-                      className="percentageinput"
-                      disabled={servicechargeedit == true ? false : true}
-                      defaultValue={serviceChargeValue}
-                      onChange={(e) => setServiceChargeValue(e.target.value)}
-                    />
-                    %
-                  </div>
-                  <div className="taxedit">
-                    <button
-                      type="button"
-                      className="taxeditbutton"
-                      onClick={handleServiceChargeEdit}
-                    >
-                      {servicechargeedit ? "Save" : "Edit"}
-                    </button>
+                  <div className="profilecontainer2">
+                    <div className="profileaddressheader">
+                      <div className="profiletitle">Address</div>
+                      <div className="editcontainer">
+                        <button
+                          className={
+                            AddressTextEdit
+                              ? "editbuttoncontainer"
+                              : "editbuttoncontaineractive"
+                          }
+                          type="button"
+                          onClick={() => handleAddressTextEdit()}
+                        >
+                          {AddressTextEdit ? "Save" : "Edit"}
+                        </button>
+                      </div>
+                    </div>
+                    <form>
+                      {tenantRetrieved == true && (
+                        <textarea
+                          disabled={AddressTextEdit ? false : true}
+                          value={textAddress}
+                          className="profileaddress"
+                          onChange={(e) => setTextAddress(event.target.value)}
+                        />
+                      )}
+                    </form>
+
+                    <div className="profileopenheader">
+                      <div className="profiletitle">Opening Hour</div>
+                      <div className="editcontainer">
+                        <button
+                          className={
+                            OpenTimeEdit
+                              ? "editbuttoncontainer"
+                              : "editbuttoncontaineractive"
+                          }
+                          type="button"
+                          onClick={() => setOpenTimeEdit((state) => !state)}
+                        >
+                          {OpenTimeEdit ? "Save" : "Edit"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="profileopen">
+                      {tenantRetrieved == true &&
+                        tenantData[0].openingDays.map((item, index) => {
+                          // console.log(item)
+                          return (
+                            <div className="opentext">
+                              <div className="openleft">{item.day}</div>
+                              <div className="openright">
+                                {item.is24Hours ? (
+                                  "Open 24 hours"
+                                ) : item.isClosed ? (
+                                  "Closed"
+                                ) : (
+                                  <>
+                                    {item.OpenHour}:{item.OpenMins}&nbsp;
+                                    {item.OpenTF}&nbsp;-&nbsp;
+                                    {item.CloseHour}:{item.CloseMins}&nbsp;
+                                    {item.CloseTF}
+                                  </>
+                                )}
+                                <FontAwesomeIcon
+                                  icon={faPencil}
+                                  className={
+                                    OpenTimeEdit ? "edithouricon" : "hidden"
+                                  }
+                                  onClick={() => {
+                                    handleOpenHourEditOpen(
+                                      item.day,
+                                      item.is24Hours,
+                                      item.isClosed,
+                                      item.OpenHour,
+                                      item.OpenMins,
+                                      item.OpenTF,
+                                      item.CloseHour,
+                                      item.CloseMins,
+                                      item.CloseTF
+                                    );
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="helpcontainer">
-            <div className="headertext">Help</div>
-            <div className="helpsettings">
-              <div className="helpcontents">
-                <div className="helptext">
-                  If you need help, you can contact our management at the button
-                  below
+            <div className="settingsinsidegrid">
+              <div className="taxandservicecontainer">
+                <div className="headertext">Tax & Service Charge</div>
+                <div className="taxsettings">
+                  <div className="taxcontents">
+                    <div className="taxtext">Tax Charge</div>
+                    <div className="taxdetails">
+                      <div className="percentagetext">
+                        {tenantRetrieved && (
+                          <div>
+                            <input
+                              type="number"
+                              className="percentageinput"
+                              disabled={taxchargeedit == true ? false : true}
+                              defaultValue={taxChargeValue}
+                              onChange={(e) =>
+                                setTaxChargeValue(e.target.value)
+                              }
+                            />
+                            %
+                          </div>
+                        )}
+                      </div>
+                      <div className="taxedit">
+                        <button
+                          type="button"
+                          className="taxeditbutton"
+                          onClick={handleTaxChargeEdit}
+                        >
+                          {taxchargeedit ? "Save" : "Edit"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="taxcontents">
+                    <div className="taxtext">Service Charge</div>
+                    <div className="taxdetails">
+                      <div className="percentagetext">
+                        <input
+                          type="number"
+                          className="percentageinput"
+                          disabled={servicechargeedit == true ? false : true}
+                          defaultValue={serviceChargeValue}
+                          onChange={(e) =>
+                            setServiceChargeValue(e.target.value)
+                          }
+                        />
+                        %
+                      </div>
+                      <div className="taxedit">
+                        <button
+                          type="button"
+                          className="taxeditbutton"
+                          onClick={handleServiceChargeEdit}
+                        >
+                          {servicechargeedit ? "Save" : "Edit"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ width: "90%" }}>
-                  <div className="helpbuttoncontainer">
-                    <button className="helpbutton">
-                      <FontAwesomeIcon
-                        className="helpicons"
-                        icon={faEnvelope}
-                      />
-                      Email
-                    </button>
-                    <button className="helpbutton2">
-                      <FontAwesomeIcon className="helpicons" icon={faPhone} />
-                      Call
-                    </button>
+              </div>
+
+              <div className="helpcontainer">
+                <div className="headertext">Help</div>
+                <div className="helpsettings">
+                  <div className="helpcontents">
+                    <div className="helptext">
+                      If you need help, you can contact our management at the
+                      button below
+                    </div>
+                    <div style={{ width: "90%" }}>
+                      <div className="helpbuttoncontainer">
+                        <button className="helpbutton">
+                          <FontAwesomeIcon
+                            className="helpicons"
+                            icon={faEnvelope}
+                          />
+                          Email
+                        </button>
+                        <button className="helpbutton2">
+                          <FontAwesomeIcon
+                            className="helpicons"
+                            icon={faPhone}
+                          />
+                          Call
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            height: "100vh",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ThreeDots color="#f10c0c" height={80} width={80} />
+        </div>
+      )}
     </div>
   );
 }
 
-const mapStateToProps = ({ session }) => ({
-  tenant: session.user,
-});
+function mapStateToProps({ session }) {
+  console.log("session user", session.user);
+  return { tenant: session.user };
+}
 
+console.log(mapStateToProps);
 export default connect(mapStateToProps)(SettingsPage);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SideBar from "./components/Navbar/SideBar";
 import Login from "./components/pages/LoginPage/ValidateLoginPage";
@@ -16,20 +16,70 @@ import Qr from "./components/pages/QrPage/QrPage";
 import Customer from "./components/pages/CustomerPage/CustomerPage";
 import Settings from "./components/pages/SettingsPage/SettingsPage";
 import "./App.css";
+import { io } from "socket.io-client";
+import { SocketContext } from "./components/socketContext";
 
 //Auth & redux
 import AuthRoute from "./components/Auth/routes/AuthRoute";
 import BasicRoute from "./components/Auth/routes/BasicRoute";
 import { connect } from "react-redux";
 
+function App({ checked, tenant }) {
+  {
+    process.env.NODE_ENV === "development"
+      ? process.env.REACT_APP_DEV_MODE
+      : process.env.REACT_APP_PRO_MODE;
+  }
 
-function App({ checked }) {
+  // Socket
+  const [socket, setSocket] = useState(null);
+  const [online, setOnline] = useState(0);
 
-  {process.env.NODE_ENV === 'development' ? process.env.REACT_APP_DEV_MODE : process.env.REACT_APP_PRO_MODE}
-  
+  let peopleOnline = online - 1;
+  let onlineText = "";
+
+  if (peopleOnline < 1) {
+    onlineText = "No one else is online";
+  } else {
+    onlineText =
+      peopleOnline > 1
+        ? `${online - 1} people are online`
+        : `${online - 1} person is online`;
+  }
+
+  console.log(onlineText);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("visitor enters", (data) => setOnline(data));
+      socket.on("visitor exits", (data) => setOnline(data));
+
+      console.log("I am app socket");
+    }
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    console.log("tenant is: ", tenant);
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const newSocket = io("ws://localhost:5000", {
+          query: {
+            tenant_id: tenant.tenant_id,
+          },
+        });
+
+        setSocket(newSocket);
+        return () => newSocket.close();
+      }
+    }
+  }, [tenant]);
+
+  console.log("app socket is: ", socket);
+
   return (
     //basename="/oasisone_tenant"
-    <Router >
+    <Router>
       {checked && (
         <div className="app">
           <Switch>
@@ -47,22 +97,31 @@ function App({ checked }) {
             />
             <BasicRoute path="/register" exact component={Register} />
             <BasicRoute path="/forgetpassword" exact component={Forget} />
+            <SocketContext.Provider value={socket}>
             <div class="box">
               <div class="column">
                 <SideBar />
               </div>
               <div class="column2">
-                <AuthRoute path="/dashboard" exact component={Dashboard} />
-                <AuthRoute path="/orders" exact component={Order} />
-                <AuthRoute path="/orderstatus" exact component={OrderStatus} />
-                <AuthRoute path="/promo" exact component={Promo} />
-                <AuthRoute path="/inventory" exact component={Inventory} />
-                <AuthRoute path="/tables" exact component={Tables} />
-                <AuthRoute path="/qr" exact component={Qr} />
-                <AuthRoute path="/customer" exact component={Customer} />
-                <AuthRoute path="/settings" exact component={Settings} />
+              
+                  <AuthRoute path="/dashboard" exact component={Dashboard} />
+                  <AuthRoute path="/orders" exact component={Order} />
+                  <AuthRoute
+                    path="/orderstatus"
+                    exact
+                    component={OrderStatus}
+                  />
+                  <AuthRoute path="/promo" exact component={Promo} />
+                  <AuthRoute path="/inventory" exact component={Inventory} />
+                  <AuthRoute path="/tables" exact component={Tables} />
+                  <AuthRoute path="/qr" exact component={Qr} />
+                  <AuthRoute path="/customer" exact component={Customer} />
+                  <AuthRoute path="/settings" exact component={Settings} />
+               
               </div>
+         
             </div>
+            </SocketContext.Provider>
           </Switch>
         </div>
       )}
@@ -70,8 +129,13 @@ function App({ checked }) {
   );
 }
 
-const mapStateToProps = ({ session }) => ({
-  checked: session.checked,
-});
+function mapStateToProps({ session }) {
+  console.log("session user", session.user);
+
+  return {
+    checked: session.checked,
+    tenant: session.user,
+  };
+}
 
 export default connect(mapStateToProps)(App);

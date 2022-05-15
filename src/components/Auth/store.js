@@ -13,12 +13,17 @@ const store = createStore(
   compose(applyMiddleware(...middlewares))
 );
 
+
 const validateSession = (session) => {
   // check if your session is still valid
   return true;
-}
-const options = { refreshOnCheckAuth: true, redirectPath: '/home', driver: 'COOKIES', validateSession };
- 
-sessionService.initSessionService(store, options)
+};
+const options = {
+  redirectPath: "/",
+  driver: "COOKIES",
+  validateSession,
+};
+
+sessionService.initSessionService(store,options);
 
 export default store;

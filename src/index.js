@@ -1,33 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-
+import React from "react";
+// import ReactDOM from "react-dom";
+import { render } from 'react-dom';
+import "./index.css";
+import App from "./App";
 
 //auth stuff
-import {Provider} from "react-redux";
-import store from "./components/Auth/store"
-import {persistStore, autoRehydrate} from 'redux-persist'
+import { Provider } from "react-redux";
+import store from "./components/Auth/store";
 
-<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"></link>
 
-// persistStore(store, {}, () => {
-//   ReactDOM.render((
-//     <Provider store={store}>
-//       <Router>
-//         <App/>
-//       </Router>
-//     </Provider>
-//   ), document.getElementById('root'));
-//   registerServiceWorker();  
-// })
+<link
+  href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap"
+  rel="stylesheet"
+></link>;
 
-ReactDOM.render(
-  <React.StrictMode>
+render(
     <Provider store={store}>
-    <App />
-    </Provider>
-
-  </React.StrictMode>,
-  document.getElementById('root')
+ 
+      <App />
+      
+    </Provider>,
+  document.getElementById("root")
 );
+
+//  ReactDOM.render
+//  <React.StrictMode>

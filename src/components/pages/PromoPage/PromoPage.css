@@ -3,9 +3,7 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  margin-top: 4%;
-  margin-left: 4%;
-  margin-right: 4%;
+  margin: 4%;
   position: relative;
 }
 
@@ -29,7 +27,7 @@
 .form {
   width: 100%;
   align-items: center;
-  height: 740px;
+  height: 700px;
   overflow-x: hidden;
   overflow-y: scroll;
 }
@@ -45,14 +43,26 @@
   border-radius: 20px;
   background-color: #fff;
   margin: 0 0 2% 0;
-  display: flex;
-  flex-direction: row;
-  overflow-x: scroll;
+  overflow: scroll;
 }
 
-.promoform::-webkit-scrollbar{
+.promoform::-webkit-scrollbar {
   display: none;
 }
+
+.insidepromoform {
+   width: 1263px;;
+  height: 300px;
+  align-items: center;
+  
+  border-radius: 20px;
+
+  display: flex;
+  flex-direction: row;
+
+}
+
+
 
 .promotitle {
   font-family: "Nunito Sans", sans-serif;
@@ -140,28 +150,6 @@ img[src="*"]{
   opacity: 1;
 }
 
-input[class~="promoinputfile"]::file-selector-button {
-  border: 0.5px solid #e52c32;
-  padding: 10px 20px;
-  border-radius: 5px;
-  background-color: #fff;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  color: #424242;
-}
-
-input[class~="promoinputfile"] {
-  background-color: #e6e6e6;
-  border-radius: 5px;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  color: #9b9b9b;
-  width: 337px;
-  margin: 0 0 5% 0;
-}
-
 input[class~="promodetailinputfile"] {
   word-wrap: break-word;
   word-break: break-all;
@@ -209,10 +197,9 @@ input[class~="promodetailinputfile"] {
 .addpromobutton {
   display: flex;
   justify-content: flex-end;
-  right: 0;
   white-space: nowrap;
   margin-top: 3%;
-  margin-bottom: 4%;
+  margin-bottom: 3%;
 }
 
 .buttonadd {
@@ -341,6 +328,7 @@ input[class~="promodetailinputfile"] {
 .promoimagebutton {
   height: 35px;
   width: 35px;
+  position: relative;
 }
 
 input[class~="promoinputfile"]::file-selector-button {
@@ -352,15 +340,17 @@ input[class~="promoinputfile"]::file-selector-button {
   font-weight: 400;
   font-size: 14px;
   color: #424242;
+  position: absolute;
+  top: 0px;
+  width: 2px;
   visibility: hidden;
 }
 
 input[class~="promoinputfile"] {
   background-color: transparent;
   border-radius: 30px;
-
   color: transparent;
-  width: 337px;
+  width: 0px;
   margin: 0 0 5% 0;
 }
 

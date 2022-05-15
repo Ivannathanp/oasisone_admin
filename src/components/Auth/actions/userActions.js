@@ -1,7 +1,6 @@
 import axios from "axios";
 import { sessionService } from "redux-react-session";
 
-
 // the remote endpoint and local
 
 const remoteUrl = "https://oasisoneserver.herokuapp.com/";
@@ -17,17 +16,18 @@ export const loginUser = (
   //make checks and get some data
 
   return () => {
-    axios
-      .post(`${currentUrl}api/tenant/signin`, credentials, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const { data } = response;
+    fetch(`${currentUrl}api/tenant/signin`, {
+      method: "POST",
+      body: JSON.stringify({email: credentials.email, password: credentials.password}),
+      headers: { "content-type": "application/JSON" },
+    })
 
-        if (data.status === "FAILED") {
-          const { message } = data;
+    .then((response) => response.json())
+      .then((result) => {
+        
+        console.log(result)
+        if (result.status === "FAILED") {
+          const { message } = result;
 
           //check for specific error
           if (message.includes("credentials")) {
@@ -35,19 +35,18 @@ export const loginUser = (
             setFieldError("password", message);
           } else if (message.includes("password")) {
             setFieldError("password", message);
-          }else if (message.toLowerCase().includes("email")) {
+          } else if (message.toLowerCase().includes("email")) {
             setFieldError("email", message);
           }
-        } else if (data.status === "SUCCESS") {
-          const userData = data.data[0];
-
-          const token = userData._id;
+        } else if (result.status === "SUCCESS") {
+    
+          const token = result.data[0].tenant_id;
 
           sessionService
             .saveSession(token)
             .then(() => {
               sessionService
-                .saveUser(userData)
+                .saveUser(result.data[0])
                 .then(() => {
                   history.push("/dashboard");
                 })
@@ -69,58 +68,51 @@ export const signupUser = (
   setFieldError,
   setSubmitting
 ) => {
-    return (dispatch) => {
-        axios
-          .post(`${currentUrl}api/tenant/signup`, credentials, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-          .then((response) => {
-            console.log(response);
-            const { data } = response;
-    
-            if (data.status === "FAILED") {
-              const { message } = data;
-    
-              //check for specific error
-              if (message.includes("name")) {
-                setFieldError("name", message);
-              } else if (message.includes("email")) {
-                setFieldError("email", message);
-              // }else if (message.includes("address")) {
-              //   setFieldError("address", message);
-              // }else if (message.includes("phonenumber")) {
-              //   setFieldError("phonenumber", message);
-              }else if (message.includes("password")) {
-                setFieldError("password", message);
-              }else if (message.includes("confirmPassword")) {
-                setFieldError("confirmPassword", message);
-              }              
-           
-            } else if (data.status === "PENDING") {
-              //display message for email verification
-              const {email} = credentials;
-              history.push(`/emailsent/${email}`);
+  return (dispatch) => {
+    fetch(`${currentUrl}api/tenant/signup`, {
+      method: "POST",
+      body: JSON.stringify({name: credentials.name, email: credentials.email, password: credentials.password}),
+      headers: { "content-type": "application/JSON" },
+    })
+    .then((response) => response.json())
+      .then((result) => {
 
-              //dispatch(loginUser({email,password},history,setFieldError,setSubmitting));
-    
-            }
-            //complete submission
-            setSubmitting(false);
-          })
-          .catch((err) => console.error(err));
-      };
+  
+
+        if (result.status === "FAILED") {
+          const { message } = result;
+
+          //check for specific error
+          if (message.includes("name")) {
+            setFieldError("name", message);
+          } else if (message.includes("email")) {
+            setFieldError("email", message);
+          } else if (message.includes("password")) {
+            setFieldError("password", message);
+          } else if (message.includes("confirmPassword")) {
+            setFieldError("confirmPassword", message);
+          }
+        } else if (result.status === "PENDING") {
+          //display message for email verification
+          const { email } = credentials.email;
+          history.push(`/emailsent/${email}`);
+
+          //dispatch(loginUser({email,password},history,setFieldError,setSubmitting));
+        }
+        //complete submission
+        setSubmitting(false);
+      })
+      .catch((err) => console.error(err));
+  };
 };
 
 export const logoutUser = (history) => {
   return () => {
     sessionService.deleteSession();
     sessionService.deleteUser();
-    history.push('/');
+    history.push("/");
   };
 };
-
 
 export const forgetpassword = (
   credentials,
@@ -144,12 +136,16 @@ export const forgetpassword = (
           const { message } = data;
 
           //check for specific error
-          if (message.toLowerCase().includes("user") || message.toLowerCase().includes("password") || message.toLowerCase().includes("email") ) {
+          if (
+            message.toLowerCase().includes("user") ||
+            message.toLowerCase().includes("password") ||
+            message.toLowerCase().includes("email")
+          ) {
             setFieldError("email", message);
-          } 
+          }
         } else if (data.status === "PENDING") {
-         const {email} = credentials;
-         history.push(`/emailsent/${email}/${true}`);
+          const { email } = credentials;
+          history.push(`/emailsent/${email}/${true}`);
         }
 
         //complete submission
@@ -158,7 +154,6 @@ export const forgetpassword = (
       .catch((err) => console.error(err));
   };
 };
-
 
 export const resetPassword = (
   credentials,
@@ -184,9 +179,9 @@ export const resetPassword = (
           //check for specific error
           if (message.toLowerCase().includes("password")) {
             setFieldError("newPassword", message);
-          } 
+          }
         } else if (data.status === "SUCCESS") {
-         history.push(`/emailsent`);
+          history.push(`/emailsent`);
         }
 
         //complete submission
@@ -195,4 +190,3 @@ export const resetPassword = (
       .catch((err) => console.error(err));
   };
 };
-

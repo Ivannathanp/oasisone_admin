@@ -1,5 +1,5 @@
-import React, { useState, useEffect} from "react";
-import "../TopBar.css";
+import React, { useState, useEffect, useContext } from "react";
+import "../TopBar/TopBar.css";
 import "./TablesPage.css";
 import logo from "../../icons/Logo.png";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
@@ -12,9 +12,11 @@ import {
   faAngleRight,
   faAngleLeft,
   faCalendar,
-faXmark,
-faRightLong
+  faXmark,
+  faRightLong,
+  faListSquares,
 } from "@fortawesome/free-solid-svg-icons";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
 import NumberFormat from "react-number-format";
 import recommended from "../../icons/Recommend.png";
@@ -23,941 +25,85 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
 import { useOutlineSelectStyles } from "./select/index";
+import TopBar from "../TopBar/TopBar";
+import { ThreeDots } from "react-loader-spinner";
+import { SocketContext } from "../../socketContext";
 
-function TablesPage({ tenant }) {  
-
-  
-
-  // const t = [
-  //   {
-  //     id: 1,
-  //     table_ID: 1,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Garpu",
-  //     isWaiterCalled: true,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-
-  //   {
-  //     id: 2,
-  //     table_ID: 2,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Garpu",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 2,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 3,
-  //     table_ID: 3,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Garpu",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 4,
-  //     table_ID: 4,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 4,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 5,
-  //     table_ID: 5,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 2,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 6,
-  //     table_ID: 6,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 7,
-  //     table_ID: 7,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 5,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 8,
-  //     table_ID: 8,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 0,
-
-  //     isWaiterCalled: false,
-  //   },
-  //   {
-  //     id: 9,
-  //     table_ID: 9,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 10,
-  //     table_ID: 10,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 2,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 11,
-  //     table_ID: 11,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 0,
-
-  //     isWaiterCalled: false,
-  //   },
-  //   {
-  //     id: 12,
-  //     table_ID: 12,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 3,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 13,
-  //     table_ID: 13,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 4,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 14,
-  //     table_ID: 14,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 4,
-  //     isWaiterCalled: true,
-  //     customername: "Lena",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Sendok",
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 15,
-  //     table_ID: 15,
-
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 1,
-  //     table_ID: 1,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Garpu",
-  //     isWaiterCalled: true,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-
-  //   {
-  //     id: 2,
-  //     table_ID: 2,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Garpu",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 2,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 3,
-  //     table_ID: 3,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Garpu",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 4,
-  //     table_ID: 4,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 4,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 5,
-  //     table_ID: 5,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 2,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 6,
-  //     table_ID: 6,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 7,
-  //     table_ID: 7,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 5,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 8,
-  //     table_ID: 8,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 0,
-
-  //     isWaiterCalled: false,
-  //   },
-  //   {
-  //     id: 9,
-  //     table_ID: 9,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 10,
-  //     table_ID: 10,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 2,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 11,
-  //     table_ID: 11,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 0,
-
-  //     isWaiterCalled: false,
-  //   },
-  //   {
-  //     id: 12,
-  //     table_ID: 12,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 3,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 13,
-  //     table_ID: 13,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 4,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 14,
-  //     table_ID: 14,
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 4,
-  //     isWaiterCalled: true,
-  //     customername: "Lena",
-  //     customerphone: "0891232232323",
-  //     instruction: "Minta Sendok",
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  //   {
-  //     id: 15,
-  //     table_ID: 15,
-
-  //     timeStart: "11:00",
-  //     time_end: "11:30",
-  //     customerCount: 2,
-  //     customername: "John",
-  //     customerphone: "0891232232323",
-  //     instruction: "",
-  //     isWaiterCalled: false,
-  //     menu: [
-  //       {
-  //         id: 1,
-  //         name: "Gurame Asam Manis",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 10,
-  //         description: "Lalala",
-  //         recommended: true,
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "Gurame Asam Pedas",
-  //         uri: "../../icons/Gurame Asam Manis.png",
-  //         price: 65000,
-  //         quantity: 20,
-  //         description: "Lalalalalalalala",
-  //         recommended: false,
-  //       },
-  //     ],
-  //     status: 1,
-  //     totalitems: 2,
-  //   },
-  // ];
+function TablesPage({ tenant }) {
 
   const localUrl = process.env.REACT_APP_TABLEURL;
+  const [tableData, setTableData] = useState([]);
+  const [tableRetrieved, setTableRetrieved] = useState(false);
+
+  // socket connection
+  const socket = useContext(SocketContext);
+
+  // Get Table Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/" + tenant.tenant_id;
+
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTableData(() => result.data);
+              setTableRetrieved(() => true);
+            } else {
+              setTableRetrieved(() => false);
+            }
+          });
+      }
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tableRetrieved]);
+
+console.log("table data: ", tableData)
+
+useEffect(() => {
+    if (socket) {
+      socket.on('add table', (data)=>handleTableAdded(data));
   
-  const [ tableData, setTableData ] = useState([]);
-  const [ tableRetrieved, setTableRetrieved ] = useState(false);
+      console.log("I am table socket",       socket.on('add table', (data) => handleTableAdded(data)));
+    }
+  });
+
+  function handleTableAdded(user) {
+    console.log("TABLE1", user.table);
+    console.log(" TABLE original ", tableData);
+
+    // if (tableRetrieved) {
+    //   console.log(" TABLE data is called ");
+    //   let newData = tableData.slice();
+    //   newData.push(user);
+    //   setTableData(newData);
+    //   console.log("TABLE2 is: ", newData);
+    //   console.log("TABLE updated", tableData);
+    // }
+  }
+
+  const orderUrl = process.env.REACT_APP_ORDERURL;
+  const [tableOrderData, setTableOrderData] = useState([]);
+  const [tableOrderRetrieved, setTableOrderRetrieved] = useState(false);
+
+  const waiterUrl = process.env.REACT_APP_WAITERURL;
+  const [waiterData, setWaiterData] = useState([]);
+  const [waiterDataRetrieved, setWaiterDataRetrieved] = useState(false);
 
   const [tableOrderOpen, setTableOrderOpen] = useState(false);
-  const handleTableOrderOpen = () => setTableOrderOpen(true);
-  const handleTableOrderClose = () => setTableOrderOpen(false);
-
+  const [tableNoOrderOpen, setTableNoOrderOpen] = useState(false);
   const [duplicatetableOpen, setDuplicateTableOpen] = useState(false);
-
-
   const [tableWaiterOpen, setTableWaiterOpen] = useState(false);
-  const handleTableWaiterOpen = () => setTableWaiterOpen(true);
-  const handleTableWaiterClose = () => setTableWaiterOpen(false);
-
   const [removetableOpen, setRemoveTableOpen] = useState(false);
-
-  const [restaurantname, setRestaurantname] = useState("");
-  const [time, setTime] = useState("");
-  const [date, setDate] = useState("");
-  const [status, setStatus] = useState("");
-  const [instruction, setInstruction] = useState("");
-  const [table, setTable] = useState("");
-  const [orderitems, setOrderitems] = useState([]);
-  const [itemtotal, setItemtotal] = useState("");
-  const [subtotal, setSubtotal] = useState("");
-  const [service, setService] = useState("");
-  const [tax, setTax] = useState("");
 
   const [tableid, setTableID] = useState("");
   const [customername, setCustomerName] = useState("");
@@ -999,43 +145,70 @@ function TablesPage({ tenant }) {
 
   const [edittable, setEditTable] = useState(false);
 
-  function handlePassinginfo(
-    status,
-    customername,
-    customerphone,
-    instruction,
-    table,
-    orderitems,
-    itemtotal,
-    subtotal,
-    service,
-    tax
-  ) {
-    //setRestaurantname(restaurant)
-    //setTime(time)
-    //setDate(date)
-    setStatus(status);
-    setCustomerName(customername);
-    setCustomerPhone(customerphone);
-    setInstruction(instruction);
-    setTable(table);
-    setOrderitems(orderitems);
-    setItemtotal(itemtotal);
-    setSubtotal(subtotal);
-    setService(service);
-    setTax(tax);
+  async function handlePassinginfo(i) {
+    const url = orderUrl + "/table/retrieve/" + tenant.tenant_id;
+    const payload = JSON.stringify({
+      order_id: i,
+    });
+    await fetch(url, {
+      method: "POST",
+      body: payload,
+      headers: { "content-type": "application/JSON" },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          setTableOrderData(() => result.data);
+
+          setTableOrderRetrieved(() => true);
+        } else {
+          setTableOrderRetrieved(() => false);
+        }
+      });
   }
 
-  function handlepasswaiterinfo(
-    tableid,
-    customername,
-    customerphone,
-    waiterinstruction
-  ) {
-    setTableID(tableid);
-    setCustomerName(customername);
-    setCustomerPhone(customerphone);
-    setWaiterInstruction(waiterinstruction);
+  console.log(tableOrderData);
+
+  async function handlepasswaiterinfo(table) {
+    const url = waiterUrl + "/retrieve/" + tenant.tenant_id;
+    console.log(url);
+    const payload = JSON.stringify({
+      table: table,
+    });
+    console.log(payload);
+    await fetch(url, {
+      method: "POST",
+      body: payload,
+      headers: { "content-type": "application/JSON" },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          setWaiterData(() => result.data);
+
+          setWaiterDataRetrieved(() => true);
+        } else {
+          setWaiterDataRetrieved(() => false);
+        }
+      });
+  }
+
+  console.log(waiterData);
+
+  async function handleCloseWaiter(table) {
+    const url = waiterUrl + "/remove/" + tenant.tenant_id;
+    const payload = JSON.stringify({
+      table: table,
+    });
+    await fetch(url, {
+      method: "POST",
+      body: payload,
+      headers: { "content-type": "application/JSON" },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+      });
   }
 
   async function handleaddtable() {
@@ -1043,21 +216,20 @@ function TablesPage({ tenant }) {
     setTimeout(() => {
       setAddTableNotif(false);
     }, 5000);
-    setTableRetrieved(() => false); 
+    setTableRetrieved(() => false);
 
-    const url = localUrl + '/create/' + tenant.tenant_id;
-    fetch( url, {
-      method: 'POST',
+    const url = localUrl + "/create/" + tenant.tenant_id;
+    fetch(url, {
+      method: "POST",
       headers: { "content-type": "application/JSON" },
     })
-    .then((response) => response.json())
-    .then((result) => {
-      if ( result.status === 'SUCCESS' ) {
-        console.log(result);
-      } else { 
-        console.log(result)
-      }
-    })
+      .then((response) => response.json())
+      .then((result) => {
+      
+          console.log("ttable is", result.data);
+          socket.emit('add table', result.data);
+          console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('add table', result.data))
+      });
   }
 
   function handleedittable() {
@@ -1070,83 +242,80 @@ function TablesPage({ tenant }) {
       setTableSavedNotif(false);
     }, 3000);
     setEditTable(false);
-    setDeleteTable(false)
   }
 
   const [deletetabletext, setDeleteTableText] = useState();
-  async function handledeletetable(a,b) {
+  async function handledeletetable(a, b) {
     setRemoveTableNotif(true);
-    setDeleteTableText(a)
+    setDeleteTableText(a);
     setTimeout(() => {
       setRemoveTableNotif(false);
-   }, 3000);
+    }, 3000);
 
-
-   const url = localUrl + '/remove/' + tenant.tenant_id;
-   const payload = JSON.stringify({
-    table_id : b,
-   })
-
-   fetch( url, {
-     method: 'POST',
-     body: payload,
-     headers: { "content-type": "application/JSON" },
-   })
-   .then((response) => response.json())
-   .then((result) => {
-     if ( result.status === 'SUCCESS' ) {
-       console.log(result);
-     } else { 
-       console.log(result)
-     }
-   })
-    
-  }
-
-  async function handleduplicatetable(){
-    const url = localUrl + '/duplicate/' + tenant.tenant_id;
+    const url = localUrl + "/remove/" + tenant.tenant_id;
     const payload = JSON.stringify({
-     or_table : startval,
-     de_table : endval,
-    })
+      table_id: b,
+    });
 
-    fetch( url, {
-      method: 'POST',
+    fetch(url, {
+      method: "POST",
       body: payload,
       headers: { "content-type": "application/JSON" },
     })
-    .then((response) => response.json())
-    .then((result) => {
-      if ( result.status === 'SUCCESS' ) {
-        console.log(result);
-        setStartVal();
-        setEndVal();
-      } else { 
-        console.log(result)
-      }
-    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          console.log(result);
+        } else {
+          console.log(result);
+        }
+      });
   }
 
-  async function handleRemoveTableContent(){    
-    const url = localUrl + '/remove/content/' + tenant.tenant_id;
+  async function handleduplicatetable() {
+    const url = localUrl + "/duplicate/" + tenant.tenant_id;
     const payload = JSON.stringify({
-     table_index : removeval,
-    })
+      or_table: startval,
+      de_table: endval,
+    });
 
-    fetch( url, {
-      method: 'POST',
+    fetch(url, {
+      method: "POST",
       body: payload,
       headers: { "content-type": "application/JSON" },
     })
-    .then((response) => response.json())
-    .then((result) => {
-      if ( result.status === 'SUCCESS' ) {
-        console.log(result);
-        setRemoveVal();
-      } else { 
-        console.log(result)
-      }
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          console.log(result);
+          setStartVal();
+          setEndVal();
+        } else {
+          console.log(result);
+        }
+      });
+  }
+
+  async function handleRemoveTableContent() {
+    const url = localUrl + "/remove/content/" + tenant.tenant_id;
+    const payload = JSON.stringify({
+      table_index: removeval,
+    });
+
+    fetch(url, {
+      method: "POST",
+      body: payload,
+      headers: { "content-type": "application/JSON" },
     })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          console.log(result);
+          setRemoveVal();
+        } else {
+          console.log(result);
+        }
+      });
   }
 
   const [addtablenotif, setAddTableNotif] = useState(false);
@@ -1155,7 +324,12 @@ function TablesPage({ tenant }) {
   const [tablesavednotif, setTableSavedNotif] = useState(false);
 
   function handlenotification() {
-    if (addtablenotif||removetablenotif||tablecallnotif||tablesavednotif) {
+    if (
+      addtablenotif ||
+      removetablenotif ||
+      tablecallnotif ||
+      tablesavednotif
+    ) {
       setAddTableNotif(false);
       setRemoveTableNotif(false);
       setTableCallNotif(false);
@@ -1163,265 +337,281 @@ function TablesPage({ tenant }) {
     }
   }
 
-  function handleproceedwaitercall(){
+  function handleproceedwaitercall() {
     setTableWaiterOpen(false);
     // set waiter call false
   }
-  
-  useEffect(() => {
-    let mounted = true;
-    console.log('called')
-
-    if ( mounted ) {
-      if ( tenant.tenant_id != undefined ) {
-        const url = localUrl + '/' + tenant.tenant_id;
-        console.log(url)
-
-        fetch( url, {
-          method: 'GET',
-          headers: { "content-type": "application/JSON" },
-        })
-        .then((response) => response.json())
-        .then((result) => {
-          if ( result.status === 'SUCCESS' ) {
-            console.log(result)
-            setTableData(() => result.data); 
-            setTableRetrieved(() => true);
-          } else { 
-            console.log(result);
-            setTableRetrieved(() => false); 
-          }
-        })
-      }
-    }
-
-    return () => { mounted = false }
-  }, [ tenant, tableRetrieved ])
 
   return (
     <div className="container">
       <div className="topbar">
         <div className="left">Tables</div>
 
-        <div className="right">
-          <div className="imagecontainer">
-            <img src={tenant.profileimage} className="image" />
-          </div>
-          <div className="toptext">{tenant.name}</div>
-        </div>
+        <TopBar />
       </div>
 
-      <Modal open={tableOrderOpen}>
+     <Modal open={tableOrderOpen}>
         <Box className="ordermodalbox">
-          <div className="modalclose">
-            <button
-              className="modalclosebutton"
-              onClick={handleTableOrderClose}
-            >
-              <FontAwesomeIcon
-                className="closebuttonicon"
-                icon={faCircleXmark}
-              />
-            </button>
-          </div>
+          {tableOrderRetrieved == true &&
+            tableOrderData.map((post, index) => {
+              const ordertime = new Date(post.order_time);
+              const dateOptions = {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              };
 
-          <div className="innermodalbox">
-            <div className="ordermodaltitle">{tenant.name}</div>
-            <div className="ordermodalsubtitle">
-              <div className="ordermodaldate">
-                <div className="ordertime">
-                  <FontAwesomeIcon className="timeicon" icon={faCalendar} />
-                  11:23:39 am <span className="space">/</span>{" "}
-                  <span className="orderdate">Aug 25 2021</span>
-                </div>
-              </div>
+              return (
+                <>
+                  <div className="modalclose">
+                    <button
+                      className="modalclosebutton"
+                      onClick={() => setTableOrderOpen(false)}
+                    >
+                      <FontAwesomeIcon
+                        className="closebuttonicon"
+                        icon={faCircleXmark}
+                      />
+                    </button>
+                  </div>
 
-              <div className="ordermodalstatus">
-                <div className="statustext">STATUS</div>
-                <div className="statuscoloredtext">
-                  {status == 1 ? (
-                    <div className="orderplaced">ORDER PLACED</div>
-                  ) : status == 2 ? (
-                    <div className="ready">READY TO SERVE</div>
-                  ) : status == 3 ? (
-                    <div className="rejected">REJECTED</div>
-                  ) : status == 4 ? (
-                    <div className="payment">PAYMENT</div>
-                  ) : status == 5 ? (
-                    <div className="complete">COMPLETE</div>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-            <div className="ordermodalitems">
-              <div className="ordermodalform">
-          
-                  <div className="ordermodalinputlabel">
-                    Name <span style={{ color: "#E52C32" }}>*</span>
-                  </div>
-                  <input
-                    type="text"
-                    value={customername}
-                    className="ordermodalinputfile"
-               
-                  />
-                  <div className="ordermodalinputlabel">
-                    Phone Number<span style={{ color: "#E52C32" }}>*</span>
-                  </div>
-                  <input
-                    type="text"
-                    value={customerphone}
-                    className="ordermodalinputfile"
-                   
-                  />
-                  <div className="ordermodalinputlabel">
-                    Special Instructions
-                  </div>
-                  <input
-                    type="text"
-                    value={instruction}
-                    className="ordermodalinputfile"
-                   
-                  />
-                  <div className="ordermodalinputlabel">Table</div>
-                  <input
-                    type="text"
-                    value={table}
-                    className="ordermodalinputfile"
-                 
-                  />
-              
-              </div>
-
-              <div className="ordermenuitemcontainer">
-                <div className="ordermenutitle">Order Items</div>
-                <div className="ordermenuitem">
-                  {orderitems.map((post, index) => (
-                    <div className="ordermenucontainer">
-                      <div className="ordermenuimagecontainer">
-                        <img src={post.uri} className="menuimage" />
+                  <div className="innermodalbox">
+                    <div className="ordermodaltitle">{tenant.name}</div>
+                    <div className="ordermodalsubtitle">
+                      <div className="ordermodaldate">
+                        <div className="ordertime">
+                          <CalendarTodayOutlinedIcon
+                            fontSize="small"
+                            className="timeicon"
+                          />
+                          {ordertime.toLocaleTimeString("en-US")}{" "}
+                          <span className="space">/</span>{" "}
+                          <span className="orderdate">
+                            {ordertime.toLocaleDateString("en-ID", dateOptions)}
+                          </span>
+                        </div>
                       </div>
-                      <div className="orderdetailsmenutext">
-                        <div className="orderdetailsmenutitle">{post.name}</div>
-                        <div className="recommended">
-                          {post.recommended === true ? (
-                            <img src={recommended} />
+
+                      <div className="ordermodalstatus">
+                        <div className="statustext">STATUS</div>
+                        <div className="statuscoloredtext">
+                          {post.order_status == 1 ? (
+                            <div className="pending">PENDING</div>
+                          ) : post.order_status == 2 ? (
+                            <div className="orderplaced">ORDER PLACED</div>
+                          ) : post.order_status == 3 ? (
+                            <div className="served">SERVED</div>
+                          ) : post.order_status == 4 ? (
+                            <div className="complete">COMPLETE</div>
+                          ) : post.order_status == 5 ? (
+                            <div className="rejected">REJECTED</div>
                           ) : null}
                         </div>
-                        <div className="orderdetailmenuprice">
-                          <NumberFormat
-                            value={post.price}
-                            prefix="RP. "
-                            decimalSeparator="."
-                            thousandSeparator=","
-                            displayType="text"
-                          />
+                      </div>
+                    </div>
+                    <div className="ordermodalitems">
+                      <div className="ordermodalform">
+                        <div className="ordermodalinputlabel">
+                          Name <span style={{ color: "#E52C32" }}>*</span>
+                        </div>
+                        <input
+                          type="text"
+                          value={post.user_name}
+                          className="ordermodalinputfile"
+                        />
+                        <div className="ordermodalinputlabel">
+                          Phone Number
+                          <span style={{ color: "#E52C32" }}>*</span>
+                        </div>
+                        <input
+                          type="text"
+                          value={post.user_phonenumber}
+                          className="ordermodalinputfile"
+                        />
+                        <div className="ordermodalinputlabel">
+                          Special Instructions
+                        </div>
+                        <input
+                          type="text"
+                          value={post.order_instruction}
+                          className="ordermodalinputfile"
+                        />
+                        <div className="ordermodalinputlabel">Table</div>
+                        <input
+                          type="text"
+                          value={post.order_table}
+                          className="ordermodalinputfile"
+                        />
+                      </div>
+
+                      <div className="ordermenuitemcontainer">
+                        <div className="ordermenutitle">Order Items</div>
+                        <div className="ordermenuitem">
+                          {post.order_menu.map((posts, index) => (
+                            <div className="ordermenucontainer">
+                              <div className="ordermenuimagecontainer">
+                                <img src={posts.menuImage} className="menuimage" />
+                              </div>
+                              <div className="orderdetailsmenutext">
+                                <div className="orderdetailsmenutitle">
+                                  {posts.name}
+                                </div>
+                                <div className="recommended">
+                                  {posts.isRecommended === true ? (
+                                    <img src={recommended} />
+                                  ) : (
+                                    "null"
+                                  )}
+                                </div>
+                                <div className="orderdetailmenuprice">
+                                  <NumberFormat
+                                    value={posts.price}
+                                    prefix="Rp. "
+                                    decimalSeparator="."
+                                    thousandSeparator=","
+                                    displayType="text"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="ordertotalsummary">
+                          <div className="ordertotalitems">
+                            <div className="lefttext">Items:</div>
+                            <div className="righttext">{post.order_item}</div>
+                          </div>
+
+                          <div className="ordertotalitems">
+                            <div className="lefttext">Subtotal:</div>
+                            <div className="righttext">
+                              <NumberFormat
+                                value={post.order_total}
+                                prefix="Rp. "
+                                decimalSeparator="."
+                                thousandSeparator=","
+                                displayType="text"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="ordertotalitems">
+                            <div className="lefttext">Service Charge:</div>
+                            <div className="righttext">
+                              <NumberFormat
+                                value={post.order_servicecharge}
+                                prefix="Rp. "
+                                decimalSeparator="."
+                                thousandSeparator=","
+                                displayType="text"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="ordertotalitems-n">
+                            <div className="lefttext">Tax(%):</div>
+                            <div className="righttext">
+                              <NumberFormat
+                                value={post.order_taxcharge}
+                                prefix="Rp. "
+                                decimalSeparator="."
+                                thousandSeparator=","
+                                displayType="text"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-
-                <div className="ordertotalsummary">
-                  <div className="ordertotalitems">
-                    <div className="lefttext">Items:</div>
-                    <div className="righttext">{itemtotal}</div>
                   </div>
+                </>
+              );
+            })}
+        </Box>
+      </Modal>
 
-                  <div className="ordertotalitems">
-                    <div className="lefttext">Subtotal:</div>
-                    <div className="righttext">
-                      <NumberFormat
-                        value={subtotal}
-                        prefix="RP. "
-                        decimalSeparator="."
-                        thousandSeparator=","
-                        displayType="text"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="ordertotalitems">
-                    <div className="lefttext">Service Charge:</div>
-                    <div className="righttext">
-                      <NumberFormat
-                        value={2000}
-                        prefix="RP. "
-                        decimalSeparator="."
-                        thousandSeparator=","
-                        displayType="text"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="ordertotalitems-n">
-                    <div className="lefttext">Tax(%):</div>
-                    <div className="righttext">
-                      <NumberFormat
-                        value={1000}
-                        prefix="RP. "
-                        decimalSeparator="."
-                        thousandSeparator=","
-                        displayType="text"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <Modal open={tableNoOrderOpen}>
+        <Box className="noordermodalbox">
+          <>
+            <div className="modalclose">
+              <button
+                className="modalclosebutton"
+                onClick={() => setTableNoOrderOpen(false)}
+              >
+                <FontAwesomeIcon
+                  className="closebuttonicon"
+                  icon={faCircleXmark}
+                />
+              </button>
             </div>
-          </div>
-
-         
+            <div className="noinnermodalbox">
+              <div className="noordertext">No orders has been made.</div>
+            </div>
+          </>
         </Box>
       </Modal>
 
       <Modal open={tableWaiterOpen}>
         <Box className="tablewaitermodalbox">
-          <div className="modalclose">
-            <button
-              className="modalclosebutton"
-              onClick={handleproceedwaitercall}
-            >
-              <FontAwesomeIcon
-                className="closebuttonicon"
-                icon={faCircleXmark}
-              />
-            </button>
-          </div>
-          <div className="tablewaitermodaltitle">T{tableid}</div>
-          <div className="sideattributes">
-            <div className="sidetexts">
-              <div className="modaltexts">Name</div>
-              <div className="modaltexts">Phone Number</div>
-            </div>
-            <div className="sidetexts">
-              <div className="modaltexts">:</div>
-              <div className="modaltexts">:</div>
-            </div>
-            <div className="sidetexts">
-              <div className="boldmodaltexts">{customername}</div>
-              <div className="boldmodaltexts">{customerphone}</div>
-            </div>
-          </div>
-          <div className="tablewaitercontainer">
-            <div className="modaltexts">Special Instructions (optional)</div>
-            <div className="waitertextinput">
-              <textarea
-                type="text"
-                value={waiterinstruction}
-                className="waiterdetailinput"
-              />
-            </div>
-          </div>
+          {waiterDataRetrieved === true &&
+            waiterData.waiter.map((post, index) => {
+              console.log(post);
+              return (
+                <>
+                  <div className="modalclose">
+                    <button
+                      className="modalclosebutton"
+                      onClick={handleproceedwaitercall}
+                    >
+                      <FontAwesomeIcon
+                        className="closebuttonicon"
+                        icon={faCircleXmark}
+                      />
+                    </button>
+                  </div>
+                  <div className="tablewaitermodaltitle">T{post.table}</div>
+                  <div className="sideattributes">
+                    <div className="sidetexts">
+                      <div className="modaltexts">Name</div>
+                      <div className="modaltexts">Phone Number</div>
+                    </div>
+                    <div className="sidetexts">
+                      <div className="modaltexts">:</div>
+                      <div className="modaltexts">:</div>
+                    </div>
+                    <div className="sidetexts">
+                      <div className="boldmodaltexts">{post.name}</div>
+                      <div className="boldmodaltexts">{post.phoneNumber}</div>
+                    </div>
+                  </div>
+                  <div className="tablewaitercontainer">
+                    <div className="modaltexts">
+                      Special Instructions (optional)
+                    </div>
+                    <div className="waitertextinput">
+                      <textarea
+                        type="text"
+                        value={post.instruction}
+                        className="waiterdetailinput"
+                      />
+                    </div>
+                  </div>
 
-          <div className="waiterbuttoncontainer">
-            <button
-              className="waiterconfirmbutton"
-              onClick={handleTableWaiterClose}
-            >
-              Proceed
-            </button>
-          </div>
+                  <div className="waiterbuttoncontainer">
+                    <button
+                      className="waiterconfirmbutton"
+                      onClick={() => {
+                        setTableWaiterOpen(false);
+                        handleCloseWaiter(post.table);
+                      }}
+                    >
+                      Proceed
+                    </button>
+                  </div>
+                </>
+              );
+            })}
         </Box>
       </Modal>
 
@@ -1439,14 +629,16 @@ function TablesPage({ tenant }) {
                   MenuProps={menuProps}
                   IconComponent={iconComponent}
                   value={startval}
-                  onChange={(e)=>setStartVal(e.target.value)}
+                  onChange={(e) => setStartVal(e.target.value)}
                 >
-                 {tableRetrieved == true && 
-                    tableData.table.map((post, index) => {
-                      if ( post.id != endval ) {
+                  {tableRetrieved == true &&
+                    tableData.map((post, index) => {
+                      if (post.table.id != endval) {
                         return (
-                          <MenuItem value={post.id}>T{(index + 1)}</MenuItem>
-                        )
+                          <MenuItem value={post.table.id}>
+                            T{post.table.index}
+                          </MenuItem>
+                        );
                       }
                     })}
                 </Select>
@@ -1458,7 +650,10 @@ function TablesPage({ tenant }) {
                   justifyContent: "center",
                 }}
               >
-                <FontAwesomeIcon icon={faRightLong} style={{color:'#f10c0c'}}/>
+                <FontAwesomeIcon
+                  icon={faRightLong}
+                  style={{ color: "#f10c0c" }}
+                />
               </div>
               <div className="tableselector2">
                 <Select
@@ -1468,14 +663,16 @@ function TablesPage({ tenant }) {
                   MenuProps={menuProps}
                   IconComponent={iconComponent}
                   value={endval}
-                  onChange={(e)=>setEndVal(e.target.value)}
+                  onChange={(e) => setEndVal(e.target.value)}
                 >
-                  { tableRetrieved == true && 
-                    tableData.table.map((post, index) => {
-                      if ( post.id != startval ) {
+                  {tableRetrieved == true &&
+                    tableData.map((post, index) => {
+                      if (post.table.id != startval) {
                         return (
-                          <MenuItem value={post.id}>T{(index + 1)}</MenuItem>
-                        )
+                          <MenuItem value={post.table.id}>
+                            T{post.table.index}
+                          </MenuItem>
+                        );
                       }
                     })}
                 </Select>
@@ -1486,7 +683,7 @@ function TablesPage({ tenant }) {
                 <button
                   className="modalcancelbutton"
                   onClick={() => {
-                    setDuplicateTableOpen(false); 
+                    setDuplicateTableOpen(false);
                     setStartVal();
                     setEndVal();
                   }}
@@ -1523,9 +720,12 @@ function TablesPage({ tenant }) {
                   value={removeval}
                   onChange={(e) => setRemoveVal(e.target.value)}
                 >
-                  { tableRetrieved == true && tableData.table.map((post, index) => (
-                    <MenuItem value={post.id}>T{(index + 1)}</MenuItem>
-                  ))}
+                  {tableRetrieved == true &&
+                    tableData.map((post, index) => (
+                      <MenuItem value={post.table.id}>
+                        T{post.table.index}
+                      </MenuItem>
+                    ))}
                 </Select>
               </div>
             </div>
@@ -1533,9 +733,9 @@ function TablesPage({ tenant }) {
               <div>
                 <button
                   className="modalcancelbutton"
-                  onClick={()=>{
+                  onClick={() => {
                     setRemoveTableOpen(false);
-                    setRemoveVal()
+                    setRemoveVal();
                   }}
                 >
                   Cancel
@@ -1552,139 +752,166 @@ function TablesPage({ tenant }) {
             </div>
           </div>
         </Box>
-      </Modal>
+      </Modal> 
 
-      <div className="tablescontainer">
-      <div className={addtablenotif || removetablenotif || tablecallnotif || tablesavednotif ? "tablesnotification" : "hidden"}>
-              <div className="notificationtextcontainer">
-                <div className="notificationtext">
-                  {addtablenotif? "New table has been added" : 
-                  removetablenotif? "Table " + deletetabletext + " has been removed" : 
-                  tablecallnotif? "Table No. is calling" : 
-                  tablesavednotif? "Table edit has been saved" : null}</div>
-              </div>
-
-              <div className="notificationclose">
-                <button
-                  className="notifclosebutton"
-                  onClick={handlenotification}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-              </div>
+{tableRetrieved? ( <div className="tablescontainer">
+        <div
+          className={
+            addtablenotif ||
+            removetablenotif ||
+            tablecallnotif ||
+            tablesavednotif
+              ? "tablesnotification"
+              : "hidden"
+          }
+        >
+          <div className="notificationtextcontainer">
+            <div className="notificationtext">
+              {addtablenotif
+                ? "New table has been added"
+                : removetablenotif
+                ? "Table " + deletetabletext + " has been removed"
+                : tablecallnotif
+                ? "Table No. is calling"
+                : tablesavednotif
+                ? "Table edit has been saved"
+                : null}
             </div>
+          </div>
+
+          <div className="notificationclose">
+            <button className="notifclosebutton" onClick={handlenotification}>
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+          </div>
+        </div>
         <div className="tablecontainergrid">
-          { tableRetrieved == true && tableData.table.map((post, index) => {
-            if ( post.customerCount === 0 ) {
-              return (
-                <div className="innergrid">
-                  <div className="emptygrid">
-                  <div className={edittable ? "emptytable" : "null"}>
+          {tableRetrieved == true &&
+            tableData.map((post, index) => {
+              console.log(post)
+              if (post.table.status == "EMPTY") {
+                return (
+                  <div className="innergrid">
+                    <div className="emptygrid">
+                      <div className={edittable ? "emptytable" : "null"}>
+                        <button
+                          className="deletetablebutton"
+                          type="button"
+                          onClick={() =>
+                            handledeletetable(post.table.index, post.table.id)
+                          }
+                        >
+                          Delete
+                        </button>
+                      </div>
+                      <button className="tabledetails">
+                        <div className="tablenumberempty">
+                          T{post.table.index}
+                        </div>
+                        <div className="emptycenter">
+                          <div className="tableempty">Empty</div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+              if (post.table.status == "FILLED") {
+                // Time
+                const orderTime = new Date(post.table.timeStart);
+                const timeOptions = {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                };
+
+                return (
+                  <div className="innergrid">
                     <button
-                      className="deletetablebutton"
-                      type="button"
-                      onClick={() => handledeletetable((index + 1), post.id)}
+                      className={
+                        post.table.isWaiterCalled
+                          ? "tablewaiteractive"
+                          : "tabledetailsactive"
+                      }
+                      onClick={
+                        post.table.isWaiterCalled
+                          ? () => {
+                              handlepasswaiterinfo(post.table.index);
+                              setTableWaiterOpen(true);
+                            }
+                          : post.table.customerCount == 0
+                          ? () => setTableNoOrderOpen(true)
+                          : () => {
+                              handlePassinginfo(post.table.order_id);
+                              setTableOrderOpen(true);
+                            }
+                      }
                     >
-                      Delete
+                      <div
+                        className={
+                          post.table.isWaiterCalled
+                            ? "waitercalltablenumber"
+                            : "tablenumberactive"
+                        }
+                      >
+                        T{post.table.index}
+                      </div>
+
+                      <div className="center">
+                        <div className="imagecenter">
+                          <img
+                            src={
+                              post.table.isWaiterCalled ? Waitercall : Customer
+                            }
+                            className={
+                              post.table.isWaiterCalled
+                                ? "waiterimage"
+                                : "customerimage"
+                            }
+                          />
+                        </div>
+
+                        <div
+                          className={
+                            post.table.isWaiterCalled
+                              ? "waitercallactive"
+                              : "tablecustomeractive"
+                          }
+                        >
+                          <img
+                            src={Customer}
+                            className={
+                              post.table.isWaiterCalled
+                                ? "customerwaiterimage"
+                                : "null"
+                            }
+                          />{" "}
+                          {post.table.customerCount} Customer
+                        </div>
+                      </div>
+                      {post.table.order_id != "NULL" ? (
+                        <div
+                          className={
+                            post.table.isWaiterCalled ? "waitertime" : "time"
+                          }
+                        >
+                          <div
+                            className={
+                              post.table.isWaiterCalled
+                                ? "waitertimestart"
+                                : "tabletimestart"
+                            }
+                          >
+                            {orderTime.toLocaleTimeString("en-US", timeOptions)}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="notime">&nbsp;</div>
+                      )}
                     </button>
                   </div>
-                  <button className="tabledetails">
-                    <div className="tablenumberempty">T{(index + 1)}</div>
-                    <div className="emptycenter">
-                      <div className="tableempty">Empty</div>
-                    </div>
-                  </button>
-                  </div>
-                </div>
-              );
-            } else {
-              return (
-                <div className="innergrid">
-                <button
-                  className={
-                    post.isWaiterCalled ? "tablewaiteractive" : "tabledetailsactive"
-                  }
-                  onClick={
-                    post.isWaiterCalled
-                      ? () => {
-                          handleTableWaiterOpen();
-
-                          handlepasswaiterinfo(
-                            index + 1,
-                            post.customername,
-                            post.customerphone,
-                            post.instruction
-                          );
-                        }
-                      : () => {
-                          handlePassinginfo(
-                            post.status,
-                            post.customername,
-                            post.customerphone,
-                            post.instruction,
-                            post.table_ID,
-                            post.menu,
-                            post.totalitems,
-                            post.totalprice,
-                            post.servicecharge,
-                            post.tax
-                          );
-                          
-                          handleTableOrderOpen();
-                        }
-                  }
-                >
-                  <div
-                    className={
-                      post.isWaiterCalled
-                        ? "waitercalltablenumber"
-                        : "tablenumberactive"
-                    }
-                  >
-                    T{(index + 1)}
-                  </div>
-
-                  <div className="center">
-                    <div className="imagecenter">
-                      <img
-                        src={post.isWaiterCalled ? Waitercall : Customer}
-                        className={
-                          post.isWaiterCalled ? "waiterimage" : "customerimage"
-                        }
-                      />
-                    </div>
-
-                    <div
-                      className={
-                        post.isWaiterCalled
-                          ? "waitercallactive"
-                          : "tablecustomeractive"
-                      }
-                    >
-                      <img
-                        src={Customer}
-                        className={
-                          post.isWaiterCalled ? "customerwaiterimage" : "null"
-                        }
-                      />{" "}
-                      {post.customerCount} Customer
-                    </div>
-                  </div>
-                  <div className={post.isWaiterCalled ? "waitertime" : "time"}>
-                    <div
-                      className={
-                        post.isWaiterCalled ? "waitertimestart" : "tabletimestart"
-                      }
-                    >
-                      {post.timeStart}
-                    </div>
-                   
-                  </div>
-                </button>
-                </div>
-              );
-            }
-          })}
+                );
+              }
+            })}
         </div>
 
         <div className="tablebuttoncontainer">
@@ -1692,7 +919,9 @@ function TablesPage({ tenant }) {
             <button
               className={edittable ? "addtableinactive" : "addtableactive"}
               disabled={edittable ? true : false}
-              onClick={() => {handleaddtable() ,console.log("add")}}
+              onClick={() => {
+                handleaddtable(), console.log("add");
+              }}
             >
               + Add New Table
             </button>
@@ -1707,7 +936,7 @@ function TablesPage({ tenant }) {
                     : "duplicatetablebutton"
                   : "null"
               }
-              onClick={()=> setDuplicateTableOpen(true)}
+              onClick={() => setDuplicateTableOpen(true)}
             >
               Duplicate Table
             </button>
@@ -1721,7 +950,7 @@ function TablesPage({ tenant }) {
                     : "removetablebutton"
                   : "null"
               }
-              onClick={()=>setRemoveTableOpen(true)}
+              onClick={() => setRemoveTableOpen(true)}
             >
               Remove Table
             </button>
@@ -1736,7 +965,20 @@ function TablesPage({ tenant }) {
             </button>
           </div>
         </div>
-      </div>
+      </div>):(
+        <div
+          style={{
+            display: "flex",
+            height: "100vh",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ThreeDots color="#f10c0c" height={80} width={80} />
+        </div>
+      )}
+     
     </div>
   );
 }

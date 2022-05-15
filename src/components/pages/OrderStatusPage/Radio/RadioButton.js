@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -73,38 +73,58 @@ function BpRadio(props) {
   );
 }
 
-export function CustomizedRadios() {
+export function CustomizedRadios( {setStatus}) {
 
-    const [selected, setSelected] = useState("")
-    const [other, setOther] = useState()
-console.log(selected);
-console.log(other)
+  const [selected, setSelected] = useState("")
+  const [other, setOther] = useState()
+  console.log(selected);
+  console.log(other)
 
-  return (
-    <FormControl>
-      <RadioGroup
-        defaultValue=""
-      >
-        <FormControlLabel  value="Costumer asks to be cancelled" control={<BpRadio />} onChange={(e)=>setSelected(e.target.value)} label={<span className='radiogroup'>Costumer asks to be cancelled</span>}/>
-        <FormControlLabel  value="Food stocks are depleted" control={<BpRadio />} onChange={(e)=>setSelected(e.target.value)} label={<span className='radiogroup'>Food stocks are depleted</span>}/>
-        <FormControlLabel  value="Double Order" control={<BpRadio />} onChange={(e)=>setSelected(e.target.value)} label={<span className='radiogroup'>Double Order</span>}/>
-        <FormControlLabel  value="Others" control={<BpRadio />} onChange={(e)=>setSelected(e.target.value)} label={
-              <Formik initialValues={{ others: "" }}>
-              <Form>
-             <TextField
-             //label="Email"
-
-             disabled={selected == "Others" || selected == "" && selected == undefined ? false : true}
-             name="others"
-             type="text"
-             placeholder="Others..."
-             value={selected == "Others" || selected == "" ? other: ((e)=>setOther(e.target.value))}
-           />
-           </Form>
-           </Formik>
-        } />
-       
-      </RadioGroup>
-    </FormControl>
-  );
+return (
+  <FormControl>
+    <RadioGroup
+      defaultValue=""
+    >
+      <FormControlLabel  value="Costumer asks to be cancelled" control={<BpRadio />} 
+        onChange={(e)=> { 
+          setStatus(e.target.value);
+          setSelected(e.target.value);
+        }} 
+        label={<span className='radiogroup'>Costumer asks to be cancelled</span>}
+        />
+      <FormControlLabel  value="Food stocks are depleted" control={<BpRadio />} 
+        onChange={(e)=>{
+          setStatus(e.target.value);
+          setSelected(e.target.value);
+          }} 
+        label={<span className='radiogroup'>Food stocks are depleted</span>}/>
+      <FormControlLabel  value="Double Order" control={<BpRadio />} 
+        onChange={(e)=>{
+          setStatus(e.target.value);
+          setSelected(e.target.value);
+          }} 
+        label={<span className='radiogroup'>Double Order</span>}/>
+      <FormControlLabel  value="Others" control={<BpRadio />} 
+        onChange={(e)=>{
+          setStatus(e.target.value);
+          setSelected(e.target.value);
+        }} 
+        label={
+            <Formik initialValues={{ others: "" }}>
+            <Form>
+           <TextField
+           disabled={selected == "Others" || selected == "" && selected == undefined ? false : true}
+           name="others"
+           type="text"
+           placeholder="Others..."
+           value={selected == "Others" || selected == "" ? other: ""}
+           onChange={(e)=>setOther(e.target.value)}
+         />
+         </Form>
+         </Formik>
+      } />
+     
+    </RadioGroup>
+  </FormControl>
+);
 }

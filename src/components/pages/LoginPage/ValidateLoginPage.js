@@ -1,24 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { Link,  useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import "./LoginPage.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faLock,
-  faEye,
-  faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
-import {BallTriangle} from "react-loader-spinner";
+import { BallTriangle } from "react-loader-spinner";
 import { PassTextField, TextField } from "../../Forms/FormLib";
 
 //auth
 import { connect } from "react-redux";
 import { loginUser } from "../../Auth/actions/userActions";
 
-function ValidateLoginPage({ loginUser }) {
-  const [show, setShow] = useState(false);
+function ValidateLoginPage({loginUser}) {
   let history = useHistory();
   const { userEmail } = useParams();
 
@@ -68,27 +60,21 @@ function ValidateLoginPage({ loginUser }) {
 
                 <div className="buttongroup">
                   {!isSubmitting && (
-                    <button
-                      type="submit"
-                     
-                      className="loginbutton"
-                    >
+                    <button type="submit" className="loginbutton">
                       {" "}
-                      Post Data{" "}
+                      Login{" "}
                     </button>
                   )}
                   {isSubmitting && (
-                    <BallTriangle
-      
-                      color="#f10c0c"
-                      height={80}
-                      width={80}
-                    />
+                    <BallTriangle color="#f10c0c" height={80} width={80} />
                   )}
                 </div>
 
                 <div className="middlerow">
-                  Don't have an account? <Link to="/register" className="link">&nbsp;Register</Link>
+                  Don't have an account?{" "}
+                  <Link to="/register" className="link">
+                    &nbsp;Register
+                  </Link>
                 </div>
               </Form>
             )}
@@ -99,4 +85,4 @@ function ValidateLoginPage({ loginUser }) {
   );
 }
 
-export default connect(null, { loginUser })(ValidateLoginPage);
+export default connect(null, {loginUser})(ValidateLoginPage);

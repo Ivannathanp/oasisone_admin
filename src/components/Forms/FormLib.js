@@ -44,15 +44,15 @@ export const PassTextField = ({ icon, label, ...props }) => {
           className={`inputform ${meta.touched && meta.error && "is-invalid"}`}
           {...field}
           {...props}
-          type={show? "text":"password"}
+          type={show ? "text" : "password"}
           autoComplete="off"
         />
 
         <FontAwesomeIcon
-                icon={show ? faEye : faEyeSlash}
-                className="passicon"
-                onClick={() => setShow(!show)}
-              ></FontAwesomeIcon>
+          icon={show ? faEye : faEyeSlash}
+          className="passicon"
+          onClick={() => setShow(!show)}
+        ></FontAwesomeIcon>
       </div>
       <div className="errorcontainer">
         <ErrorMessage component="div" name={field.name} className="error" />
