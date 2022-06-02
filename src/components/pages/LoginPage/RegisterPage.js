@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+<<<<<<< HEAD
 import { Link,  useHistory } from "react-router-dom";
+=======
+import { Link, useHistory } from "react-router-dom";
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -12,7 +16,11 @@ import {
   faLocationDot,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
+<<<<<<< HEAD
 import {BallTriangle} from "react-loader-spinner";
+=======
+import { BallTriangle } from "react-loader-spinner";
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 import "./LoginPage.css";
 
 //auth
@@ -23,51 +31,59 @@ import { PassTextField, TextField } from "../../Forms/FormLib";
 function RegisterPage({ signupUser }) {
   const [show, setShow] = useState(false);
   let history = useHistory();
+<<<<<<< HEAD
   const [ErrorMessage,seterrormessage] = useState();
+=======
+  const [ErrorMessage, seterrormessage] = useState();
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   return (
     <div className="backgroundcontainer">
-    <div className="registerinnercontainer">
-      <div className="containertitle">Register For Oasis One</div>
-      <div className="containerforms">
-
-      <Formik
-        initialValues={{
-          name: "",
-          email: "",
-          address: "",
-          phonenumber: "",
-          password: "",
-          confirmPassword: "",
-        }}
-        validationSchema={Yup.object({
-          name: Yup.string().min(3, "too short").required("Required"),
-          email: Yup.string()
-            .email("Invalid e-mail address")
-            .required("Required"),
-          // address: Yup.string().required("Required"),
-          // phonenumber: Yup.number()
-          //   .typeError("Enter valid phone number")
-          //   .required("Required"),
-          password: Yup.string()
-            .min(8, "Password is too short - should be 8 chars minimum")
-            .matches(/(?=.*[0-9])/, "Password must contain a number.")
-            .max(30, "Password is too long")
-            .required("Required"),
-          confirmPassword: Yup.string()
-            .oneOf([Yup.ref("password")], "Password not matched")
-            .required("Required"),
-        })}
-        onSubmit={(values, { setSubmitting, setFieldError }) => {
-          console.log(values);
-          signupUser(values, history, setFieldError, seterrormessage, setSubmitting);
-          console.log(setFieldError);
-        }}
-      >
-        {({ errors, touched, isSubmitting }) => (
-          <Form>
-
-            {/* <div className="inputcontainer">
+      <div className="registerinnercontainer">
+        <div className="containertitle">Register For Oasis One</div>
+        <div className="containerforms">
+          <Formik
+            initialValues={{
+              name: "",
+              email: "",
+              address: "",
+              phonenumber: "",
+              password: "",
+              confirmPassword: "",
+            }}
+            validationSchema={Yup.object({
+              name: Yup.string().required("Required"),
+              email: Yup.string()
+                .email("Invalid e-mail address")
+                .required("Required"),
+              // address: Yup.string().required("Required"),
+              // phonenumber: Yup.number()
+              //   .typeError("Enter valid phone number")
+              //   .required("Required"),
+              password: Yup.string()
+                .min(8, "Password is too short - should be 8 chars minimum")
+                .matches(/(?=.*[0-9])/, "Password must contain a number.")
+                .max(30, "Password is too long")
+                .required("Required"),
+              confirmPassword: Yup.string()
+                .oneOf([Yup.ref("password")], "Password not matched")
+                .required("Required"),
+            })}
+            onSubmit={(values, { setSubmitting, setFieldError }) => {
+              console.log("what", values);
+              signupUser(
+                values,
+                history,
+                setFieldError,
+                seterrormessage,
+                setSubmitting
+              );
+              console.log(setFieldError);
+            }}
+          >
+            {({ errors, touched, isSubmitting }) => (
+              <Form>
+                {/* <div className="inputcontainer">
               <FontAwesomeIcon icon={faLocationDot} className="loginicons" />
               <TextField
                 label="Address"
@@ -79,7 +95,7 @@ function RegisterPage({ signupUser }) {
                
             </div> */}
 
-            {/* <div className="inputcontainer">
+                {/* <div className="inputcontainer">
               <FontAwesomeIcon icon={faPhone} className="loginicons" />
               <TextField
                 label="Phone Number"
@@ -89,7 +105,7 @@ function RegisterPage({ signupUser }) {
         
               />
             </div> */}
-<div className="marginedinputform">
+                <div className="marginedinputform">
                   <TextField
                     //label="Email"
                     name="name"
@@ -97,8 +113,8 @@ function RegisterPage({ signupUser }) {
                     placeholder="Name"
                   />
                 </div>
-                
-<div className="marginedinputform">
+
+                <div className="marginedinputform">
                   <TextField
                     //label="Email"
                     name="email"
@@ -115,20 +131,15 @@ function RegisterPage({ signupUser }) {
                   />
                 </div>
 
+                <div className="passinputform">
+                  <PassTextField
+                    //label="Confirm Password"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                  />
+                </div>
 
-            <div className="passinputform">
-             
-              <PassTextField
-                //label="Confirm Password"
-                name="confirmPassword"
-               
-                placeholder="Confirm Password"
-              
-              />
-             
-            </div>
-
-            <div className="buttongroup">
+                <div className="buttongroup">
                   {!isSubmitting && (
                     <button
                       type="submit"
@@ -136,24 +147,31 @@ function RegisterPage({ signupUser }) {
                       className="loginbutton"
                     >
                       {" "}
-                      Post Data{" "}
+                      Register{" "}
                     </button>
                   )}
                   {isSubmitting && (
+<<<<<<< HEAD
                     <BallTriangle
       
                     color="#f10c0c"
                       height={80}
                       width={80}
                     />
+=======
+                    <BallTriangle color="#f10c0c" height={80} width={80} />
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                   )}
                 </div>
 
                 <div className="middlerow">
-                  Already have an account? <Link to="/login" className="link">&nbsp;Login</Link>
+                  Already have an account?{" "}
+                  <Link to="/login" className="link">
+                    &nbsp;Login
+                  </Link>
                 </div>
               </Form>
-        )}
+            )}
           </Formik>
         </div>
       </div>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Color from 'color';
 
 const mainColor = '#E52C32';
@@ -53,10 +54,63 @@ export default () => ({
       },
       '& input:hover + .Mui-error, input:focus + .Mui-error': {
         background: 'transparent',
+=======
+import Color from "color";
+
+const mainColor = "#E52C32";
+const encodedMainColor = encodeURIComponent(mainColor);
+const lightColor = Color(mainColor).fade(0.8).toString();
+
+const errorColor = "#d52731";
+const lightErrorColor = Color(errorColor).fade(0.8).toString();
+
+export default () => ({
+  root: {
+    "& + *": {
+      fontFamily: "Nunito Sans, sans-serif",
+      fontWeight: 600,
+      fontSize: 18,
+      lineHeight: "25px",
+      marginTop: "2px",
+      fontSize: "0.875rem",
+    },
+    "&:hover, &.Mui-focusVisible": {
+      backgroundColor: "transparent !important",
+    },
+    "& input + *": {
+      border: "2px solid #808080",
+      borderRadius: 2,
+      width: 14,
+      height: 14,
+      boxShadow: "none",
+      background: "transparent",
+      outline: "none",
+    },
+    "& input:disabled + *": {
+      boxShadow: "none !important",
+      background: "transparent !important",
+    },
+    "&:not($checked)": {
+      "& input + *": {
+        boxShadow: "none",
+        backgroundColor: "transparent",
+        paddingLeft: "20%",
+      },
+      "& input:hover ~ *, & input:focus + *": {
+        boxShadow: "none",
+        backgroundColor: "transparent",
+      },
+      "& input + .Mui-error": {
+        boxShadow: "none",
+      },
+      "& input:hover + .Mui-error, input:focus + .Mui-error": {
+        background: "transparent",
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
       },
     },
   },
   checked: {
+<<<<<<< HEAD
     '& input + *': {
       border: '2px solid #E52C32',
       boxShadow: 'none',
@@ -68,6 +122,19 @@ export default () => ({
         alignContent: 'center',
         marginTop: '-6%',
         marginLeft: '-3%',
+=======
+    "& input + *": {
+      border: "2px solid #E52C32",
+      boxShadow: "none",
+      backgroundColor: "#FFE4E5",
+      "&:before": {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        marginTop: "-6%",
+        marginLeft: "-3%",
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
         width: 16,
         height: 16,
         backgroundImage:
@@ -77,8 +144,13 @@ export default () => ({
         content: '""',
       },
     },
+<<<<<<< HEAD
     '& input:focus + *': {
       backgroundColor: '#FFE4E5',
+=======
+    "& input:focus + *": {
+      backgroundColor: "#FFE4E5",
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
     },
   },
 });

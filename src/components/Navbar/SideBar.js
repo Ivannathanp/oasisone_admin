@@ -1,89 +1,204 @@
-import React, { useState } from "react";
-import { useHistory, Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useHistory, NavLink } from "react-router-dom";
 import "./SideBar.css";
-import Dashboard from "../icons/Dashboard.png";
-import Cart from "../icons/Order Stat.png";
-import Chart from "../icons/Order.png";
-import Banner from "../icons/PromoBan.png";
-import Inventory from "../icons/Inven.png";
-import Tables from "../icons/Table.png";
-import Qr from "../icons/Qr.png";
-import People from "../icons/Customer.png";
-import Settings from "../icons/VectorSettings.png";
-import Logout from "../icons/Logout.png";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import InsertChartOutlinedOutlinedIcon from "@mui/icons-material/InsertChartOutlinedOutlined";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import TableChartOutlinedIcon from "@mui/icons-material/TableChartOutlined";
+import QrCodeOutlinedIcon from "@mui/icons-material/QrCodeOutlined";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+
 //auth & redux
 import { connect } from "react-redux";
-import {logoutUser} from "../Auth/actions/userActions";
+import { logoutUser } from "../Auth/actions/userActions";
+import { SocketContext } from "../socketContext";
 
+<<<<<<< HEAD
 function SideBar({logoutUser}) {
   let history = useHistory();
+=======
+function SideBar({ logoutUser, tenant }) {
+  let history = useHistory();
+
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const socket = useContext(SocketContext);
+
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const [profileName, setProfileName] = useState(tenantData);
+
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved, tenantData]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('update user', (data) => handleUserUpdated(data));
+    }
+  });
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
+    }
+  }
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   return (
     <>
-      <nav className="sidebar">
+      <nav className="sidebar"  style={{background: tenant.profileColor}}>
         <div className="sidebar-container">
           <div className="sidebar-header">
-            Telaga Seafood <i className="fab fa-typo3"></i>
+            {profileName} <i className="fab fa-typo3"></i>
           </div>
           <ul className="side-menu">
             <li className="side-item">
-              <Link to="/dashboard" className="side-links">
-                <img src={Dashboard} className="icons2" /> Dashboard
-              </Link>
+              <NavLink
+                to="/dashboard"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <DashboardOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Dashboard</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/orders" className="side-links">
-                <img src={Cart} className="icons" />
-                Orders
-              </Link>
+              <NavLink
+                to="/orders"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <ShoppingCartOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Orders</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/orderstatus" className="side-links">
-                <img src={Chart} className="icons" />
-                Order Status Screen
-              </Link>
+              <NavLink
+                to="/orderstatus"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <InsertChartOutlinedOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Order Status Screen</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/promo" className="side-links">
-                <img src={Banner} className="icons" />
-                Promo Banner
-              </Link>
+              <NavLink
+                to="/promo"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <ImageOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Promo Banner</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/inventory" className="side-links">
-                <img src={Inventory} className="icons" />
-                Inventory
-              </Link>
+              <NavLink
+                to="/inventory"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <Inventory2OutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Inventory</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/tables" className="side-links">
-                <img src={Tables} className="icons2" />
-                Tables
-              </Link>
+              <NavLink
+                to="/tables"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <TableChartOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Tables</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/qr" className="side-links">
-                <img src={Qr} className="icons" />
-                Print QR Codes
-              </Link>
+              <NavLink
+                to="/qr"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <QrCodeOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Print QR Codes</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/customer" className="side-links">
-                <img src={People} className="icons2" />
-                Customer
-              </Link>
+              <NavLink
+                to="/customer"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <PeopleOutlinedIcon className="icons" />
+                <span style={{ color: "#fff" }}>Customer</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="/settings" className="side-links">
-                <img src={Settings} className="icons" />
-                Settings
-              </Link>
+              <NavLink
+                to="/settings"
+                activeClassName="is-active"
+                className="side-links"
+              >
+                <SettingsOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Settings</span>
+              </NavLink>
             </li>
             <li className="side-item">
-              <Link to="#" className="side-links" onClick={() => logoutUser(history)}>
-                <img src={Logout} className="icons" />
-                Logout
-              </Link>
+              <NavLink
+                to="#"
+                className="side-links"
+                onClick={() => logoutUser(history)}
+              >
+                <ExitToAppOutlinedIcon className="icons2" />
+                <span style={{ color: "#fff" }}>Logout</span>
+              </NavLink>
             </li>
           </ul>
         </div>
@@ -92,7 +207,8 @@ function SideBar({logoutUser}) {
   );
 }
 
+const mapStateToProps = ({ session }) => ({
+  tenant: session.user,
+});
 
-
-
-export default connect(null, {logoutUser})(SideBar);
+export default connect(mapStateToProps, { logoutUser })(SideBar);

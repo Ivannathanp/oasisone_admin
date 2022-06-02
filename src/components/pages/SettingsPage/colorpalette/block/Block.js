@@ -141,6 +141,7 @@ export const Block = ({
     { "hide-triangle": triangle === "hide" }
   );
 
+<<<<<<< HEAD
   const handleshowpalette = () => {
     if (!showpalette) {
       setShowPalette(true);
@@ -151,12 +152,18 @@ export const Block = ({
     }
   };
 
+=======
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
   return (
     <div style={styles.container}>
       <button
         style={showpalette ? styles.buttonshow : styles.button}
         type="button"
+<<<<<<< HEAD
         onClick={handleshowpalette}
+=======
+        onClick={()=>setShowPalette((state)=>!state)}
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
       >
         <div style={styles.insidediv}>&nbsp;</div>
         <FontAwesomeIcon

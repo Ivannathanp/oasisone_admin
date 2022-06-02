@@ -18,7 +18,9 @@ export const TextField = ({ icon, label, ...props }) => {
         <label htmlFor={field.name}>{label}</label>
 
         <input
-          className={`inputform ${meta.touched && meta.error && "is-invalid"}`}
+          className={`othersinputform ${
+            meta.touched && meta.error && "is-invalid"
+          }`}
           {...field}
           {...props}
           autoComplete="off"
@@ -41,7 +43,9 @@ export const PassTextField = ({ icon, label, ...props }) => {
         <label htmlFor={field.name}>{label}</label>
 
         <input
-          className={`inputform ${meta.touched && meta.error && "is-invalid"}`}
+          className={`othersinputform ${
+            meta.touched && meta.error && "is-invalid"
+          }`}
           {...field}
           {...props}
           type={show ? "text" : "password"}

@@ -15,10 +15,10 @@
   left: 0;
   flex: 0.5;
   margin-left: 4%;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 700;
   font-size: 26px;
-  color: #E52C32;
+  color: #e52c32;
 }
 
 .right {
@@ -28,11 +28,17 @@
   flex: 0.5;
   margin-right: 4%;
 }
+<<<<<<< HEAD:src/components/pages/TopBar.css
 .imagecontainer{
+=======
+.imagecontainer {
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53:src/components/pages/TopBar/TopBar.css
   margin-right: 2%;
 }
 
-.image{
+.image {
+  width: 49px;
+  height: 49px;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -47,8 +53,8 @@
   justify-content: center;
   align-items: center;
   display: flex;
-  color: #E52C32;
-  font-family: 'Nunito Sans', sans-serif;
+  color: #e52c32;
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 700;
   font-size: 16px;
 }

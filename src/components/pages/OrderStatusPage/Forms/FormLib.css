@@ -7,17 +7,15 @@
   font-size: 20px;
 }
 
-.inputform {
-  width: 600px;
-  height: 60px;
-  color: #838fa6;
+.othersinputform {
+  width: auto;
+  height: auto;
+  color: #1f1f1f;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
-  font-size: 20px;
-  background-color: #f2f6fc;
-  border-radius: 30px;
+  font-size: 18px;
+  background-color: transparent;
   border: none;
-  padding: 0px 20px;
 }
 
 .passinputformcontainer {

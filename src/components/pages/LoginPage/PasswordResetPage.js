@@ -9,7 +9,11 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
+<<<<<<< HEAD
 import {BallTriangle} from "react-loader-spinner";
+=======
+import { BallTriangle } from "react-loader-spinner";
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 import { PassTextField } from "../../Forms/FormLib";
 
 //auth
@@ -73,17 +77,20 @@ function PasswordResetPage({ resetPassword }) {
                       onClick={console.log("pressed", onsubmit)}
                       className="loginbutton"
                     >
-                      {" "}
-                      Post Data{" "}
+                      Proceed
                     </button>
                   )}
                   {isSubmitting && (
+<<<<<<< HEAD
                    <BallTriangle
       
                    color="#f10c0c"
                       height={80}
                       width={80}
                     />
+=======
+                    <BallTriangle color="#f10c0c" height={80} width={80} />
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                   )}
                 </div>
               </Form>

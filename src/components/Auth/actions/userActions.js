@@ -1,12 +1,10 @@
-import axios from "axios";
 import { sessionService } from "redux-react-session";
-
 
 // the remote endpoint and local
 
-const remoteUrl = "https://oasisone.herokuapp.com/";
+const remoteUrl = "https://oasisoneserver.herokuapp.com/";
 const localUrl = "http://localhost:5000/";
-const currentUrl = remoteUrl;
+const currentUrl = localUrl;
 
 export const loginUser = (
   credentials,
@@ -17,17 +15,18 @@ export const loginUser = (
   //make checks and get some data
 
   return () => {
-    axios
-      .post(`${currentUrl}tenant/signin`, credentials, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const { data } = response;
+    fetch(`${currentUrl}api/tenant/signin`, {
+      method: "POST",
+      body: JSON.stringify({email: credentials.email, password: credentials.password}),
+      headers: { "content-type": "application/JSON" },
+    })
 
-        if (data.status === "FAILED") {
-          const { message } = data;
+    .then((response) => response.json())
+      .then((result) => {
+        
+        console.log(result)
+        if (result.status === "FAILED") {
+          const { message } = result;
 
           //check for specific error
           if (message.includes("credentials")) {
@@ -35,19 +34,18 @@ export const loginUser = (
             setFieldError("password", message);
           } else if (message.includes("password")) {
             setFieldError("password", message);
-          }else if (message.toLowerCase().includes("email")) {
+          } else if (message.toLowerCase().includes("email")) {
             setFieldError("email", message);
           }
-        } else if (data.status === "SUCCESS") {
-          const userData = data.data[0];
-
-          const token = userData._id;
+        } else if (result.status === "SUCCESS") {
+    
+          const token = result.data[0].tenant_id;
 
           sessionService
             .saveSession(token)
             .then(() => {
               sessionService
-                .saveUser(userData)
+                .saveUser(result.data[0])
                 .then(() => {
                   history.push("/dashboard");
                 })
@@ -69,6 +67,7 @@ export const signupUser = (
   setFieldError,
   setSubmitting
 ) => {
+<<<<<<< HEAD
     return (dispatch) => {
         axios
           .post(`${currentUrl}tenant/signup`, credentials, {
@@ -102,25 +101,53 @@ export const signupUser = (
               //display message for email verification
               const {email} = credentials;
               history.push(`/emailsent/${email}`);
+=======
+  return (dispatch) => {
+    fetch(`${currentUrl}api/tenant/signup`, {
+      method: "POST",
+      body: JSON.stringify({name: credentials.name, email: credentials.email, password: credentials.password}),
+      headers: { "content-type": "application/JSON" },
+    })
+    .then((response) => response.json())
+      .then((result) => {
+>>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
-              //dispatch(loginUser({email,password},history,setFieldError,setSubmitting));
-    
-            }
-            //complete submission
-            setSubmitting(false);
-          })
-          .catch((err) => console.error(err));
-      };
+  
+
+        if (result.status === "FAILED") {
+          const { message } = result;
+
+          //check for specific error
+          if (message.includes("name")) {
+            setFieldError("name", message);
+          } else if (message.includes("email")) {
+            setFieldError("email", message);
+          } else if (message.includes("password")) {
+            setFieldError("password", message);
+          } else if (message.includes("confirmPassword")) {
+            setFieldError("confirmPassword", message);
+          }
+        } else if (result.status === "PENDING") {
+          //display message for email verification
+          const { email } = credentials.email;
+          history.push(`/emailsent/${email}`);
+
+          //dispatch(loginUser({email,password},history,setFieldError,setSubmitting));
+        }
+        //complete submission
+        setSubmitting(false);
+      })
+      .catch((err) => console.error(err));
+  };
 };
 
 export const logoutUser = (history) => {
   return () => {
     sessionService.deleteSession();
     sessionService.deleteUser();
-    history.push('/');
+    history.push("/");
   };
 };
-
 
 export const forgetpassword = (
   credentials,
@@ -131,25 +158,28 @@ export const forgetpassword = (
   //make checks and get some data
 
   return () => {
-    axios
-      .post(`${currentUrl}tenant/passwordresetrequest`, credentials, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const { data } = response;
+    fetch(`${currentUrl}api/tenant/passwordresetrequest`, {
+      method: "POST",
+      body: JSON.stringify({email: credentials.email}),
+      headers: { "content-type": "application/JSON" },
+    }) .then((response) => response.json())
+        .then((result) => {
+        
 
-        if (data.status === "FAILED") {
+        if (result.status === "FAILED") {
           const { message } = data;
 
           //check for specific error
-          if (message.toLowerCase().includes("user") || message.toLowerCase().includes("password") || message.toLowerCase().includes("email") ) {
-            setFieldError("email", message);
-          } 
-        } else if (data.status === "PENDING") {
-         const {email} = credentials;
-         history.push(`/emailsent/${email}/${true}`);
+          if (
+            message.toLowerCase().includes("user") ||
+            message.toLowerCase().includes("password") ||
+            message.toLowerCase().includes("email")
+          ) {
+            setFieldError("email", result.status);
+          }
+        } else if (result.status === "PENDING") {
+          const { email } = credentials;
+          history.push(`/emailsent/${email}/${true}`);
         }
 
         //complete submission
@@ -158,7 +188,6 @@ export const forgetpassword = (
       .catch((err) => console.error(err));
   };
 };
-
 
 export const resetPassword = (
   credentials,
@@ -169,24 +198,23 @@ export const resetPassword = (
   //make checks and get some data
 
   return () => {
-    axios
-      .post(`${currentUrl}tenant/passwordreset`, credentials, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const { data } = response;
+    fetch(`${currentUrl}api/tenant/passwordreset`, {
+      method: "POST",
+      body: JSON.stringify({password: credentials.password}),
+      headers: { "content-type": "application/JSON" },
+    }) .then((response) => response.json())
+       .then((result) => {
 
-        if (data.status === "FAILED") {
+
+        if (result.status === "FAILED") {
           const { message } = data;
 
           //check for specific error
           if (message.toLowerCase().includes("password")) {
             setFieldError("newPassword", message);
-          } 
-        } else if (data.status === "SUCCESS") {
-         history.push(`/emailsent`);
+          }
+        } else if (result.status === "SUCCESS") {
+          history.push(`/emailsent`);
         }
 
         //complete submission
@@ -195,4 +223,3 @@ export const resetPassword = (
       .catch((err) => console.error(err));
   };
 };
-
