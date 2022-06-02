@@ -20,11 +20,8 @@ import Tables from "./components/pages/TablesPage/TablesPage";
 import Qr from "./components/pages/QrPage/QrPage";
 import Customer from "./components/pages/CustomerPage/CustomerPage";
 import Settings from "./components/pages/SettingsPage/SettingsPage";
-<<<<<<< HEAD
-=======
 import MissingRoute from "./components/pages/MissingRoute";
 import RedirectDashboard from "./components/pages/RedirectDashboard";
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 import "./App.css";
 import { io } from "socket.io-client";
 import { SocketContext } from "./components/socketContext";
@@ -90,7 +87,7 @@ function App({ checked, tenant }) {
     console.log("tenant is: ", tenant);
 
     if (tenant.tenant_id != undefined) {
-      const newSocket = io("ws://localhost:5000", {
+      const newSocket = io("ws://oasis-one.com:5000", {
         query: {
           tenant_id: tenant.tenant_id,
         },
@@ -107,14 +104,8 @@ function App({ checked, tenant }) {
   }
 
   return (
-<<<<<<< HEAD
     
     <Router basename="/oasisone_tenant">
-=======
-    //basename="/oasisone_tenant"
-
-    <Router>
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
       {checked && (
         <div className="app">
           <Switch>

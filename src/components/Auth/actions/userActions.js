@@ -1,10 +1,7 @@
 import { sessionService } from "redux-react-session";
 
 // the remote endpoint and local
-
-const remoteUrl = "https://oasisoneserver.herokuapp.com/";
-const localUrl = "http://localhost:5000/";
-const currentUrl = localUrl;
+const currentUrl = "http://oasis-one.com:5000/";
 
 export const loginUser = (
   credentials,
@@ -67,41 +64,6 @@ export const signupUser = (
   setFieldError,
   setSubmitting
 ) => {
-<<<<<<< HEAD
-    return (dispatch) => {
-        axios
-          .post(`${currentUrl}tenant/signup`, credentials, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-          .then((response) => {
-            console.log(response);
-            const { data } = response;
-    
-            if (data.status === "FAILED") {
-              const { message } = data;
-    
-              //check for specific error
-              if (message.includes("name")) {
-                setFieldError("name", message);
-              } else if (message.includes("email")) {
-                setFieldError("email", message);
-              // }else if (message.includes("address")) {
-              //   setFieldError("address", message);
-              // }else if (message.includes("phonenumber")) {
-              //   setFieldError("phonenumber", message);
-              }else if (message.includes("password")) {
-                setFieldError("password", message);
-              }else if (message.includes("confirmPassword")) {
-                setFieldError("confirmPassword", message);
-              }              
-           
-            } else if (data.status === "PENDING") {
-              //display message for email verification
-              const {email} = credentials;
-              history.push(`/emailsent/${email}`);
-=======
   return (dispatch) => {
     fetch(`${currentUrl}api/tenant/signup`, {
       method: "POST",
@@ -110,7 +72,6 @@ export const signupUser = (
     })
     .then((response) => response.json())
       .then((result) => {
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   
 
