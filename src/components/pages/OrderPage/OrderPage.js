@@ -13,14 +13,6 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import recommended from "../../icons/Recommend.png";
 import { connect } from "react-redux";
-<<<<<<< HEAD
-
-
-
-function OrderPage({ tenant }) {
-  const [page, setPage] = useState(0);
-  const rowsPerPage = 7;
-=======
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import moment from "moment";
@@ -159,7 +151,6 @@ return item.map((post,index)=>{
   const [page, setPage] = useState(0);
   const rowsPerPage = 7;
   const [orderOpen, setOrderOpen] = useState(false);
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   const [orderStatus, setOrderStatus] = useState("");
   const [orderTable, setOrderTable] = useState("");
@@ -174,97 +165,6 @@ return item.map((post,index)=>{
   const [orderInstruction, setOrderInstruction] = useState("");
   const [rejectReason, setRejectReason] = useState("");
 
-<<<<<<< HEAD
-  const [restaurantname, setRestaurantname] = useState("");
-  const [time, setTime] = useState("");
-  const [date, setDate] = useState("");
-  const [status, setStatus] = useState("");
-  const [customername, setCustomerName] = useState("");
-  const [customerphone, setCustomerPhone] = useState("");
-  const [instruction, setInstruction] = useState("");
-  const [table, setTable] = useState("");
-  const [orderitems, setOrderitems] = useState([]);
-  const [itemtotal, setItemtotal] = useState("");
-  const [subtotal, setSubtotal] = useState("");
-  const [service, setService] = useState("");
-  const [tax, setTax] = useState("");
-  const [index, setIndex] = useState(1);
-
-
-  function TablePaginationActions(props) {
-    const { count, page, onPageChange } = props;
-  
-    const handleBackButtonClick = (event) => {
-      onPageChange(event, page - 1);
-      setIndex(index - 7);
-    };
-  
-    const handleNextButtonClick = (event) => {
-      onPageChange(event, page + 1);
-  
-      setIndex(index + 7);
-    };
-  
-    return (
-      <div className="containerbutton">
-        <button
-          onClick={handleBackButtonClick}
-          disabled={page === 0}
-          className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
-        >
-          {" "}
-          <FontAwesomeIcon icon={faAngleLeft} style={page === 0? {color: "#BEBEBE"} : {color: "#949494"}}/>
-        </button>
-  
-        <button
-          onClick={handleNextButtonClick}
-          disabled={page >= Math.ceil(count / 7) - 1}
-          className={
-            page >= Math.ceil(count / 7) - 1
-              ? "rightdisabledbutton"
-              : "rightdisplaybutton"
-          }
-        >
-          <FontAwesomeIcon icon={faAngleRight} style={page >= Math.ceil(count / 7) - 1? {color: "#BEBEBE"} : {color: "#949494"}}/>
-        </button>
-      </div>
-    );
-  }
-  
-  TablePaginationActions.propTypes = {
-    count: PropTypes.number.isRequired,
-    onPageChange: PropTypes.func.isRequired,
-    page: PropTypes.number.isRequired,
-    rowsPerPage: PropTypes.number.isRequired,
-  };
-
-
-  function handlePassinginfo(
-    status,
-    customername,
-    customerphone,
-    instruction,
-    table,
-    orderitems,
-    itemtotal,
-    subtotal,
-    service,
-    tax
-  ) {
-    //setRestaurantname(restaurant)
-    //setTime(time)
-    //setDate(date)
-    setStatus(status);
-    setCustomerName(customername);
-    setCustomerPhone(customerphone);
-    setInstruction(instruction);
-    setTable(table);
-    setOrderitems(orderitems);
-    setItemtotal(itemtotal);
-    setSubtotal(subtotal);
-    setService(service);
-    setTax(tax);
-=======
   const [index, setIndex] = useState(1);
 
   function handlePassinginfo(
@@ -293,7 +193,6 @@ return item.map((post,index)=>{
     setUserPhonenumber(userPhonenumber);
     setOrderInstruction(orderInstruction);
     setRejectReason(rejectReason);
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
   }
 
   const dateOptions = {
@@ -352,587 +251,12 @@ return item.map((post,index)=>{
     );
   }
 
-<<<<<<< HEAD
-  function handleChange(e) {
-    setFormValues({ value: e.target.value });
-  }
-
-  const OrderData = [
-    {
-      id: 1,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 220000,
-      status: 1,
-      orderplaced: 30,
-      accepted: 1,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-        {
-          id: 3,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 4,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 4,
-    },
-    {
-      id: 2,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 3,
-      orderplaced: 30,
-      accepted: 4,
-      customername: "John",
-      customerphone: "0899872679",
-      instruction: "no sambal",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 3,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 2,
-      orderplaced: 30,
-      accepted: 2,
-      customername: "Angel",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 4,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 1,
-      orderplaced: 30,
-      accepted: 1,
-      customername: "Jesslyn",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 5,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 2,
-      orderplaced: 30,
-      accepted: 2,
-      customername: "Lina",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 6,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 4,
-      orderplaced: 30,
-      accepted: 3,
-      customername: "Ivan",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 7,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 5,
-      orderplaced: 30,
-      accepted: 4,
-      customername: "Farah",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 8,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 1,
-      orderplaced: 30,
-      accepted: 1,
-      customername: "Pia",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 9,
-      order_ID: "ODR - 1629840586",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 1,
-      orderplaced: 30,
-      accepted: 1,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 10,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 4,
-      orderplaced: 30,
-      accepted: 3,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 11,
-      order_ID: "ODR - 1629841588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 3,
-      orderplaced: 30,
-      accepted: 4,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 12,
-      order_ID: "ODR - 1619840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 2,
-      orderplaced: 30,
-      accepted: 2,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 13,
-      order_ID: "ODR - 1629840558",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 1,
-      orderplaced: 30,
-      accepted: 1,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 14,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 3,
-      orderplaced: 30,
-      accepted: 4,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 15,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 2,
-      orderplaced: 30,
-      accepted: 2,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-    {
-      id: 16,
-      order_ID: "ODR - 1629840588",
-      time: "59 minutes ago",
-      table_ID: 12,
-      totalprice: 110000,
-      status: 1,
-      orderplaced: 30,
-      accepted: 1,
-      customername: "Chris",
-      customerphone: "0899872679",
-      instruction: "no onions",
-      menu: [
-        {
-          id: 1,
-          name: "Gurame Asam Manis",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 10,
-          description: "Lalala",
-          recommended: true,
-        },
-        {
-          id: 2,
-          name: "Gurame Asam Pedas",
-          uri: "../../icons/Gurame Asam Manis.png",
-          price: 65000,
-          quantity: 20,
-          description: "Lalalalalalalala",
-          recommended: false,
-        },
-      ],
-      totalitems: 2,
-    },
-  ];
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - OrderData.length) : 0;
-=======
   TablePaginationActions.propTypes = {
     count: PropTypes.number.isRequired,
     onPageChange: PropTypes.func.isRequired,
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
   };
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -945,16 +269,7 @@ return item.map((post,index)=>{
       <div className="topbar">
         <div className="left">Orders</div>
 
-<<<<<<< HEAD
-        <div className="right">
-          <div className="imagecontainer">
-            <img src={tenant.profileimage} className="image" />
-          </div>
-          <div className="toptext">{tenant.name}</div>
-        </div>
-=======
         <TopBar />
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
       </div>
 
 {orderRetrieved? ( <div className="ordercontainer">
@@ -985,11 +300,7 @@ return item.map((post,index)=>{
                 <div className="modalclose">
                   <button
                     className="modalclosebutton"
-<<<<<<< HEAD
-                    onClick={handleOrderclose}
-=======
                     onClick={() => setOrderOpen(false)}
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                   >
                     <FontAwesomeIcon
                       className="closebuttonicon"
@@ -1023,44 +334,25 @@ return item.map((post,index)=>{
                           <div className="pending">PENDING</div>
                         ) : orderStatus == 2 ? (
                           <div className="orderplaced">ORDER PLACED</div>
-<<<<<<< HEAD
-                        ) : status == 2 ? (
-                          <div className="ready">READY TO SERVE</div>
-                        ) : status == 3 ? (
-                          <div className="rejected">REJECTED</div>
-                        ) : status == 4 ? (
-                          <div className="payment">PAYMENT</div>
-                        ) : status == 5 ? (
-                          <div className="complete">COMPLETE</div>
-=======
                         ) : orderStatus == 3 ? (
                           <div className="served">SERVED</div>
                         ) : orderStatus == 4 ? (
                           <div className="complete">COMPLETE</div>
                         ) : orderStatus == 5 ? (
                           <div className="modalrejectedstatus">REJECTED</div>
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                         ) : null}
                       </div>
                     </div>
                   </div>
                   <div className="ordermodalitems">
                     <div className="ordermodalform">
-<<<<<<< HEAD
-                      <form onSubmit={handleSubmit}>
-=======
                       <form>
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                         <div className="ordermodalinputlabel">
                           Name <span style={{ color: "#E52C32" }}>*</span>
                         </div>
                         <input
                           type="text"
-<<<<<<< HEAD
-                          value={customername}
-=======
                           value={userName}
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                           className="ordermodalinputfile"
                           disabled={true}
                         />
@@ -1070,11 +362,7 @@ return item.map((post,index)=>{
                         </div>
                         <input
                           type="text"
-<<<<<<< HEAD
-                          value={customerphone}
-=======
                           value={userPhonenumber}
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                           className="ordermodalinputfile"
                           disabled={true}
                         />
@@ -1114,11 +402,7 @@ return item.map((post,index)=>{
                         {orderMenu.map((post, index) => (
                           <div className="ordermenucontainer">
                             <div className="ordermenuimagecontainer">
-<<<<<<< HEAD
-                              <img src={post.uri} className="menuimage" />
-=======
                               <img src={post.menuImage} className="menuimage" />
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                             </div>
                             <div className="orderdetailsmenutext">
                               <div className="orderdetailsmenutitle">
@@ -1196,84 +480,6 @@ return item.map((post,index)=>{
               </Box>
             </Modal>
 
-<<<<<<< HEAD
-            {(rowsPerPage > 0
-              ? OrderData.slice(
-                  page * rowsPerPage,
-                  page * rowsPerPage + rowsPerPage
-                )
-              : OrderData
-            ).map((post, i) => (
-              <div className={i != 7 ? "bordered" : "noborder"}>
-                <div className="orderrendergrid">
-                  <div className="ordertext">{i + index}</div>
-                  <div className="ordertext">{post.order_ID}</div>
-                  <div className="ordertext">
-                    {" "}
-                    <NumberFormat
-                      value={post.totalprice}
-                      prefix="RP. "
-                      decimalSeparator="."
-                      thousandSeparator=","
-                      displayType="text"
-                    />
-                  </div>
-                  <div className="status">
-                    {" "}
-                    {post.status == 1 ? (
-                      <div className="orderplaced">ORDER PLACED</div>
-                    ) : post.status == 2 ? (
-                      <div className="ready">READY TO SERVE</div>
-                    ) : post.status == 3 ? (
-                      <div className="rejected">REJECTED</div>
-                    ) : post.status == 4 ? (
-                      <div className="payment">PAYMENT</div>
-                    ) : post.status == 5 ? (
-                      <div className="complete">COMPLETE</div>
-                    ) : null}
-                  </div>
-                  <div className="ordertext">
-                    {post.orderplaced} minutes ago
-                  </div>
-                  <div className="ordertablenumber">{post.table_ID}</div>
-                  <div className="acceptreject">
-                    {post.accepted == 1 ? (
-                      <div className="proceed">PROCEED</div>
-                    ) : post.accepted == 2 ? (
-                      <div className="serve">SERVE</div>
-                    ) : post.accepted == 3 ? (
-                      <div className="serve">COMPLETE</div>
-                    ) : post.accepted == 4 ? (
-                      post.status == 3 ? (
-                        <div className="completedR">COMPLETED</div>
-                      ) : (
-                        <div className="completed">COMPLETED</div>
-                      )
-                    ) : null}
-                  </div>
-                  <div className="vieworder">
-                    <button
-                      className="vieworderbutton"
-                      onClick={() => {
-                        handleOrderopen();
-                        handlePassinginfo(
-                          post.status,
-                          post.customername,
-                          post.customerphone,
-
-                          post.instruction,
-                          post.table_ID,
-                          post.menu,
-                          post.totalitems,
-                          post.totalprice,
-                          post.servicecharge,
-                          post.tax
-                        );
-                      }}
-                    >
-                      View Order
-                    </button>
-=======
             {orderRetrieved == true &&
               (rowsPerPage > 0
                 ? orderData.map((item)=> {
@@ -1359,7 +565,6 @@ return item.map((post,index)=>{
                         View Order
                       </button>
                     </div>
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                   </div>
                 </div>
                   )
@@ -1393,13 +598,9 @@ return item.map((post,index)=>{
         >
           <ThreeDots color="#f10c0c" height={80} width={80} />
         </div>
-<<<<<<< HEAD
-      </div>
-=======
       )}
      
      
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
     </div>
   );
 }

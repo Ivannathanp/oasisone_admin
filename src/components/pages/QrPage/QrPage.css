@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-
-.qrcontainer{
-  height: 100%;
-  background-color: #fffaf4;
-}
-
-.printqrsection {
-  height: auto;
-=======
 .qrcontainer {
   height: 100%;
   background-color: #fffaf4;
@@ -15,7 +5,6 @@
 }
 
 .printqrsection {
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
   display: flex;
   justify-content: center;
   align-items: center;

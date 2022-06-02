@@ -1,34 +1,16 @@
 import React from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-<<<<<<< HEAD
-import { Link,  useHistory, useParams } from "react-router-dom";
-import "./LoginPage.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faLock,
-  faEye,
-  faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
-import {BallTriangle} from "react-loader-spinner";
-=======
 import { Link, useHistory, useParams } from "react-router-dom";
 import "./LoginPage.css";
 import { BallTriangle } from "react-loader-spinner";
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 import { PassTextField, TextField } from "../../Forms/FormLib";
 
 //auth
 import { connect } from "react-redux";
 import { loginUser } from "../../Auth/actions/userActions";
 
-<<<<<<< HEAD
-function ValidateLoginPage({ loginUser }) {
-  const [show, setShow] = useState(false);
-=======
 function ValidateLoginPage({loginUser}) {
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
   let history = useHistory();
   const { userEmail } = useParams();
 
@@ -78,30 +60,13 @@ function ValidateLoginPage({loginUser}) {
 
                 <div className="buttongroup">
                   {!isSubmitting && (
-<<<<<<< HEAD
-                    <button
-                      type="submit"
-                     
-                      className="loginbutton"
-                    >
-=======
                     <button type="submit" className="loginbutton">
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                       {" "}
                       Login{" "}
                     </button>
                   )}
                   {isSubmitting && (
-<<<<<<< HEAD
-                    <BallTriangle
-      
-                      color="#f10c0c"
-                      height={80}
-                      width={80}
-                    />
-=======
                     <BallTriangle color="#f10c0c" height={80} width={80} />
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                   )}
                 </div>
 

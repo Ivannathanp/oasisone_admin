@@ -1,29 +1,3 @@
-<<<<<<< HEAD
-.inventorysection{
-    
-}
-.modalbox{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 497px;
-    height: 277px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    border: 0px;
-    border-radius: 20px;
-    background-color: #fff;
-
-}
-
-.productinnerbox{
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    padding: 3% 2% 0 2%;
-=======
 .inventorysection {
   margin-left: 4%;
   margin-right: 8%;
@@ -41,7 +15,6 @@
 .inventoryoutercontainer {
   width: 100%;
   overflow: scroll;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .inventoryoutercontainer::-webkit-scrollbar {
@@ -59,122 +32,6 @@
   overflow: scroll;
 }
 
-<<<<<<< HEAD
-.modaltitle{
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 700;
-    font-size: 30px;
-    line-height: 41px;
-    color: #424242;
-}
-
-.modalform{
-    width: 100%;
-}
-
-.productinputrow{
-    display: flex;
-    justify-content: space-between;
-    box-sizing: border-box;
-    
-}
-
-
-.productinputtext{
-    margin-top: 1%;
-}
-
-.productinputimage{
-    margin-top: 1%;
-    margin-left: 5%;
-}
-
-.inputlabel{
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 22px;
-    color: #c4c4c4;
-    margin-bottom: 2%;
-}
-
-.POC::before {
-
-      content: attr(data-placeholder);
-      position: absolute;
- margin-top: 1%;
- margin-left: 3%;
-      color: #ABABAB;
-  
-  }
-
-  .catselector{
-      width: 100%;
-    margin-bottom: 5%;
-  }
-
-  .inputpricefile{
-    width: 200px;
-    height: 39px;
-    outline: none;
-    border: 0px;
-    border-radius: 10px;
-    background-color: #F8FAFB;
-    margin-bottom: 5%;
-    padding-left: 13%;
-    box-sizing: border-box;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 25px;
-    color: #424242;
-}
-
-.inputfile{
-    width: 418px;
-    height: 37px;
-    outline: none;
-    border: 0px;
-    border-radius: 10px;
-    background-color: #F8FAFB;
-    margin-bottom: 5%;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 25px;
-    box-sizing: border-box;
-    padding-left: 5%;
-    color: #424242;
-}
-
-.inputdetailfile{
-    width: 694px;
-    height: 90px;
-    outline: none;
-    border: 0px;
-    border-radius: 10px;
-    background-color: #F8FAFB;
-    margin-bottom: 5%;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 25px;
-    padding-top: 2%;
-    padding-left: 3%;
-    box-sizing: border-box;
-    color: #424242;
-    resize: none;
-}
-
-.productimagepreview{
-    width: 230px;
-    height: 175px;
-    border-radius: 10px;
-    border: 0px solid;
-    box-shadow: 0px;
-    outline: none;
-    background-color: #F8FAFB;
-=======
 .inventorynotification {
   display: flex;
   justify-content: center;
@@ -343,7 +200,6 @@
   font-size: 18px;
   line-height: 25px;
   color: #424242;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
   
   .productimage {
@@ -352,69 +208,6 @@
     object-fit: cover;
   }
 
-<<<<<<< HEAD
-.imagebuttoncontainer{
-    width: 100%;
-    display: flex;
-justify-content: flex-end;
-margin-top: -10%;
-}
-.productimagebutton{
-height: 35px;
-width: 35px ;
-}
-
-
-input[class~=productinputfile]::file-selector-button {
-    border: 0.5px solid #E52C32;
-    padding: 10px 20px;
-    border-radius: 30px;
-    background-color: #fff;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: #424242;
-    visibility: hidden;
-  }
-  
-  input[class~="inputdetailfile"] {
-    word-wrap: break-word;
-    word-break: break-all;
-    width: 694px;
-    
-    
-  }
-
-  input[class~=productinputfile]{
-    background-color: transparent;
-    border-radius: 30px;
-
-   color: transparent;
-   width: 337px;
-   margin: 0 0 5% 0;
-  }
-
-
-  .recommendcontainer{
-display: flex;
-align-items: center;
-margin-top: -4%;
-  }
-
-  .recommendtext{
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 22px;
-    color: #df3030;
-  }
-.modalbutton{
-    justify-content: flex-end;
-    align-items: flex-end;
-    display: flex;
-    margin-top: 1%;
-    margin-bottom: 2%;
-=======
 .inputfile {
   width: 418px;
   height: 39px;
@@ -447,7 +240,6 @@ margin-top: -4%;
   font-size: 18px;
   line-height: 25px;
   color: #424242;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .inputdetailfile {
@@ -479,103 +271,6 @@ margin-top: -4%;
   background-color: #f8fafb;
 }
 
-<<<<<<< HEAD
-.cancelbutton{
-    width: auto;
-    height: 40px;
-    background-color: transparent;
-    border: 0px;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
-    color: #df3030;
-    margin-right: 10%;
-}
-
-.savebutton{
-    width: 150px;
-    height: 40px;
-    background-color: #df3030;
-    border: 0px solid;
-    border-radius: 5px;
-    outline: none;
-    box-shadow: none;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 22px;
-    color: #fff;
-}
-
-.removecatmodalbox {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 482px;
-    height: 229px;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    border-radius: 20px;
-    background-color: #fffaf4;
-  }
-  
-  .removecatinnerbox {
-    padding: 5% 5% 0 5%;
-  }
-
-  .removecatheading{
-      display: flex;
-      align-items: center;
-  }
-
-  .removecatmodaltitle {
-    display: flex;
-    font-family: "Nunito Sans", sans-serif;
-    font-weight: 700;
-    font-size: 24px;
-    line-height: 33px;
-    color: #f10c0c;
-    margin: 0 0 0 3%;
-  }
-  
-  .removecatmodaltext {
-    font-family: "Nunito Sans", sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 25px;
-    color: #424242;
-    margin: 0 0 2% 14%;
-  }
-
-  .removecatimage{
-      width: 45px;
-      height: 45px;
-  }
-
-  .removecatmodalbuttoncontainer {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 10%;
-    padding-bottom: 5%;
-  }
-.inventorycontainergrid{
-    display: grid;
-grid-template-areas: "a a";
-    grid-gap: 40px;
-    margin-top: 2%;
-    margin-left: 4%;
-    margin-right: 4%;
-    
-    align-items: flex-start;
-
-=======
 .productimage {
   width: 230px;
   height: 175px;
@@ -599,7 +294,6 @@ input[class~="inputdetailfile"] {
   word-wrap: break-word;
   word-break: break-all;
   width: 694px;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 input[class~="productinputfile"]::file-selector-button {
@@ -617,17 +311,12 @@ input[class~="productinputfile"]::file-selector-button {
   visibility: hidden;
 }
 
-<<<<<<< HEAD
-.categorycontainer{
-    width: 530px;
-=======
 input[class~="productinputfile"] {
   background-color: transparent;
   border-radius: 30px;
   color: transparent;
   width: 0px;
   margin: 0 0 5% 0;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .recommendcontainer {
@@ -716,16 +405,6 @@ height: 6px
   color: #df3030;
 }
 
-<<<<<<< HEAD
-.catmenuimagecontainer{
-    margin: 5%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #F8FAFB;
-    width: 90px;
-    height: 66px;
-=======
 .removebutton {
   width: 150px;
   height: 40px;
@@ -740,7 +419,6 @@ height: 6px
   line-height: 22px;
   color: #fff;
   margin-right: 2%;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .removecatmodalbox {
@@ -759,22 +437,6 @@ height: 6px
   background-color: #fffaf4;
 }
 
-<<<<<<< HEAD
-.catmenutitle{
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 19px;
-    color: #424242;
-}
-
-.catmenuprice{
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 19px;
-    color: #424242;
-=======
 .removecatinnerbox {
   margin: 0 5% 0 5%;
   display: flex;
@@ -785,7 +447,6 @@ height: 6px
 .removecatheading {
   display: flex;
   align-items: center;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .removecatmodaltitle {
@@ -812,141 +473,6 @@ height: 6px
   height: 45px;
 }
 
-<<<<<<< HEAD
-.negative{
-    width:20px;
-    color: #c4c4c4;
-    background-color: #fff;
-    outline: none;
-    border: 0px solid;
-    box-shadow: none;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.negativeactive{
-    width:20px;
-    color: #e52c32;
-    background-color: #fff;
-    outline: none;
-    border: 0px solid;
-    box-shadow: none;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.quanttext{
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 21px;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.inputquantityfile{
-    width: 20px;
-    background-color: transparent;
-    border: 0px solid;
-    outline: none;
-    box-shadow: none;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 21px;
-    color: #fff;
-    text-align: center;
-}
-
-.increment{
-    width:20px;
-    height:20px;
-    color: #e52c32;
-
-    background-color: #fff;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin-bottom: 2%;
-}
-
-.plus{
-    width:20px;
-    outline: none;
-    color: #c4c4c4;
-    background-color: #fff;
-    outline: none;
-    border: 0px solid;
-    box-shadow: none;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.plusactive{
-    width:20px;
-    color: #e52c32;
-    background-color: #fff;
-    outline: none;
-    border: 0px solid;
-    box-shadow: none;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-.editbutton{
-display: flex;
-flex: 1;
-justify-content: flex-end;
-margin-right: 5%;
-}
-
-.edit{
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 19px;
-    color: #e52c32;
-    background-color: transparent;
-    border: 0px;
-}
-
-.addbutton{
-    display: flex;
-    margin-top: 2%;
-    margin-left: 4%;
-    margin-right: 14%;
-    justify-content: flex-end;
-}
-
-.buttonadd {
-    right: 0;
-    width: 190px;
-    height: 41px;
-    border-radius: 100px;
-    border: 0px solid;
-    background-color: #f10c0c;
-    font-family: "Nunito Sans", sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 20px;
-    color: #fff;
-  }
-=======
 .removecatmodalbuttoncontainer {
   display: flex;
   justify-content: flex-end;
@@ -1292,4 +818,3 @@ margin-right: 5%;
   color: #c4c4c4;
   font-size: 10px;
 }
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53

@@ -1,7 +1,4 @@
 .container {
-<<<<<<< HEAD
-  background-color: #fffaf4;
-=======
   width: 100%;
   background-color: #fffaf4;
   height: 100vh;
@@ -10,7 +7,6 @@
 
 .container::-webkit-scrollbar{
   display: none;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .dashboardsection {
@@ -20,10 +16,7 @@
   margin-top: 2%;
   margin-left: 4%;
   margin-right: 4%;
-<<<<<<< HEAD
-=======
   padding-bottom: 5%;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
   align-items: flex-start;
   overflow: scroll;
 }
@@ -237,10 +230,7 @@
   height: 150px;
   background-color: #fff;
   border-radius: 5px;
-<<<<<<< HEAD
-=======
   width: 370px;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
   overflow-y: scroll;
 }
 
@@ -293,21 +283,13 @@
   color: #424242;
 }
 
-<<<<<<< HEAD
-.dashboardouterborder {
-=======
 .dashboardordercontainer {
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
   border: 3px solid #ff9598;
   border-radius: 19px;
   width: 100%;
   height: 400px;
   margin-top: 2%;
-<<<<<<< HEAD
-  overflow-y: scroll;
-=======
   overflow: scroll;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .dashboardordercontainer::-webkit-scrollbar {
@@ -394,17 +376,12 @@
   margin-top: 2%;
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
-  height: auto;
-  border-radius: 28px;
-=======
   height: 400px;
   overflow: scroll;
 }
 
 .dashboardpromocontainer::-webkit-scrollbar {
   display: none;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .promodetails {
@@ -417,19 +394,13 @@
   background: none;
   box-shadow: none;
   border: none;
-<<<<<<< HEAD
-=======
   width: 530px;
   height: 150px;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }
 
 .picture {
   width: 100%;
   height: 100%;
   border-radius: 28px;
-<<<<<<< HEAD
-=======
   object-fit: cover;
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 }

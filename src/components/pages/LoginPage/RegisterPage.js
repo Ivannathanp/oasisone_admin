@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-<<<<<<< HEAD
-import { Link,  useHistory } from "react-router-dom";
-=======
 import { Link, useHistory } from "react-router-dom";
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -16,11 +12,7 @@ import {
   faLocationDot,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-<<<<<<< HEAD
-import {BallTriangle} from "react-loader-spinner";
-=======
 import { BallTriangle } from "react-loader-spinner";
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 import "./LoginPage.css";
 
 //auth
@@ -31,11 +23,7 @@ import { PassTextField, TextField } from "../../Forms/FormLib";
 function RegisterPage({ signupUser }) {
   const [show, setShow] = useState(false);
   let history = useHistory();
-<<<<<<< HEAD
-  const [ErrorMessage,seterrormessage] = useState();
-=======
   const [ErrorMessage, seterrormessage] = useState();
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   return (
     <div className="backgroundcontainer">
@@ -151,16 +139,7 @@ function RegisterPage({ signupUser }) {
                     </button>
                   )}
                   {isSubmitting && (
-<<<<<<< HEAD
-                    <BallTriangle
-      
-                    color="#f10c0c"
-                      height={80}
-                      width={80}
-                    />
-=======
                     <BallTriangle color="#f10c0c" height={80} width={80} />
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                   )}
                 </div>
 
