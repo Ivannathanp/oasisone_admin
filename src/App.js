@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import SideBar from "./components/Navbar/SideBar";
 import Login from "./components/pages/LoginPage/ValidateLoginPage";
 import Register from "./components/pages/LoginPage/RegisterPage";
@@ -15,6 +20,8 @@ import Tables from "./components/pages/TablesPage/TablesPage";
 import Qr from "./components/pages/QrPage/QrPage";
 import Customer from "./components/pages/CustomerPage/CustomerPage";
 import Settings from "./components/pages/SettingsPage/SettingsPage";
+import MissingRoute from "./components/pages/MissingRoute";
+import RedirectDashboard from "./components/pages/RedirectDashboard";
 import "./App.css";
 import { io } from "socket.io-client";
 import { SocketContext } from "./components/socketContext";
@@ -32,7 +39,8 @@ function App({ checked, tenant }) {
   }
 
   // Socket
-  const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState("");
+  const [socketRetrieved, setSocketRetrieved] = useState(false);
   const [online, setOnline] = useState(0);
 
   let peopleOnline = online - 1;
@@ -54,37 +62,58 @@ function App({ checked, tenant }) {
       socket.on("visitor enters", (data) => setOnline(data));
       socket.on("visitor exits", (data) => setOnline(data));
 
-      console.log("I am app socket");
+      socket.on("roomUsers", ({ room, users }) => {
+        outputRoomName(room);
+        // outputUsers(users);
+      });
+      socket.emit("joinRoom", tenant.tenant_id);
+      console.log("I am app socket", socket.emit("joinRoom", tenant.tenant_id));
     }
   });
 
-  useEffect(() => {
-    let mounted = true;
-    console.log("tenant is: ", tenant);
-    if (mounted) {
-      if (tenant.tenant_id != undefined) {
-        const newSocket = io("ws://localhost:5000", {
-          query: {
-            tenant_id: tenant.tenant_id,
-          },
-        });
+  // function outputUsers(users) {
+  //   const userList = [];
+  //   users.forEach((user) => {
+  //     userList.push(user);
+  //   });
+  //   console.log("users :", userList);
+  // }
 
-        setSocket(newSocket);
-        return () => newSocket.close();
-      }
+  function outputRoomName(room) {
+    console.log("Room is :", room);
+  }
+
+  useEffect(() => {
+    console.log("tenant is: ", tenant);
+
+    if (tenant.tenant_id != undefined) {
+      const newSocket = io("ws://localhost:5000", {
+        query: {
+          tenant_id: tenant.tenant_id,
+        },
+      });
+
+      setSocket(newSocket);
+      setSocketRetrieved(true);
+      return () => newSocket.close();
     }
   }, [tenant]);
 
-  console.log("app socket is: ", socket);
+  if (socketRetrieved) {
+    console.log("app socket is: ", socket);
+  }
 
   return (
     //basename="/oasisone_tenant"
+
     <Router>
       {checked && (
         <div className="app">
           <Switch>
             <Route path="/" exact component={Login} />
+
             <BasicRoute path="/login/:userEmail?" exact component={Login} />
+
             <BasicRoute
               path="/emailsent/:userEmail?/:reset?"
               exact
@@ -97,13 +126,13 @@ function App({ checked, tenant }) {
             />
             <BasicRoute path="/register" exact component={Register} />
             <BasicRoute path="/forgetpassword" exact component={Forget} />
+
             <SocketContext.Provider value={socket}>
-            <div class="box">
-              <div class="column">
-                <SideBar />
-              </div>
-              <div class="column2">
-              
+              <div class="box">
+                <div class="column">
+                  <SideBar />
+                </div>
+                <div class="column2">
                   <AuthRoute path="/dashboard" exact component={Dashboard} />
                   <AuthRoute path="/orders" exact component={Order} />
                   <AuthRoute
@@ -117,11 +146,10 @@ function App({ checked, tenant }) {
                   <AuthRoute path="/qr" exact component={Qr} />
                   <AuthRoute path="/customer" exact component={Customer} />
                   <AuthRoute path="/settings" exact component={Settings} />
-               
+                </div>
               </div>
-         
-            </div>
             </SocketContext.Provider>
+            <Route path="*" component={MissingRoute} />
           </Switch>
         </div>
       )}
@@ -130,8 +158,6 @@ function App({ checked, tenant }) {
 }
 
 function mapStateToProps({ session }) {
-  console.log("session user", session.user);
-
   return {
     checked: session.checked,
     tenant: session.user,

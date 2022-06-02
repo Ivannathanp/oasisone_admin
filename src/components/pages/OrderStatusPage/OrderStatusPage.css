@@ -5,25 +5,25 @@
   align-items: center;
   height: 75vh;
   position: relative;
-  overflow: scroll;
+
 }
 
-.orderstatusoutercontainer::-webkit-scrollbar{
+.orderstatuscontainer::-webkit-scrollbar{
   display: none;
 }
 
 .orderstatuscontainer {
   display: grid;
-  grid-row-gap: 5%;
-  grid-column-gap: 2%;
+  grid-row-gap: 3%;
+  grid-column-gap: 3%;
   grid-template-columns: repeat(3, 1fr);
-  position: relative;
+overflow: scroll;
 }
 
 
 
 .orderstatuscard {
-  width: 377px;
+  width: 370px;
   height: 400px;
   background: #ffffff;
   border: 0.5px solid #9b9b9b;
@@ -145,7 +145,7 @@ right: 15px;
   font-weight: 600;
   font-size: 16px;
   color: #424242;
-  margin-bottom: 3%;
+  margin-bottom: 2%;
 }
 
 .menutext2 {
@@ -301,8 +301,8 @@ right: 15px;
   flex-direction: row;
   position: absolute;
   z-index: 3;
-  top: -30px;
-  right: 60px;
+  top: -50px;
+  right: 0px;
   width: 227px;
   height: 49px;
   background-color: #E52C32;

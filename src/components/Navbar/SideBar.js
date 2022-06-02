@@ -69,7 +69,7 @@ function SideBar({ logoutUser, tenant }) {
 
   useEffect(() => {
     if (socket) {
-      socket.on("update user", (data) => handleUserUpdated(data));
+      socket.on('update user', (data) => handleUserUpdated(data));
     }
   });
 
@@ -89,7 +89,7 @@ function SideBar({ logoutUser, tenant }) {
 
   return (
     <>
-      <nav className="sidebar">
+      <nav className="sidebar"  style={{background: tenant.profileColor}}>
         <div className="sidebar-container">
           <div className="sidebar-header">
             {profileName} <i className="fab fa-typo3"></i>

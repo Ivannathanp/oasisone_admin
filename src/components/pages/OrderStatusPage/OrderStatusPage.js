@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../TopBar/TopBar.css";
 import "./OrderStatusPage.css";
 import logo from "../../icons/Logo.png";
@@ -16,7 +16,7 @@ import {
   FormLabel,
   Radio,
 } from "@material-ui/core";
-import RadioGroup from "@material-ui/core/RadioGroup/RadioGroup";
+import recommended from "../../icons/Recommend.png";
 import { CustomizedRadios } from "./Radio/RadioButton";
 import { ModeComment } from "@material-ui/icons";
 import moment from "moment";
@@ -28,7 +28,7 @@ function OrderStatusPage({ tenant }) {
   const localUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
-
+  const [acceptance, setAcceptance] = useState([]);
   const [menuData, setMenuData] = useState([]);
   const [menuRetrieved, setMenuRetrieved] = useState(false);
 
@@ -39,7 +39,6 @@ function OrderStatusPage({ tenant }) {
     if (mounted) {
       if (tenant.tenant_id != undefined) {
         const url = localUrl + "/retrieve/" + tenant.tenant_id;
-        console.log(url);
 
         fetch(url, {
           method: "GET",
@@ -48,11 +47,9 @@ function OrderStatusPage({ tenant }) {
           .then((response) => response.json())
           .then((result) => {
             if (result.status === "SUCCESS") {
-              // console.log(result)
-              setOrderData(() => result.data);
+              setOrderData([result.data]);
               setOrderRetrieved(() => true);
             } else {
-              // console.log(result);
               setOrderRetrieved(() => false);
             }
           });
@@ -64,35 +61,59 @@ function OrderStatusPage({ tenant }) {
     };
   }, [tenant, orderRetrieved]);
 
-  const [acceptance, setAcceptance] = useState([]);
+  // socket connection
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("add order", (data) => handleOrderAdded(data));
+      socket.on("update order", (data) => handleOrderUpdated(data));
+    }
+  });
+
+  function handleOrderAdded(user) {
+    if (orderRetrieved) {
+      let newData = orderData.splice();
+
+      newData.push(user);
+      setOrderData(newData);
+    }
+  }
+
+  function handleOrderUpdated(user) {
+    if (orderRetrieved) {
+      let newData = orderData.splice();
+
+      newData.push(user);
+      setOrderData(newData);
+    }
+  }
 
   function handleacceptincrement(i, v, j) {
-    orderData.map((post) => {
-      if (post.order_id == i) {
-        post.order_status = v + 1;
-        console.log(post.order_status);
-        const url = localUrl + "/edit/" + i;
-        fetch(url, {
-          method: "POST",
-          body: JSON.stringify({
-            order_status: post.order_status,
-            order_table: j,
-          }),
-          headers: { "content-type": "application/JSON" },
-        })
-          .then((response) => response.json())
-          .then((result) => {
-            if (result.status === "SUCCESS") {
-              console.log(result);
-            } else {
-              console.log(result);
-            }
-          });
-      }
-      setAcceptance({ post });
-    });
+    orderData.map((item) => {
+      return item.map((post, index) => {
+        if (post.order_id == i) {
+          post.order_status = v + 1;
 
-    console.log("acc", acceptance);
+          const url = localUrl + "/edit/" + tenant.tenant_id + "/" + i;
+          fetch(url, {
+            method: "POST",
+            body: JSON.stringify({
+              order_status: post.order_status,
+              order_table: j,
+            }),
+            headers: { "content-type": "application/JSON" },
+          })
+            .then((response) => response.json())
+            .then((result) => {
+              if (result.status === "SUCCESS") {
+                socket.emit("update order", result.data);
+              }
+            });
+        }
+        setAcceptance({ post });
+      });
+    });
   }
 
   const [rejectOrder, setRejectOrder] = useState(false);
@@ -103,12 +124,17 @@ function OrderStatusPage({ tenant }) {
   const [removeitemnotif, setRemoveItemNotif] = useState(false);
 
   async function handleRejectOrder(id) {
-    console.log(id);
-    const url = localUrl + "/reject/" + id;
+    setRemoveItemNotif(true);
+    setTimeout(() => {
+      setRemoveItemNotif(false);
+    }, 5000);
+    setRejectReason(false);
+
+    const url = localUrl + "/reject/" + tenant.tenant_id + "/" + id;
     fetch(url, {
       method: "POST",
       body: JSON.stringify({
-        order_status: "5",
+        order_status: "6",
         reject_reason: rejectReasonText,
       }),
       headers: { "content-type": "application/JSON" },
@@ -116,9 +142,7 @@ function OrderStatusPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          console.log(result);
-        } else {
-          console.log(result);
+          socket.emit("update order", result.data);
         }
       });
 
@@ -126,22 +150,6 @@ function OrderStatusPage({ tenant }) {
     setRejectID();
     setRejectReasonText();
   }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    alert(JSON.stringify(formValues));
-  }
-
-  function handlerejected() {
-    setRejectOrder(false);
-    setRemoveItemNotif(true);
-    setTimeout(() => {
-      setRemoveItemNotif(false);
-    }, 5000);
-    setRejectReason(false);
-  }
-
-  console.log(rejectReasonText, "reason");
 
   function rejectOrdermodal() {
     return (
@@ -199,200 +207,223 @@ function OrderStatusPage({ tenant }) {
       <div className="topbar">
         <div className="left">Order Status Screen</div>
 
-       <TopBar/>
+        <TopBar />
       </div>
-{orderRetrieved? ( <div className="orderstatusoutercontainer">
-        <div className="orderstatuscontainer">
-          {rejectOrdermodal()}
-          <div className={removeitemnotif ? "notification" : "hidden"}>
-            <div className="notificationtextcontainer">
-              <div className="notificationtext">Order Removed</div>
+      {orderRetrieved ? (
+        <div className="orderstatusoutercontainer">
+          <div className="orderstatuscontainer">
+            {rejectOrdermodal()}
+            <div className={removeitemnotif ? "notification" : "hidden"}>
+              <div className="notificationtextcontainer">
+                <div className="notificationtext">Order Removed</div>
+              </div>
+
+              <div className="notificationclose">
+                <button
+                  className="notifclosebutton"
+                  onClick={() => setRemoveItemNotif(false)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              </div>
             </div>
 
-            <div className="notificationclose">
-              <button
-                className="notifclosebutton"
-                onClick={() => setRemoveItemNotif(false)}
-              >
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-            </div>
-          </div>
+            {orderRetrieved == true &&
+              orderData.map((item) => {
+                return item.map((post, index) => {
+                  if (post.order_status != 5 && post.order_status != 6) {
+                    return (
+                      <>
+                        <div className="orderstatuscard">
+                          {post.order_status != 1 ? null : (
+                            <FontAwesomeIcon
+                              icon={faXmark}
+                              className="closeordericon"
+                              onClick={() => {
+                                setRejectOrder(true);
+                                setRejectID(post.order_id);
+                              }}
+                            />
+                          )}
 
-          {orderRetrieved == true &&
-            orderData.map((post, index) => {
-              if (post.order_status != 4 && post.order_status != 5) {
-                return (
-                  <>
-                    <div className="orderstatuscard">
-                      <FontAwesomeIcon
-                        icon={faXmark}
-                        className="closeordericon"
-                        onClick={() => {
-                          setRejectOrder(true);
-                          setRejectID(post.order_id);
-                        }}
-                      />
-                      <div className="orderID">{post.order_id}</div>
-                      <div className="orderdetail">
-                        <div className="orderstatustime">
-                          {moment(post.order_time).fromNow()}-{" "}
-                        </div>
-                        <div className="tableID"> Table {post.order_table}</div>
-                      </div>
-                      <div className="menucontainer">
-                        {post.order_menu.map((posts, index) => {
-                          return (
-                            <div className="menudetails">
-                              <div className="menuimagecontainer">
-                                <img
-                                  src={require("../../icons/Gurame Asam Manis.png")}
-                                  className="menuimage"
-                                />
-                              </div>
-                              <div
-                                className={
-                                  index < posts.length - 1
-                                    ? "menutext"
-                                    : "nobordermenutext"
-                                }
-                              >
-                                <div className="menutitle">{posts.name}</div>
-                                <div className="menutext2">
-                                  <div className="menuprice">
-                                    <NumberFormat
-                                      value={posts.price}
-                                      prefix="Rp. "
-                                      decimalSeparator="."
-                                      thousandSeparator=","
-                                      displayType="text"
+                          <div className="orderID">{post.order_id}</div>
+                          <div className="orderdetail">
+                            <div className="orderstatustime">
+                              {moment(post.order_time).fromNow()}-{" "}
+                            </div>
+                            <div className="tableID">
+                              {" "}
+                              Table {post.order_table}
+                            </div>
+                          </div>
+                          <div className="menucontainer">
+                            {post.order_menu.map((posts, index) => {
+                              return (
+                                <div className="menudetails">
+                                  <div className="menuimagecontainer">
+                                    <img
+                                      src={require("../../icons/Gurame Asam Manis.png")}
+                                      className="menuimage"
                                     />
                                   </div>
-                                  <div className="menuquant">
-                                    Qty:{" "}
-                                    <span className="quant">
-                                      {" "}
-                                      {posts.orderQty}{" "}
-                                    </span>
+                                  <div
+                                    className={
+                                      index < posts.length - 1
+                                        ? "menutext"
+                                        : "nobordermenutext"
+                                    }
+                                  >
+                                    <div className="menutitle">
+                                      {posts.name}
+                                    </div>
+                                    <div className="recommended">
+                                      {posts.isRecommended === true ? (
+                                        <img src={recommended} />
+                                      ) : (
+                                        "null"
+                                      )}
+                                    </div>
+                                    <div className="menutext2">
+                                      <div className="menuprice">
+                                        <NumberFormat
+                                          value={posts.price}
+                                          prefix="Rp. "
+                                          decimalSeparator="."
+                                          thousandSeparator=","
+                                          displayType="text"
+                                        />
+                                      </div>
+                                      <div className="menuquant">
+                                        Qty:{" "}
+                                        <span className="quant">
+                                          {" "}
+                                          {posts.orderQty}{" "}
+                                        </span>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
+                              );
+                            })}
+                          </div>
+                          <div className="totalcontainer">
+                            <div className="total">
+                              <div className="totalquant">
+                                x{post.order_item} items
+                              </div>
+                              <div className="totalprice">
+                                <NumberFormat
+                                  value={post.order_total}
+                                  prefix="Rp. "
+                                  decimalSeparator="."
+                                  thousandSeparator=","
+                                  displayType="text"
+                                />
                               </div>
                             </div>
-                          );
-                        })}
-                      </div>
-                      <div className="totalcontainer">
-                        <div className="total">
-                          <div className="totalquant">
-                            x{post.order_item} items
-                          </div>
-                          <div className="totalprice">
-                            <NumberFormat
-                              value={post.order_total}
-                              prefix="Rp. "
-                              decimalSeparator="."
-                              thousandSeparator=","
-                              displayType="text"
-                            />
+                            <div className="buttoncontainer" key={index}>
+                              {post.order_status == 1 ? (
+                                <button
+                                  className="proceedstatusbutton"
+                                  type="button"
+                                  onClick={() => {
+                                    handleacceptincrement(
+                                      post.order_id,
+                                      post.order_status,
+                                      post.order_table
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faCheck}
+                                    className="icon"
+                                  />
+                                  Proceed
+                                </button>
+                              ) : post.order_status == 2 ? (
+                                <button
+                                  type="button"
+                                  className="servestatusbutton"
+                                  onClick={() => {
+                                    handleacceptincrement(
+                                      post.order_id,
+                                      post.order_status,
+                                      post.order_table
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faCheck}
+                                    className="icon"
+                                  />
+                                  Serve
+                                </button>
+                              ) : post.order_status == 3 ? (
+                                <button
+                                  className="completestatusbutton"
+                                  type="button"
+                                  onClick={() => {
+                                    handleacceptincrement(
+                                      post.order_id,
+                                      post.order_status,
+                                      post.order_table
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faCheck}
+                                    className="icon"
+                                  />
+                                  Payment
+                                </button>
+                              ) : post.order_status == 4 ? (
+                                <button
+                                  className="completedstatusbutton"
+                                  type="button"
+                                  onClick={() => {
+                                    handleacceptincrement(
+                                      post.order_id,
+                                      post.order_status,
+                                      post.order_table
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faCheck}
+                                    className="icon"
+                                  />
+                                  Complete
+                                </button>
+                              ) : post.order_status == 5 ? (
+                                <button
+                                  className="completedstatusbutton"
+                                  type="button"
+                                  onClick={() => {
+                                    handleacceptincrement(
+                                      post.order_id,
+                                      post.order_status,
+                                      post.order_table
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faCheck}
+                                    className="icon"
+                                  />
+                                  Completed
+                                </button>
+                              ) : null}
+                            </div>
                           </div>
                         </div>
-                        <div className="buttoncontainer" key={index}>
-                          {post.order_status == 1 ? (
-                            <button
-                              className="proceedstatusbutton"
-                              type="button"
-                              onClick={() => {
-                                handleacceptincrement(
-                                  post.order_id,
-                                  post.order_status,
-                                  post.order_table,
-                                );
-                                console.log(post.order_status);
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className="icon"
-                              />
-                              Proceed
-                            </button>
-                          ) : post.order_status == 2 ? (
-                            <button
-                              type="button"
-                              className="servestatusbutton"
-                              onClick={() => {
-                                handleacceptincrement(
-                                  post.order_id,
-                                  post.order_status,
-                                  post.order_table,
-                                );
-                                console.log(post.order_status);
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className="icon"
-                              />
-                              Serve
-                            </button>
-                          ) : post.order_status == 3 ? (
-                            <button
-                              className="completestatusbutton"
-                              type="button"
-                              onClick={() => {
-                                handleacceptincrement(
-                                  post.order_id,
-                                  post.order_status,
-                                  post.order_table,
-                                );
-                                console.log(post.order_status);
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className="icon"
-                              />
-                              Complete
-                            </button>
-                          ) : post.order_status == 4 ? (
-                            <button
-                              className="completedstatusbutton"
-                              type="button"
-                              onClick={() => {
-                                handleacceptincrement(
-                                  post.order_id,
-                                  post.order_status,
-                                  post.order_table,
-                                );
-                                console.log(post.order_status);
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className="icon"
-                              />
-                              Completed
-                            </button>
-                          ) : null}
-
-                          {/* <button
-                className={post.order_status == 1? "proceedstatusbutton" : post.order_status == 2? "servestatusbutton" : post.order_status == 3? "completestatusbutton" : post.order_status == 4? "completedstatusbutton" : null }
-                type="button"
-                onClick={()=>handleacceptincrement(post.order_status)}
-              >
-                <FontAwesomeIcon icon={faCheck} className="icon" />
-                {post.order_status == 1? "Proceed" : post.order_status == 2? "Serve" : post.order_status == 3? "Complete" : post.order_status == 4? "Completed" : null}
-                
-              </button> */}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                );
-              }
-            })}
+                      </>
+                    );
+                  }
+                });
+              })}
+          </div>
         </div>
-      </div>):(
+      ) : (
         <div
           style={{
             display: "flex",
@@ -405,7 +436,6 @@ function OrderStatusPage({ tenant }) {
           <ThreeDots color="#f10c0c" height={80} width={80} />
         </div>
       )}
-     
     </div>
   );
 }

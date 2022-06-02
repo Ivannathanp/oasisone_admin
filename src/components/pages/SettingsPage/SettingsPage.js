@@ -108,14 +108,10 @@ function SettingsPage({ tenant }) {
   function handleUserUpdated(user) {
     console.log("update SOCKET IS CALLED!!!!!!!!!")
     if (tenantRetrieved) {
-      let newData = tenantData.slice();
-      console.log("INSIDE update SOCKET IS CALLED")
-      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+      let newData = tenantData.splice();
 
-      if (newData.length > i) {
-        newData[i] = user;
-      }
-
+     
+      newData.push(user);
       setTenantData(newData);
       console.log("new data is", newData)
     }
@@ -130,6 +126,8 @@ function SettingsPage({ tenant }) {
       setSettingSavedNotif(false);
     }, 5000); //wait 5 seconds
 
+    var tenantID= tenant.tenant_id;
+    console.log("tenant IDDDDD:", tenantID);
     const profileUrl = imageUrl + "/avatar/" + tenant.tenant_id;
     var input = document.querySelector('input[type="file"]');
     console.log(input);
@@ -166,17 +164,11 @@ function SettingsPage({ tenant }) {
         console.log("settings data is:       ", result.data)
         socket.emit('update user', result.data);
         sessionService.saveUser(result.data);
-        console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('update user', result.data))
+        console.log("SOCKET IS EMITTED!!!!!!!!!",  socket.emit('update user', result.data))
       });
   }
 
-  function handleUserDeleted(user) {
-    let tenantData = tenantData.slice();
-    tenantData = tenantData.filter((u) => {
-      return u._id !== user._id;
-    });
-    setTenantData({ tenantData });
-  }
+
 
   async function handleTaxChargeEdit() {
     setTaxChargeEdit(() => !taxchargeedit);
@@ -247,7 +239,8 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result);
+          socket.emit('update user', result.data);
+       
         });
     }
   }
@@ -334,7 +327,7 @@ function SettingsPage({ tenant }) {
 
   function DateAndTimeModal() {
     const [daysSelected, setDaysSelected] = useState([]);
-    const url = localUrl + "/edit/openinghours";
+    const url = localUrl + "/edit/openinghours/" + tenant.tenant_id;
 
     function handlesavehour() {
       function verifyTime() {
@@ -360,7 +353,6 @@ function SettingsPage({ tenant }) {
         setOpenHourEdit((state) => !state);
         daysSelected.map((item, index) => {
           const payload = JSON.stringify({
-            tenant_id: tenant.tenant_id,
             day: item,
             is24Hours: open24hrs,
             isClosed: isclosed,
@@ -382,13 +374,15 @@ function SettingsPage({ tenant }) {
             .then((response) => response.json())
             .then((result) => {
               console.log(result);
+              socket.emit('update user', result.data);
+              sessionService.saveUser(result.data);
               setDaysSelected([]);
             });
         });
       }
     }
 
-    // console.log(daysSelected);
+    console.log(daysSelected);
     function renderButton(item, index) {
       const [selected, setSelected] = useState(false);
 
@@ -690,7 +684,7 @@ function SettingsPage({ tenant }) {
             <div className="openhourmodalbutton">
               <button
                 onClick={() => {
-                  // setDay();
+                  setDay();
                   setOpenHourEdit((state) => !state);
                   setDaysSelected([]);
                 }}
@@ -942,7 +936,7 @@ function SettingsPage({ tenant }) {
                           disabled={AddressTextEdit ? false : true}
                           value={textAddress}
                           className="profileaddress"
-                          onChange={(e) => setTextAddress(event.target.value)}
+                          onChange={(e) => setTextAddress(e.target.value)}
                         />
                       )}
                     </form>

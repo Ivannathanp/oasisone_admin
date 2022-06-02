@@ -1,4 +1,3 @@
-import axios from "axios";
 import { sessionService } from "redux-react-session";
 
 // the remote endpoint and local
@@ -123,16 +122,15 @@ export const forgetpassword = (
   //make checks and get some data
 
   return () => {
-    axios
-      .post(`${currentUrl}api/tenant/passwordresetrequest`, credentials, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const { data } = response;
+    fetch(`${currentUrl}api/tenant/passwordresetrequest`, {
+      method: "POST",
+      body: JSON.stringify({email: credentials.email}),
+      headers: { "content-type": "application/JSON" },
+    }) .then((response) => response.json())
+        .then((result) => {
+        
 
-        if (data.status === "FAILED") {
+        if (result.status === "FAILED") {
           const { message } = data;
 
           //check for specific error
@@ -141,9 +139,9 @@ export const forgetpassword = (
             message.toLowerCase().includes("password") ||
             message.toLowerCase().includes("email")
           ) {
-            setFieldError("email", message);
+            setFieldError("email", result.status);
           }
-        } else if (data.status === "PENDING") {
+        } else if (result.status === "PENDING") {
           const { email } = credentials;
           history.push(`/emailsent/${email}/${true}`);
         }
@@ -164,23 +162,22 @@ export const resetPassword = (
   //make checks and get some data
 
   return () => {
-    axios
-      .post(`${currentUrl}api/tenant/passwordreset`, credentials, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const { data } = response;
+    fetch(`${currentUrl}api/tenant/passwordreset`, {
+      method: "POST",
+      body: JSON.stringify({password: credentials.password}),
+      headers: { "content-type": "application/JSON" },
+    }) .then((response) => response.json())
+       .then((result) => {
 
-        if (data.status === "FAILED") {
+
+        if (result.status === "FAILED") {
           const { message } = data;
 
           //check for specific error
           if (message.toLowerCase().includes("password")) {
             setFieldError("newPassword", message);
           }
-        } else if (data.status === "SUCCESS") {
+        } else if (result.status === "SUCCESS") {
           history.push(`/emailsent`);
         }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 import TablePagination from "../../Pagination/index";
@@ -43,7 +43,7 @@ function OrderPage({ tenant }) {
           .then((result) => {
             if (result.status === "SUCCESS") {
               // console.log(result)
-              setOrderData(() => result.data);
+              setOrderData([result.data]);
               setOrderRetrieved(() => true);
             } else {
               // console.log(result);
@@ -58,6 +58,48 @@ function OrderPage({ tenant }) {
     };
   }, [tenant, orderRetrieved]);
 
+  // socket connection
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("add order", (data) => handleOrderAdded(data));
+      socket.on("update order", (data) => handleOrderUpdated(data));
+    }
+  });
+
+  function handleOrderAdded(user) {
+    console.log("TABLE1", user);
+    console.log(" TABLE original ", orderData);
+
+    if (orderRetrieved) {
+      console.log("I am order retrieved!!!!!!!!!!!!!", user);
+
+      let newData = orderData.splice();
+
+      newData.push(user);
+      setOrderData(newData);
+      console.log("NEW DATA IS!!!!!!!!!: ", newData);
+      console.log("...user is", orderData);
+    }
+  }
+
+  function handleOrderUpdated(user) {
+    console.log("TABLE1", user);
+    console.log(" TABLE original ", orderData);
+
+    if (orderRetrieved) {
+      console.log("I am order retrieved!!!!!!!!!!!!!", user);
+
+      let newData = orderData.splice();
+
+      newData.push(user);
+      setOrderData(newData);
+      console.log("NEW DATA IS!!!!!!!!!: ", newData);
+      console.log("...user is", orderData);
+    }
+  }
+
   const generatePdf = () => {
     const doc = new jsPDF();
     const tableColumn = [
@@ -71,26 +113,29 @@ function OrderPage({ tenant }) {
       "Order Instruction",
     ];
     const tableRows = [];
-    orderData.map((post, index) => {
-      const dateOptions = {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      };
-      const ordertime = new Date(post.order_time);
-      const OrderData = [
-        index + 1,
-        post.order_id,
-        post.user_name,
-        post.user_phonenumber,
-        post.order_total,
-        ordertime.toLocaleDateString("en-ID", dateOptions),
-        post.order_table,
-        post.order_instruction,
-      ];
-      // push each tickcet's info into a row
-      tableRows.push(OrderData);
+    orderData.map((item) => {
+return item.map((post,index)=>{
+  const dateOptions = {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+  const ordertime = new Date(post.order_time);
+  const OrderData = [
+    index + 1,
+    post.order_id,
+    post.user_name,
+    post.user_phonenumber,
+    post.order_total,
+    ordertime.toLocaleDateString("en-ID", dateOptions),
+    post.order_table,
+    post.order_instruction,
+  ];
+  // push each tickcet's info into a row
+  tableRows.push(OrderData);
+})
+      
     });
 
     doc.autoTable(tableColumn, tableRows, { startY: 20 });
@@ -212,10 +257,6 @@ function OrderPage({ tenant }) {
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
   };
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - orderData.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -361,7 +402,7 @@ function OrderPage({ tenant }) {
                         {orderMenu.map((post, index) => (
                           <div className="ordermenucontainer">
                             <div className="ordermenuimagecontainer">
-                              {/* <img src={post.uri} className="menuimage" /> */}
+                              <img src={post.menuImage} className="menuimage" />
                             </div>
                             <div className="orderdetailsmenutext">
                               <div className="orderdetailsmenutitle">
@@ -441,13 +482,17 @@ function OrderPage({ tenant }) {
 
             {orderRetrieved == true &&
               (rowsPerPage > 0
-                ? orderData.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                ? orderData.map((item)=> {
+                  return item.slice( page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage)
+                })
                 : orderData
-              ).map((post, i) => (
-                <div className={i != 7 ? "bordered" : "noborder"}>
+              ).map((item) => {
+                console.log(item)
+                return item.map((post,i)=>{
+                  console.log(post)
+                  return(
+<div className={i != 7 ? "bordered" : "noborder"}>
                   <div className="orderrendergrid">
                     <div className="ordertext">{i + index}</div>
                     <div className="ordertext">{post.order_id}</div>
@@ -462,7 +507,7 @@ function OrderPage({ tenant }) {
                       />
                     </div>
                     <div className="status">
-                      {/* payment */}{" "}
+             
                       {post.order_status == 1 ? (
                         <div className="pending">PENDING</div>
                       ) : post.order_status == 2 ? (
@@ -470,8 +515,10 @@ function OrderPage({ tenant }) {
                       ) : post.order_status == 3 ? (
                         <div className="served">SERVED</div>
                       ) : post.order_status == 4 ? (
+                        <div className="payment">PAYMENT</div>
+                      ): post.order_status == 5 ? (
                         <div className="complete">COMPLETE</div>
-                      ) : post.order_status == 5 ? (
+                      ) : post.order_status == 6 ? (
                         <div className="rejected">REJECTED</div>
                       ) : null}
                     </div>
@@ -483,12 +530,14 @@ function OrderPage({ tenant }) {
                       {post.order_status == 1 ? (
                         <div className="proceed">PROCEED</div>
                       ) : post.order_status == 2 ? (
-                        <div className="serve">PROCEED</div>
+                        <div className="proceed">PROCEED</div>
                       ) : post.order_status == 3 ? (
-                        <div className="serve">SERVE</div>
+                        <div className="proceed">SERVE</div>
                       ) : post.order_status == 4 ? (
-                        <div className=" completed">COMPLETED</div>
+                        <div className=" proceed">COMPLETE</div>
                       ) : post.order_status == 5 ? (
+                        <div className=" completed">COMPLETED</div>
+                      ) : post.order_status == 6 ? (
                         <div className=" completedR">COMPLETED</div>
                       ) : null}
                     </div>
@@ -518,14 +567,19 @@ function OrderPage({ tenant }) {
                     </div>
                   </div>
                 </div>
-              ))}
+                  )
+
+                })
+
+                
+            })}
           </div>
           </div>
         </div>
         <div className="footer">
             <TablePagination
               colSpan={3}
-              count={orderData.length}
+              count={orderData[0].length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

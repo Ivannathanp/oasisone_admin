@@ -53,7 +53,7 @@ function TablesPage({ tenant }) {
           .then((response) => response.json())
           .then((result) => {
             if (result.status === "SUCCESS") {
-              setTableData(() => result.data);
+              setTableData([result.data]);
               setTableRetrieved(() => true);
             } else {
               setTableRetrieved(() => false);
@@ -72,23 +72,126 @@ console.log("table data: ", tableData)
 useEffect(() => {
     if (socket) {
       socket.on('add table', (data)=>handleTableAdded(data));
-  
-      console.log("I am table socket",       socket.on('add table', (data) => handleTableAdded(data)));
+      socket.on('add order', (data)=>handleOrderAdded(data));
+      socket.on('delete table', (data)=>handleDeleteTable(data));
+      socket.on('remove table', (data)=>handleRemoveTable(data));
+      socket.on('duplicate table', (data)=>handleDuplicateTable(data));
+      socket.on('add waiter call', (data) => handlCallTable(data));
+      socket.on('remove waiter call', (data) => handlCallTable(data));
+      console.log("I am table socket",        socket.on('delete table', (data)=>handleDeleteTable(data)));
     }
   });
 
   function handleTableAdded(user) {
-    console.log("TABLE1", user.table);
+    console.log("TABLE1", user);
     console.log(" TABLE original ", tableData);
 
-    // if (tableRetrieved) {
-    //   console.log(" TABLE data is called ");
-    //   let newData = tableData.slice();
-    //   newData.push(user);
-    //   setTableData(newData);
-    //   console.log("TABLE2 is: ", newData);
-    //   console.log("TABLE updated", tableData);
-    // }
+    if (tableRetrieved) {
+      console.log("I am table retrieved!!!!!!!!!!!!!", user)
+    
+      let newData = tableData.splice();
+ 
+      newData.push(user);
+      setTableData(newData);
+      console.log("NEW DATA IS!!!!!!!!!: ", newData);
+      console.log("...user is", tableData)
+     
+    }
+  }
+
+  function handleOrderAdded(){
+    if (tableRetrieved) {
+
+    
+  
+      const url = localUrl + "/" + tenant.tenant_id;
+
+      fetch(url, {
+        method: "GET",
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            setTableData([result.data]);
+            setTableRetrieved(() => true);
+          } else {
+            setTableRetrieved(() => false);
+          }
+        });
+  
+    
+      console.log("NEW Table DATA IS!!!!!!!!!: ");
+  
+     
+      }
+    
+  }
+
+  function handleDeleteTable(user) {
+    console.log("TABLE1", user);
+    console.log(" TABLE original ", tableData);
+
+    if (tableRetrieved) {
+     console.log("I am table retrieved!!!!!!!!!!!!!", user)
+    
+     let newData = tableData.splice();
+ 
+     newData.push(user);
+     setTableData(newData);
+     console.log("NEW DATA IS!!!!!!!!!: ", newData);
+     console.log("...user is", tableData)
+  }
+  }
+
+  function handleRemoveTable(user) {
+    console.log("TABLE1", user);
+    console.log(" TABLE original ", tableData);
+
+    if (tableRetrieved) {
+     console.log("I am table retrieved!!!!!!!!!!!!!", user)
+    
+     let newData = tableData.splice();
+ 
+     newData.push(user);
+     setTableData(newData);
+     console.log("NEW DATA IS!!!!!!!!!: ", newData);
+     console.log("...user is", tableData)
+  }
+  }
+
+  function handleDuplicateTable(user) {
+    console.log("TABLE1", user);
+    console.log(" TABLE original ", tableData);
+
+    if (tableRetrieved) {
+     console.log("I am table retrieved!!!!!!!!!!!!!", user)
+    
+     let newData = tableData.splice();
+ 
+     newData.push(user);
+     setTableData(newData);
+     console.log("NEW DATA IS!!!!!!!!!: ", newData);
+     console.log("...user is", tableData)
+  }
+  }
+
+  function handlCallTable(user) {
+    const url = localUrl + "/" + tenant.tenant_id;
+
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTableData([result.data]);
+              setTableRetrieved(() => true);
+            } else {
+              setTableRetrieved(() => false);
+            }
+          });
   }
 
   const orderUrl = process.env.REACT_APP_ORDERURL;
@@ -140,7 +243,7 @@ useEffect(() => {
 
   const [startval, setStartVal] = useState();
   const [endval, setEndVal] = useState();
-
+const [tableIndex, setTableIndex] = useState();
   const [removeval, setRemoveVal] = useState();
 
   const [edittable, setEditTable] = useState(false);
@@ -170,10 +273,11 @@ useEffect(() => {
   console.log(tableOrderData);
 
   async function handlepasswaiterinfo(table) {
+
     const url = waiterUrl + "/retrieve/" + tenant.tenant_id;
     console.log(url);
     const payload = JSON.stringify({
-      table: table,
+      order_table: table,
     });
     console.log(payload);
     await fetch(url, {
@@ -184,8 +288,8 @@ useEffect(() => {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          setWaiterData(() => result.data);
-
+          setWaiterData([result.data]);
+         
           setWaiterDataRetrieved(() => true);
         } else {
           setWaiterDataRetrieved(() => false);
@@ -196,9 +300,11 @@ useEffect(() => {
   console.log(waiterData);
 
   async function handleCloseWaiter(table) {
+    setTableIndex();
+
     const url = waiterUrl + "/remove/" + tenant.tenant_id;
     const payload = JSON.stringify({
-      table: table,
+      order_table: table,
     });
     await fetch(url, {
       method: "POST",
@@ -208,6 +314,8 @@ useEffect(() => {
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
+        socket.emit('remove waiter call', result.data);
+        setTableData([result.data])
       });
   }
 
@@ -228,7 +336,8 @@ useEffect(() => {
       
           console.log("ttable is", result.data);
           socket.emit('add table', result.data);
-          console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('add table', result.data))
+          setTableData([result.data]);
+          console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('add table', result))
       });
   }
 
@@ -264,15 +373,18 @@ useEffect(() => {
     })
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "SUCCESS") {
-          console.log(result);
-        } else {
-          console.log(result);
-        }
+
+          console.log("Table deleted is:", result.data);
+          socket.emit('delete table', result.data);
+          setTableData([result.data]);
+          console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('delete table', result))
+        
       });
   }
 
   async function handleduplicatetable() {
+    setDuplicateTableOpen(false);
+
     const url = localUrl + "/duplicate/" + tenant.tenant_id;
     const payload = JSON.stringify({
       or_table: startval,
@@ -286,36 +398,54 @@ useEffect(() => {
     })
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "SUCCESS") {
+        
           console.log(result);
           setStartVal();
           setEndVal();
-        } else {
-          console.log(result);
-        }
+          socket.emit('duplicate table', result.data);
+          setTableData([result.data]);
+          console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('duplicate table', result))
+         
       });
   }
 
   async function handleRemoveTableContent() {
-    const url = localUrl + "/remove/content/" + tenant.tenant_id;
-    const payload = JSON.stringify({
-      table_index: removeval,
-    });
+    setRemoveTableOpen(false);
 
-    fetch(url, {
-      method: "POST",
-      body: payload,
-      headers: { "content-type": "application/JSON" },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status === "SUCCESS") {
-          console.log(result);
-          setRemoveVal();
-        } else {
-          console.log(result);
-        }
-      });
+    {tableRetrieved == true &&
+      tableData.map((post) => {
+        return post.map((posts,index)=>{
+          if (posts.table.id == removeval){
+            const url = localUrl + "/remove/content/" + tenant.tenant_id;
+            const payload = JSON.stringify({
+              table_id: removeval,
+              order_table: posts.table.index 
+            });
+            console.log("remove val is:", removeval)
+            console.log("tableIndex val is:", posts.table.index)
+            fetch(url, {
+              method: "POST",
+              body: payload,
+              headers: { "content-type": "application/JSON" },
+            })
+              .then((response) => response.json())
+              .then((result) => {
+                
+                  console.log(result.data);
+                  setRemoveVal();
+                  setTableIndex();
+                   socket.emit('remove table', result.data);
+                   setTableData([result.data]);
+                   console.log("SOCKET IS EMITTED!!!!!!!!!", socket.on('remove table', result))
+                
+              });
+           
+          }
+         
+        })})}
+
+
+   
   }
 
   const [addtablenotif, setAddTableNotif] = useState(false);
@@ -335,11 +465,6 @@ useEffect(() => {
       setTableCallNotif(false);
       setTableSavedNotif(false);
     }
-  }
-
-  function handleproceedwaitercall() {
-    setTableWaiterOpen(false);
-    // set waiter call false
   }
 
   return (
@@ -395,17 +520,19 @@ useEffect(() => {
                       <div className="ordermodalstatus">
                         <div className="statustext">STATUS</div>
                         <div className="statuscoloredtext">
-                          {post.order_status == 1 ? (
-                            <div className="pending">PENDING</div>
-                          ) : post.order_status == 2 ? (
-                            <div className="orderplaced">ORDER PLACED</div>
-                          ) : post.order_status == 3 ? (
-                            <div className="served">SERVED</div>
-                          ) : post.order_status == 4 ? (
-                            <div className="complete">COMPLETE</div>
-                          ) : post.order_status == 5 ? (
-                            <div className="rejected">REJECTED</div>
-                          ) : null}
+                        {post.order_status == 1 ? (
+                        <div className="pending">PENDING</div>
+                      ) : post.order_status == 2 ? (
+                        <div className="orderplaced">ORDER PLACED</div>
+                      ) : post.order_status == 3 ? (
+                        <div className="served">SERVED</div>
+                      ) : post.order_status == 4 ? (
+                        <div className="payment">PAYMENT</div>
+                      ): post.order_status == 5 ? (
+                        <div className="complete">COMPLETE</div>
+                      ) : post.order_status == 6 ? (
+                        <div className="rejected">REJECTED</div>
+                      ) : null}
                         </div>
                       </div>
                     </div>
@@ -555,14 +682,17 @@ useEffect(() => {
       <Modal open={tableWaiterOpen}>
         <Box className="tablewaitermodalbox">
           {waiterDataRetrieved === true &&
-            waiterData.waiter.map((post, index) => {
-              console.log(post);
+            waiterData[0].map((post, index) => {
+              console.log(post.waiter);
               return (
                 <>
                   <div className="modalclose">
                     <button
                       className="modalclosebutton"
-                      onClick={handleproceedwaitercall}
+                      onClick={()=>{
+                        setTableWaiterOpen(false);
+                        setTableIndex();
+                      }}
                     >
                       <FontAwesomeIcon
                         className="closebuttonicon"
@@ -570,21 +700,25 @@ useEffect(() => {
                       />
                     </button>
                   </div>
-                  <div className="tablewaitermodaltitle">T{post.table}</div>
+                  <div className="tablewaitermodaltitle">T{tableIndex}</div>
                   <div className="sideattributes">
                     <div className="sidetexts">
                       <div className="modaltexts">Name</div>
                       <div className="modaltexts">Phone Number</div>
+                      <div className="modaltexts">Number of Guess</div>
                     </div>
                     <div className="sidetexts">
                       <div className="modaltexts">:</div>
                       <div className="modaltexts">:</div>
+                      <div className="modaltexts">:</div>
                     </div>
                     <div className="sidetexts">
-                      <div className="boldmodaltexts">{post.name}</div>
-                      <div className="boldmodaltexts">{post.phoneNumber}</div>
+                      <div className="boldmodaltexts">{post.waiter.user_name}</div>
+                      <div className="boldmodaltexts">{post.waiter.user_phonenumber}</div>
+                      <div className="boldmodaltexts">{post.waiter.user_guest}</div>
                     </div>
                   </div>
+    
                   <div className="tablewaitercontainer">
                     <div className="modaltexts">
                       Special Instructions (optional)
@@ -592,7 +726,7 @@ useEffect(() => {
                     <div className="waitertextinput">
                       <textarea
                         type="text"
-                        value={post.instruction}
+                        value={post.waiter.order_instruction}
                         className="waiterdetailinput"
                       />
                     </div>
@@ -603,7 +737,8 @@ useEffect(() => {
                       className="waiterconfirmbutton"
                       onClick={() => {
                         setTableWaiterOpen(false);
-                        handleCloseWaiter(post.table);
+                        handleCloseWaiter(post.waiter.order_table);
+                        setTableIndex();
                       }}
                     >
                       Proceed
@@ -632,14 +767,18 @@ useEffect(() => {
                   onChange={(e) => setStartVal(e.target.value)}
                 >
                   {tableRetrieved == true &&
-                    tableData.map((post, index) => {
-                      if (post.table.id != endval) {
-                        return (
-                          <MenuItem value={post.table.id}>
-                            T{post.table.index}
-                          </MenuItem>
-                        );
-                      }
+                    tableData.map((post) => {
+                      return post.map((posts,index)=>{
+               console.log(posts)
+                        if (posts.table.id != endval && posts.table.status !== 'EMPTY') {
+                          return (
+                            <MenuItem value={posts.table.id}>
+                              T{posts.table.index}
+                            </MenuItem>
+                          );
+                        }
+                      })
+                      
                     })}
                 </Select>
               </div>
@@ -665,15 +804,19 @@ useEffect(() => {
                   value={endval}
                   onChange={(e) => setEndVal(e.target.value)}
                 >
-                  {tableRetrieved == true &&
-                    tableData.map((post, index) => {
-                      if (post.table.id != startval) {
-                        return (
-                          <MenuItem value={post.table.id}>
-                            T{post.table.index}
-                          </MenuItem>
-                        );
-                      }
+                {tableRetrieved == true &&
+                    tableData.map((post) => {
+                      return post.map((posts,index)=>{
+                     
+                        if (posts.table.id != startval && posts.table.status !== 'FILLED') {
+                          return (
+                            <MenuItem value={posts.table.id}>
+                              T{posts.table.index}
+                            </MenuItem>
+                          );
+                        }
+                      })
+                      
                     })}
                 </Select>
               </div>
@@ -707,7 +850,7 @@ useEffect(() => {
       <Modal open={removetableOpen}>
         <Box className="duplicatetablemodalbox">
           <div className="duplicateinnerbox">
-            <div className="duplicatetablemodaltitle">Remove Table</div>
+            <div className="duplicatetablemodaltitle">Remove Table Content</div>
             <div className="duplicatetabletext">Select the table</div>
             <div className="tableselectorcontainer">
               <div className="tableselector1">
@@ -721,11 +864,20 @@ useEffect(() => {
                   onChange={(e) => setRemoveVal(e.target.value)}
                 >
                   {tableRetrieved == true &&
-                    tableData.map((post, index) => (
-                      <MenuItem value={post.table.id}>
-                        T{post.table.index}
-                      </MenuItem>
-                    ))}
+                    tableData.map((post) => {
+                      return post.map((posts,index)=>{
+                        if (posts.table.status == 'FILLED'){
+                          return(
+                            <MenuItem value={posts.table.id}>
+                            T{posts.table.index}
+                          </MenuItem>
+                          )
+                        }
+                        
+                      
+                      })
+                    
+                  })}
                 </Select>
               </div>
             </div>
@@ -787,130 +939,137 @@ useEffect(() => {
         </div>
         <div className="tablecontainergrid">
           {tableRetrieved == true &&
-            tableData.map((post, index) => {
-              console.log(post)
-              if (post.table.status == "EMPTY") {
-                return (
-                  <div className="innergrid">
-                    <div className="emptygrid">
-                      <div className={edittable ? "emptytable" : "null"}>
-                        <button
-                          className="deletetablebutton"
-                          type="button"
-                          onClick={() =>
-                            handledeletetable(post.table.index, post.table.id)
-                          }
-                        >
-                          Delete
-                        </button>
-                      </div>
-                      <button className="tabledetails">
-                        <div className="tablenumberempty">
-                          T{post.table.index}
-                        </div>
-                        <div className="emptycenter">
-                          <div className="tableempty">Empty</div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                );
-              }
-              if (post.table.status == "FILLED") {
-                // Time
-                const orderTime = new Date(post.table.timeStart);
-                const timeOptions = {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                };
-
-                return (
-                  <div className="innergrid">
-                    <button
-                      className={
-                        post.table.isWaiterCalled
-                          ? "tablewaiteractive"
-                          : "tabledetailsactive"
-                      }
-                      onClick={
-                        post.table.isWaiterCalled
-                          ? () => {
-                              handlepasswaiterinfo(post.table.index);
-                              setTableWaiterOpen(true);
-                            }
-                          : post.table.customerCount == 0
-                          ? () => setTableNoOrderOpen(true)
-                          : () => {
-                              handlePassinginfo(post.table.order_id);
-                              setTableOrderOpen(true);
-                            }
-                      }
-                    >
-                      <div
-                        className={
-                          post.table.isWaiterCalled
-                            ? "waitercalltablenumber"
-                            : "tablenumberactive"
-                        }
-                      >
-                        T{post.table.index}
-                      </div>
-
-                      <div className="center">
-                        <div className="imagecenter">
-                          <img
-                            src={
-                              post.table.isWaiterCalled ? Waitercall : Customer
-                            }
-                            className={
-                              post.table.isWaiterCalled
-                                ? "waiterimage"
-                                : "customerimage"
-                            }
-                          />
-                        </div>
-
-                        <div
-                          className={
-                            post.table.isWaiterCalled
-                              ? "waitercallactive"
-                              : "tablecustomeractive"
-                          }
-                        >
-                          <img
-                            src={Customer}
-                            className={
-                              post.table.isWaiterCalled
-                                ? "customerwaiterimage"
-                                : "null"
-                            }
-                          />{" "}
-                          {post.table.customerCount} Customer
-                        </div>
-                      </div>
-                      {post.table.order_id != "NULL" ? (
-                        <div
-                          className={
-                            post.table.isWaiterCalled ? "waitertime" : "time"
-                          }
-                        >
-                          <div
-                            className={
-                              post.table.isWaiterCalled
-                                ? "waitertimestart"
-                                : "tabletimestart"
+            tableData.map((post) => {
+             console.log("Table Data is:", tableData)
+              return post.map((posts, index)=>{
+                
+                if (posts.table.status == "EMPTY") {
+          
+                  return (
+              
+                    <div className="innergrid">
+                      <div className="emptygrid">
+                        <div className={edittable ? "emptytable" : "null"}>
+                          <button
+                            className="deletetablebutton"
+                            type="button"
+                            onClick={() =>
+                              handledeletetable(posts.table.index, posts.table.id)
                             }
                           >
-                            {orderTime.toLocaleTimeString("en-US", timeOptions)}
+                            Delete
+                          </button>
+                        </div>
+                        <button className="tabledetails">
+                          <div className="tablenumberempty">
+                            T{posts.table.index}
+                          </div>
+                          <div className="emptycenter">
+                            <div className="tableempty">Empty</div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+                if (posts.table.status == "FILLED") {
+                  // Time
+                  const orderTime = new Date(posts.table.timeStart);
+                  const timeOptions = {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  };
+  
+                  return (
+                    <div className="innergrid">
+                      <button
+                        className={
+                          posts.table.isWaiterCalled
+                            ? "tablewaiteractive"
+                            : "tabledetailsactive"
+                        }
+                        onClick={
+                          posts.table.isWaiterCalled
+                            ? () => {
+                                handlepasswaiterinfo(posts.table.index);
+                                setTableWaiterOpen(true);
+                                setTableIndex(posts.table.index)
+                              }
+                            : posts.table.order_id == "NULL"
+                            ? () => setTableNoOrderOpen(true)
+                            : () => {
+                                handlePassinginfo(posts.table.order_id);
+                                setTableOrderOpen(true);
+                              }
+                        }
+                      >
+                        <div
+                          className={
+                            posts.table.isWaiterCalled
+                              ? "waitercalltablenumber"
+                              : "tablenumberactive"
+                          }
+                        >
+                          T{posts.table.index}
+                        </div>
+  
+                        <div className="center">
+                          <div className="imagecenter">
+                            <img
+                              src={
+                                posts.table.isWaiterCalled ? Waitercall : Customer
+                              }
+                              className={
+                                posts.table.isWaiterCalled
+                                  ? "waiterimage"
+                                  : "customerimage"
+                              }
+                            />
+                          </div>
+  
+                          <div
+                            className={
+                              posts.table.isWaiterCalled
+                                ? "waitercallactive"
+                                : "tablecustomeractive"
+                            }
+                          >
+                            <img
+                              src={Customer}
+                              className={
+                                posts.table.isWaiterCalled
+                                  ? "customerwaiterimage"
+                                  : "null"
+                              }
+                            />{" "}
+                            {posts.table.customerCount} Customer
                           </div>
                         </div>
-                      ) : (
-                        <div className="notime">&nbsp;</div>
-                      )}
-                    </button>
-                  </div>
-                );
-              }
+                        {posts.table.order_id != "NULL" ? (
+                          <div
+                            className={
+                              posts.table.isWaiterCalled ? "waitertime" : "time"
+                            }
+                          >
+                            <div
+                              className={
+                                posts.table.isWaiterCalled
+                                  ? "waitertimestart"
+                                  : "tabletimestart"
+                              }
+                            >
+                              {orderTime.toLocaleTimeString("en-US", timeOptions)}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="notime">&nbsp;</div>
+                        )}
+                      </button>
+                    </div>
+                  );
+                }
+              })
+            
             })}
         </div>
 

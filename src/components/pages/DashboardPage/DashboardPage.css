@@ -2,7 +2,11 @@
   width: 100%;
   background-color: #fffaf4;
   height: 100vh;
-  overflow: hidden;
+  overflow: scroll;
+}
+
+.container::-webkit-scrollbar{
+  display: none;
 }
 
 .dashboardsection {
@@ -12,6 +16,7 @@
   margin-top: 2%;
   margin-left: 4%;
   margin-right: 4%;
+  padding-bottom: 5%;
   align-items: flex-start;
   overflow: scroll;
 }

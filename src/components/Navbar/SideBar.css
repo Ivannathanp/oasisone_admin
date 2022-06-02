@@ -7,10 +7,15 @@
   position: relative;
   z-index: 1;
   margin: 0;
+overflow-y: scroll;
+}
+
+.sidebar::-webkit-scrollbar{
+  display: none;
 }
 
 .sidebar-container {
-  height: 100%;
+  height: 100vh;
   margin-left: -10%;
 }
 
@@ -46,7 +51,7 @@
   height: 55px;
   display: flex;
   align-items: center;
-  background-color: #a61313;
+  background-color: #00000065;
   border-radius: 10px;
   transition: all 0.2s ease-out;
   box-shadow: none;
@@ -56,7 +61,7 @@
   width: 308px;
   height: 55px;
   color: #fcd232 !important;
-  background-color: #a61313;
+  background-color: #00000065;
   border-radius: 10px;
   transition: all 0.2s ease-out;
   box-shadow: none;

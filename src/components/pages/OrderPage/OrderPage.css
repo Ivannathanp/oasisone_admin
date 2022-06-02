@@ -171,37 +171,6 @@
   border-radius: 5px;
   background-color: #ffa800;
 }
-.rejected {
-  display: flex;
-  align-items: center;
-  padding: 2% 15%;
-  height: 25px;
-  white-space: nowrap;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 17px;
-  border-radius: 5px;
-  color: #ff7878;
-  background-color: transparent;
-  border: 1px solid #ff7878;
-}
-.modalrejectedstatus {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2% 15%;
-  height: 25px;
-  white-space: nowrap;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 17px;
-  border-radius: 5px;
-  color: #fff;
-  background-color: #e52c32;
-  border: none;
-}
 .payment {
   display: flex;
   align-items: center;
@@ -233,6 +202,38 @@
   border: 1px solid #1cab33;
 }
 
+.rejected {
+  display: flex;
+  align-items: center;
+  padding: 2% 15%;
+  height: 25px;
+  white-space: nowrap;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 17px;
+  border-radius: 5px;
+  color: #ff7878;
+  background-color: transparent;
+  border: 1px solid #ff7878;
+}
+.modalrejectedstatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2% 15%;
+  height: 25px;
+  white-space: nowrap;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 17px;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #e52c32;
+  border: none;
+}
+
 .ordertablenumber {
   display: flex;
   justify-content: center;
@@ -254,23 +255,6 @@
 }
 
 .proceed {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2% 5%;
-  width: 91px;
-  height: 25px;
-  white-space: nowrap;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 17px;
-  color: #fff;
-  border-radius: 5px;
-  background-color: #34ae47;
-}
-
-.serve {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -575,6 +559,7 @@
   font-weight: 600;
   font-size: 10px;
   color: #424242;
+  margin-bottom: 2%;
 }
 
 .orderdetailmenuprice {
@@ -582,7 +567,6 @@
   font-weight: 400;
   font-size: 10px;
   color: #424242;
-  margin-top: 5%;
 }
 
 .ordertotalsummary {

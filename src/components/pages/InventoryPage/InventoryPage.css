@@ -373,6 +373,32 @@ input[class~="productinputfile"] {
   color: #fff;
 }
 
+.noerrormessage{
+height: 6px
+}
+
+.productnoerrormessage{
+  height: 6px
+}
+.errormessage {
+  margin-top: -20px;
+  margin-left: 5px;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  color: #df3030;
+}
+
+.producterrormessage {
+ 
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  color: #df3030;
+}
+
 .removebutton {
   width: 150px;
   height: 40px;
@@ -554,6 +580,7 @@ input[class~="productinputfile"] {
 .recommended {
   font-size: 5px;
   color: #fff;
+  margin-bottom: 1%;
 }
 
 .catmenuprice {

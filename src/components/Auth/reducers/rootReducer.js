@@ -4,8 +4,7 @@ import { combineReducers } from "redux";
 import { sessionReducer } from "redux-react-session";
 
 const rootReducer = combineReducers({
-    session: sessionReducer
+  session: sessionReducer,
 });
 
-
-export default rootReducer
+export default rootReducer;

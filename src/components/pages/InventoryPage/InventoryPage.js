@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../TopBar/TopBar.css";
 import "./InventoryPage.css";
 import NumberFormat from "react-number-format";
@@ -40,6 +40,7 @@ function InventoryPage({ tenant }) {
   const [addcategoryopen, setAddCategoryOpen] = useState(false);
   const [editcategory, setEditCategory] = useState(false);
 
+  const [ValidCategoryName, setValidCategoryName] = useState(true);
   const [newCategoryName, setNewCategoryName] = useState();
   const [categoryName, setCategoryName] = useState();
   const [categoryID, setCategoryID] = useState();
@@ -67,6 +68,7 @@ function InventoryPage({ tenant }) {
     price,
     recommend,
     description,
+    quantity
   ) {
     setEditItemOpen(true);
     setItemName(name);
@@ -76,15 +78,16 @@ function InventoryPage({ tenant }) {
     setCategoryID(category);
     setProductImage(menuImage);
     setItemIsRecommended(recommend);
+    setItemQuantity(quantity);
   }
   const iosStyles = useIosSwitchStyles();
 
   function handleMove(id, direction) {
-    const items = inventoryData;
-    console.log("inventory", items);
+    const items = inventoryData[0];
+
 
     const position = items.findIndex((i) => i.category.id === id);
-    console.log(position);
+
 
     if (position < 0) {
       throw new Error("Given item not found.");
@@ -99,15 +102,15 @@ function InventoryPage({ tenant }) {
     const newItems = items.filter((i) => i.category.id !== id); // remove item from array
     newItems.splice(position + direction, 0, item);
 
-    setInventoryData(newItems);
+    setInventoryData([newItems]);
   }
 
   const [itemval, setItemval] = useState([]);
 
   function handleIncrement(i, v) {
     {
-      inventoryData.map((post, index) => {
-        {
+      inventoryData.map((item) => {
+        return item.map((post, index) => {
           if (post.category.id === i) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
@@ -125,29 +128,29 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                      console.log(result);
-                    } else {
-                      console.log(result);
-                    }
+               
+                      socket.emit("update category", result.data);
+                      setInventoryData([result.data]);
+                    } 
                   });
               }
             });
           }
           setItemval({ post });
-        }
+        });
       });
     }
   }
 
   function handleDecrement(i, v) {
     {
-      inventoryData.map((post, index) => {
-        {
+      inventoryData.map((item) => {
+        return item.map((post, index) => {
           if (post.category.id === i) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
                 posts.quantity = parseInt(posts.quantity) - 1;
-                console.log(posts.quantity);
+               
                 const url = localUrl + "/edit/" + tenant.tenant_id;
                 fetch(url, {
                   method: "POST",
@@ -161,16 +164,16 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                      console.log(result);
-                    } else {
-                      console.log(result);
-                    }
+                     
+                      socket.emit("update category", result.data);
+                      setInventoryData([result.data]);
+                    } 
                   });
               }
             });
           }
           setItemval({ post });
-        }
+        });
       });
     }
   }
@@ -181,8 +184,8 @@ function InventoryPage({ tenant }) {
 
   function handlequantityvalChange(i, v, j) {
     {
-      inventoryData.map((post, index) => {
-        {
+      inventoryData.map((item) => {
+        return item.map((post, index) => {
           if (post.category.id === i) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
@@ -200,16 +203,16 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                      console.log(result);
-                    } else {
-                      console.log(result);
-                    }
+                
+                      socket.emit("update category", result.data);
+                      setInventoryData([result.data]);
+                    } 
                   });
               }
             });
           }
           setItemval({ post });
-        }
+        });
       });
     }
   }
@@ -258,8 +261,14 @@ function InventoryPage({ tenant }) {
   const [menuAdded, setMenuAdded] = useState(false);
   const [menuEditted, setMenuEditted] = useState(false);
   const [menuRemoved, setMenuRemoved] = useState(false);
-  function handlenotification(){
-    if(categoryAdded || categoryEditted || menuAdded || menuEditted || menuRemoved){
+  function handlenotification() {
+    if (
+      categoryAdded ||
+      categoryEditted ||
+      menuAdded ||
+      menuEditted ||
+      menuRemoved
+    ) {
       setCategoryAdded(false);
       setCategoryEditted(false);
       setMenuAdded(false);
@@ -267,6 +276,7 @@ function InventoryPage({ tenant }) {
       setMenuRemoved(false);
     }
   }
+
   // Get Inventory Data
   useEffect(() => {
     let mounted = true;
@@ -282,7 +292,7 @@ function InventoryPage({ tenant }) {
           .then((response) => response.json())
           .then((result) => {
             if (result.status === "SUCCESS") {
-              setInventoryData(() => result.data);
+              setInventoryData([result.data]);
               setInventoryRetrieved(() => true);
             } else {
               setInventoryRetrieved(() => false);
@@ -295,13 +305,91 @@ function InventoryPage({ tenant }) {
     };
   }, [tenant, inventoryRetrieved]);
 
-  async function handleAddCategory(name) {
-    setCategoryAdded(true);
- 
-    setTimeout(() => {
-      setCategoryAdded(false);
-    }, 3000);
+  // socket connection
+  const socket = useContext(SocketContext);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("add category", (data) => handleCategoryAdded(data));
+      socket.on("add order", (data) => handleOrderAdded(data));
+      socket.on("update category", (data) => handleCategoryUpdated(data));
+      socket.on("delete category", (data) => handleCategoryRemoved(data));
+
+    }
+  });
+
+  function handleCategoryAdded(user) {
+
+
+    if (inventoryRetrieved) {
+
+
+      let newData = inventoryData.splice();
+
+      newData.push(user);
+      setInventoryData(newData);
+
+    }
+  }
+
+  function handleOrderAdded(){
+    if (inventoryRetrieved) {
+
+    
+  
+      const url = localUrl + "/category/" + tenant.tenant_id;
+
+      fetch(url, {
+        method: "GET",
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            setInventoryData([result.data]);
+            setInventoryRetrieved(() => true);
+          } else {
+            setInventoryRetrieved(() => false);
+          }
+        });
+  
+    
+      console.log("NEW Inventory DATA IS!!!!!!!!!: ");
+  
+     
+      }
+    
+  }
+
+  function handleCategoryUpdated(user) {
+
+
+    if (inventoryRetrieved) {
+
+
+      let newData = inventoryData.splice();
+
+      newData.push(user);
+      setInventoryData(newData);
+
+    }
+  }
+
+  function handleCategoryRemoved(user) {
+   
+
+    if (inventoryRetrieved) {
+     
+
+      let newData = inventoryData.splice();
+
+      newData.push(user);
+      setInventoryData(newData);
+   
+    }
+  }
+
+  async function handleAddCategory(name) {
     const url = localUrl + "/category/create/" + tenant.tenant_id;
     fetch(url, {
       method: "POST",
@@ -312,14 +400,23 @@ function InventoryPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "SUCCESS") {
-          console.log(result);
+        if (result.status !== "FAILED") {
+          setCategoryAdded(true);
+
+          setTimeout(() => {
+            setCategoryAdded(false);
+          }, 3000);
+      
+          socket.emit("add category", result.data);
+          setInventoryData([result.data]);
+
+          setAddCategoryOpen(false);
+          setValidCategoryName(true);
         } else {
-          console.log(result);
+    
+          setValidCategoryName(false);
         }
       });
-
-    setAddCategoryOpen(false);
   }
 
   async function handleEditCategory() {
@@ -330,11 +427,10 @@ function InventoryPage({ tenant }) {
       setCategoryEditted(true);
       setTimeout(() => {
         setCategoryEditted(false);
-      }, 3000); 
+      }, 3000);
 
-      inventoryData.map(async (item, index) => {
-        console.log(index);
-        console.log(item.category.id);
+      inventoryData[0].map(async (item, index) => {
+   
 
         await fetch(url, {
           method: "POST",
@@ -346,11 +442,9 @@ function InventoryPage({ tenant }) {
         })
           .then((response) => response.json())
           .then((result) => {
-            if (result.status === "SUCCESS") {
-              console.log(result);
-            } else {
-              console.log(result);
-            }
+       
+            socket.emit("update category", result.data);
+            setInventoryData([result.data]);
           });
       });
     } else {
@@ -359,34 +453,26 @@ function InventoryPage({ tenant }) {
   }
 
   async function handleRemoveCategory(id) {
-    const url = localUrl + "/category/delete/" + id;
+    const url = localUrl + "/category/delete/" + tenant.tenant_id + "/" + id;
     fetch(url, {
       method: "POST",
       headers: { "content-type": "application/JSON" },
     })
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "SUCCESS") {
-          console.log(result);
-        } else {
-          console.log(result);
-        }
+   
+        socket.emit("delete category", result.data);
+        setInventoryData([result.data]);
       });
 
     setRemoveCategoryOpen(false);
   }
 
   async function handleAddItem() {
-    setMenuAdded(true);
-    setTimeout(() => {
-      setMenuAdded(false);
-    }, 3000); //wait 5 seconds
-
     let formData = new FormData();
     const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
-    var input = document.querySelector('input[type="file"]')
+    var input = document.querySelector('input[type="file"]');
     formData.append("menu", input.files[0]);
-
 
     fetch(menuUrl, {
       method: "POST",
@@ -394,12 +480,11 @@ function InventoryPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
+   
       })
       .catch((error) => {
         console.error("Error Upload Logo:", error);
       });
-
 
     const url = localUrl + "/create/" + tenant.tenant_id;
 
@@ -412,9 +497,10 @@ function InventoryPage({ tenant }) {
       menu_price: itemPrice,
       menu_quantity: itemQuantity,
       menu_isAvailable: itemQuantity > 0 ? true : false,
-      menu_image : imageUrl + "/menu/render/" + tenant.tenant_id + "/" + itemName + ".jpg"
+      menu_image:
+        imageUrl + "/menu/render/" + tenant.tenant_id + "/" + itemName + ".jpg",
     });
-    console.log(payload);
+  
 
     fetch(url, {
       method: "POST",
@@ -423,83 +509,144 @@ function InventoryPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
+     
         if (result.status === "SUCCESS") {
-          console.log(result);
+          setMenuAdded(true);
+          setTimeout(() => {
+            setMenuAdded(false);
+          }, 3000); //wait 5 seconds
+
+        
+          socket.emit("add category", result.data);
+          setInventoryData([result.data]);
+     
+          setAdditemopen(false);
+          setProductImage();
+          setItemIsRecommended();
+          setValidCategoryName(true);
         } else {
-          console.log(result);
+   
+          setValidCategoryName(false);
         }
       });
-
-    setAdditemopen(false);
-    setProductImage();
-    setItemIsRecommended();
   }
 
   async function handleEditItem() {
-    setMenuEditted(true);
-    setTimeout(() => {
-      setMenuEditted(false);
-    }, 3000);
+    const url = localUrl + "/edit/" + tenant.tenant_id;
 
     let formData = new FormData();
     const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
-    var input = document.querySelector('input[type="file"]')
-    formData.append("menu", input.files[0]);
+    var input = document.querySelector('input[type="file"]');
 
+    if(input.files[0] != undefined){
+     
+      formData.append("menu", input.files[0]);
+ 
 
-    fetch(menuUrl, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
+      fetch(menuUrl, {
+        method: "POST",
+        body: formData,
       })
-      .catch((error) => {
-        console.error("Error Upload Logo:", error);
+        .then((response) => response.json())
+        .then((result) => {
+
+        })
+        .catch((error) => {
+          console.error("Error Upload Logo:", error);
+        });
+
+        const payload = JSON.stringify({
+          cat_id: categoryID,
+          menu_id: itemID,
+          menu_name: itemName,
+          menu_duration: itemDuration,
+          menu_desc: itemDescription,
+          menu_isRecommended: itemIsRecommended,
+          menu_price: itemPrice,
+          menu_quantity: itemQuantity,
+          menu_isAvailable: itemQuantity > 0 ? true : false,
+          menu_image:
+            imageUrl + "/menu/render/" + tenant.tenant_id + "/" + itemName + ".jpg",
+        });
+
+        fetch(url, {
+          method: "POST",
+          body: payload,
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setMenuEditted(true);
+              setTimeout(() => {
+                setMenuEditted(false);
+              }, 3000);
+            
+              socket.emit("update category", result.data);
+              setInventoryData([result.data]);
+         
+              setEditItemOpen(false);
+              setProductImage();
+              setItemIsRecommended();
+              setValidCategoryName(true);
+            } else {
+  
+              setValidCategoryName(false);
+            }
+          });
+
+    } else {
+      const payload = JSON.stringify({
+        cat_id: categoryID,
+        menu_id: itemID,
+        menu_name: itemName,
+        menu_duration: itemDuration,
+        menu_desc: itemDescription,
+        menu_isRecommended: itemIsRecommended,
+        menu_price: itemPrice,
+        menu_quantity: itemQuantity,
+        menu_isAvailable: itemQuantity > 0 ? true : false,        
       });
 
-    const url = localUrl + "/edit/" + tenant.tenant_id;
-    const payload = JSON.stringify({
-      cat_id: categoryID,
-      menu_id: itemID,
-      menu_name: itemName,
-      menu_duration: itemDuration,
-      menu_desc: itemDescription,
-      menu_isRecommended: itemIsRecommended,
-      menu_price: itemPrice,
-      menu_quantity: itemQuantity,
-      menu_isAvailable: itemQuantity > 0 ? true : false,
-      menu_image : imageUrl + "/menu/render/" + tenant.tenant_id + "/" + itemName + ".jpg"
-    });
+      fetch(url, {
+        method: "POST",
+        body: payload,
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            setMenuEditted(true);
+            setTimeout(() => {
+              setMenuEditted(false);
+            }, 3000);
+ 
+            socket.emit("update category", result.data);
+            setInventoryData([result.data]);
 
-    fetch(url, {
-      method: "POST",
-      body: payload,
-      headers: { "content-type": "application/JSON" },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status === "SUCCESS") {
-          console.log(result);
-        } else {
-          console.log(result);
-        }
-      });
+            setEditItemOpen(false);
+            setProductImage();
+            setItemIsRecommended();
+            setValidCategoryName(true);
+          } else {
+           
+            setValidCategoryName(false);
+          }
+        });
+    }
+    
 
-    setEditItemOpen(false);
-    setProductImage();
-    setItemIsRecommended();
+    
+
+   
+
+   
+
+    
   }
 
   async function handleRemoveItem() {
-    setMenuRemoved(true);
-    setTimeout(() => {
-      setMenuRemoved(false);
-    }, 3000); //wait 5 seconds
-
-    const url = localUrl + "/delete/" + itemID;
+    const url = localUrl + "/delete/" + tenant.tenant_id + "/" + itemID;
     fetch(url, {
       method: "POST",
       headers: { "content-type": "application/JSON" },
@@ -507,15 +654,18 @@ function InventoryPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          console.log(result);
-        } else {
-          console.log(result);
-        }
+          setMenuRemoved(true);
+          setTimeout(() => {
+            setMenuRemoved(false);
+          }, 3000); //wait 5 seconds
+          socket.emit("delete category", result.data);
+          setInventoryData([result.data]);
+          setEditItemOpen(false);
+          setProductImage();
+          setItemIsRecommended();
+          setValidCategoryName(true);
+        } 
       });
-
-    setEditItemOpen(false);
-    setProductImage();
-    setItemIsRecommended();
   }
 
   return (
@@ -526,578 +676,658 @@ function InventoryPage({ tenant }) {
         <TopBar />
       </div>
 
-{inventoryRetrieved? (  <div className="inventorysection">
-        <Modal open={addcategoryopen}>
-          <Box className="modalbox">
-            <div className="innerbox">
-              <div className="modaltitle">Category Name</div>
-              <div className="modalform">
-                <div className="inputlabel">Category Name</div>
-                <input
-                  type="text"
-                  className="inputfile"
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                />
-              </div>
-
-              <div className="modalbutton">
-                <button
-                  onClick={() => {
-                    setAddCategoryOpen(false);
-                  }}
-                  className="cancelbutton"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  onClick={() => handleAddCategory(newCategoryName)}
-                  className="savebutton"
-                >
-                  Save Category
-                </button>
-              </div>
-            </div>
-          </Box>
-        </Modal>
-
-        <Modal open={additemopen}>
-          <Box className="productmodalbox">
-            <div className="innerbox">
-              <div className="modaltitle">Product add</div>
-              <div className="modalform">
-                <form>
-                  <div className="productinputrow">
-                    <div className="productinputtext">
-                      <div className="inputlabel">Product Name</div>
-                      <input
-                        type="text"
-                        className="inputfile"
-                        onChange={(e) => setItemName(e.target.value)}
-                      />
-                      <div className="inputlabel">Product Category</div>
-                      <div className="catselector">
-                        <Select
-                          defaultValue=""
-                          disableUnderline
-                          classes={{ root: minimalSelectClasses.select }}
-                          MenuProps={menuProps}
-                          IconComponent={iconComponent}
-                          value={categoryID}
-                          onChange={(e) => setCategoryID(e.target.value)}
-                        >
-                          {inventoryRetrieved == true &&
-                            inventoryData.map((post, index) => (
-                              <MenuItem value={post.category.id}>
-                                {post.category.name}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </div>
-                      <div className="inputlabel">Product Cooking Time</div>
-                      <div class="MPOC" data-placeholder="Minutes"></div>
-                      <input
-                        type="text"
-                        className="inputcookingtime"
-                        onChange={(e) => setItemDuration(e.target.value)}
-                      />
-
-                      <div className="inputlabel">Product Price</div>
-                      <div class="POC" data-placeholder="Rp.">
-                        <input
-                          type="text"
-                          className="inputpricefile"
-                          onChange={(e) => setItemPrice(e.target.value)}
-                          data-mask="000.000.000"
-                          data-mask-reverse="true"
-                        />
-                      </div>
-                    </div>
-                    <div className="productinputimage">
-                      <div className="inputlabel">Product Picture</div>
-                      <div className="productimagepreview">
-                        <img src={productImage} className="productimage" />
-                      </div>
-                      <div className="imagebuttoncontainer">
-                        <div className="productimagebutton">
-                          <label for="file-input">
-                            <img src={inputimage} />
-                          </label>
-
-                          <input
-                            id="file-input"
-                            type="file"
-                            name="menu"
-                            className="productinputfile"
-                            onChange={(handleChange, imageHandler)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="inputlabel">Product Detail</div>
-                  <textarea
+      {inventoryRetrieved ? (
+        <div className="inventorysection">
+          <Modal open={addcategoryopen}>
+            <Box className="modalbox">
+              <div className="innerbox">
+                <div className="modaltitle">Category Name</div>
+                <div className="modalform">
+                  <div className="inputlabel">Category Name</div>
+                  <input
                     type="text"
-                    className="inputdetailfile"
-                    onChange={(e) => setItemDescription(e.target.value)}
-                  />
-
-                  <div className="recommendcontainer">
-                    <div className="recommendtext">
-                      Do you recommend this product?
-                    </div>
-                    <div className="switchbutton">
-                      <Switch
-                        classes={iosStyles}
-                        checked={itemIsRecommended}
-                        onChange={(e) => {
-                          setItemIsRecommended(e.target.checked);
-                          console.log("checked", e.target.checked);
-                        }}
-                      />
-                      <img src={recommended} className="recommendimage" />
-                    </div>
-                  </div>
-                </form>
-              </div>
-
-              <div className="modalbutton">
-                <button
-                  onClick={() => {
-                    setAdditemopen(false);
-                    setProductImage();
-    setItemIsRecommended();
-                  }}
-                  className="cancelbutton"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  onClick={() => handleAddItem()}
-                  className="savebutton"
-                >
-                  Save Product
-                </button>
-              </div>
-            </div>
-          </Box>
-        </Modal>
-
-        <Modal open={edititemopen}>
-          <Box className="productmodalbox">
-            <div className="productinnerbox">
-              <div className="modaltitle">Product Edit</div>
-              <div className="modalform">
-                <form>
-                  <div className="productinputrow">
-                    <div className="productinputtext">
-                      <div className="inputlabel">Product Name</div>
-                      <input
-                        type="text"
-                        value={itemName}
-                        className="inputfile"
-                        onChange={(e) => setItemName(e.target.value)}
-                      />
-                      <div className="inputlabel">Product Category</div>
-                      <div className="catselector">
-                        <Select
-                          disableUnderline
-                          classes={{ root: minimalSelectClasses.select }}
-                          MenuProps={menuProps}
-                          IconComponent={iconComponent}
-                          value={categoryID}
-                          onChange={(e) => setCategoryID(e.target.value)}
-                        >
-                          {inventoryRetrieved == true &&
-                            inventoryData.map((post, index) => (
-                              <MenuItem value={post.category.id}>
-                                {" "}
-                                {post.category.name}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </div>
-                      <div className="inputlabel">Product Cooking Time</div>
-                      <div class="MPOC" data-placeholder="Minutes"></div>
-                      <input
-                        type="text"
-                        className="inputcookingtime"
-                        value={itemDuration}
-                        onChange={(e) => setItemDuration(e.target.value)}
-                      />
-                      <div className="inputlabel">Product Price</div>
-                      <div class="POC" data-placeholder="Rp.">
-                        <input
-                          type="text"
-                          value={itemPrice}
-                          className="inputpricefile"
-                          onChange={(e) => setItemPrice(e.target.value)}
-                          data-mask="000.000.000"
-                          data-mask-reverse="true"
-                        />
-                      </div>
-                    </div>
-                    <div className="productinputimage">
-                      <div className="inputlabel">Product Picture</div>
-                      <div className="productimagepreview">
-                        <img src={productImage} className="productimage" />
-                      </div>
-                      <div className="imagebuttoncontainer">
-                        <div className="productimagebutton">
-                          <label for="file-input">
-                            <img src={inputimage} />
-                          </label>
-
-                          <input
-                            id="file-input"
-                            type="file"
-                            name="menu"
-                            className="productinputfile"
-                            onChange={(handleChange, imageHandler)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="inputlabel">Product Detail</div>
-                  <textarea
-                    type="text"
-                    className="inputdetailfile"
-                    value={itemDescription}
-                    onChange={(e) => setItemDescription(e.target.value)}
-                  />
-
-                  <div className="recommendcontainer">
-                    <div className="recommendtext">
-                      Do you recommend this product?
-                    </div>
-                    <div className="switchbutton">
-                      <Switch
-                        classes={iosStyles}
-                        checked={itemIsRecommended}
-                        onChange={(e) => setItemIsRecommended(e.target.checked)}
-                      />
-                      <img src={recommended} className="recommendimage" />
-                    </div>
-                  </div>
-                </form>
-              </div>
-
-              <div className="modalbutton">
-                <button
-                  onClick={() => {
-                    setEditItemOpen(false);
-                    setProductImage();
-    setItemIsRecommended();
-                  }}
-                  className="cancelbutton"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  onClick={() => handleRemoveItem()}
-                  className="removebutton"
-                >
-                  Remove Product
-                </button>
-                <button
-                  type="submit"
-                  onClick={() => handleEditItem()}
-                  className="savebutton"
-                >
-                  Save Product
-                </button>
-              </div>
-            </div>
-          </Box>
-        </Modal>
-
-        <Modal open={removecategoryopen}>
-          <Box className="removecatmodalbox">
-            <div className="removecatinnerbox">
-              <div className="removecatheading">
-                <img src={removecat} className="removecatimage" />
-                <div className="removecatmodaltitle">Remove Category</div>
-              </div>
-              <div className="removecatmodaltext">
-                Are you sure to remove the{" "}
-                <span style={{ color: "#f10c0c" }}>"{categoryName}"</span>{" "}
-                category in your menu?
-              </div>
-
-              <div className="removecatmodalbuttoncontainer">
-                <div>
-                  <button
-                    className="modalcancelbutton"
-                    onClick={() => {
-                      setRemoveCategoryOpen(false);
-                      setCategoryName();
-                      setCategoryID();
+                    className="inputfile"
+                    onChange={(e) => {
+                      setNewCategoryName(e.target.value);
+                      setValidCategoryName(true);
                     }}
+                  />
+                  {ValidCategoryName ? (
+                    <div className="noerrormessage">&nbsp;</div>
+                  ) : (
+                    <div className="errormessage">
+                      Category name already exists!
+                    </div>
+                  )}
+                </div>
+
+                <div className="modalbutton">
+                  <button
+                    onClick={() => {
+                      setAddCategoryOpen(false);
+                    }}
+                    className="cancelbutton"
                   >
                     Cancel
                   </button>
-                </div>
-                <div>
                   <button
-                    className="modalconfirmbutton"
-                    onClick={() => handleRemoveCategory(categoryID)}
+                    type="submit"
+                    onClick={() => handleAddCategory(newCategoryName)}
+                    className="savebutton"
                   >
-                    Remove
+                    Save Category
                   </button>
                 </div>
               </div>
-            </div>
-          </Box>
-        </Modal>
+            </Box>
+          </Modal>
 
-        <div className="inventoryoutercontainer">
-          <div
-            className={categoryAdded || categoryEditted || menuAdded || menuEditted || menuRemoved ? "inventorynotification" : "hidden"}
-          >
-
-            <div className="notificationtextcontainer">
-              <div className="notificationtext">{categoryAdded? "New Category Added " : categoryEditted? "Category Saved" : menuAdded? "New Menu Added" : menuEditted? "Menu Edited" : " Menu Removed" }   </div>
-            </div>
-
-            <div className="notificationclose">
-              <button
-                className="notifclosebutton"
-                onClick={handlenotification}
-              >
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-            </div>
-          </div>
-
-          <div className="inventorycontainergrid">
-            {inventoryRetrieved == true &&
-              inventoryData.map((item, index) => {
-                return (
-                  <div className="categorycontainer" key={item.category.id}>
-                    <div className="inventorycatergoryheading">
-                      <div className="categoryname">{item.category.name}</div>
-                      {editcategory ? (
-                        <>
-                          <div className="categorynumber">
-                            <div className="catdown">
-                              <button
-                                className={
-                                  index + 2 > inventoryData.length
-                                    ? "catdownbutton"
-                                    : "catdownbuttonactive"
-                                }
-                                onClick={() => {
-                                  handleMove(item.category.id, DOWN);
-                                  console.log("item id", item.category.id);
-                                }}
-                                //disabled={index<=1? true: false}
-                              >
-                                <FontAwesomeIcon icon={faAngleDown} />
-                              </button>
-                            </div>
-                            <div className="cattext">{index + 1}</div>
-                            <div className="catup">
-                              <button
-                                className={
-                                  index + 1 <= 1
-                                    ? "catupbutton"
-                                    : "catupbuttonactive"
-                                }
-                                onClick={() => handleMove(item.category.id, UP)}
-                                //disabled={index >= 5? true : false}
-                              >
-                                <FontAwesomeIcon icon={faAngleUp} />
-                              </button>
-                            </div>
+          <Modal open={additemopen}>
+            <Box className="productmodalbox">
+              <div className="innerbox">
+                <div className="modaltitle">Product add</div>
+                <div className="modalform">
+                  <form>
+                    <div className="productinputrow">
+                      <div className="productinputtext">
+                        <div className="inputlabel">Product Name</div>
+                        <input
+                          type="text"
+                          className="inputfile"
+                          onChange={(e) => setItemName(e.target.value)}
+                        />
+                        {ValidCategoryName ? (
+                          <div className="noerrormessage">&nbsp;</div>
+                        ) : (
+                          <div className="errormessage">
+                            Category name already exists!
                           </div>
-                          <div className="categoryremove">
-                            <button
-                              className="buttonremove"
-                              onClick={() => {
-                                setRemoveCategoryOpen(() => true);
-                                setCategoryName(item.category.name);
-                                setCategoryID(item.category.id);
-                              }}
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </>
-                      ) : null}
+                        )}
+                        <div className="inputlabel">Product Category</div>
+                        <div className="catselector">
+                          <Select
+                            defaultValue=""
+                            disableUnderline
+                            classes={{ root: minimalSelectClasses.select }}
+                            MenuProps={menuProps}
+                            IconComponent={iconComponent}
+                            value={categoryID}
+                            onChange={(e) => setCategoryID(e.target.value)}
+                          >
+                            {inventoryRetrieved == true &&
+                              inventoryData.map((post) => {
+                       
+                                return post.map((posts, index) => {
+                             
+                                  return (
+                                    <MenuItem value={posts.category.id}>
+                                      {posts.category.name}
+                                    </MenuItem>
+                                  );
+                                });
+                              })}
+                          </Select>
+                        </div>
+                        <div className="inputlabel">Product Cooking Time</div>
+                        <div class="MPOC" data-placeholder="Minutes"></div>
+                        <input
+                          type="text"
+                          className="inputcookingtime"
+                          onChange={(e) => setItemDuration(e.target.value)}
+                        />
 
-                      <div className="additem">
-                        <button
-                          className="add"
-                          onClick={() => {
-                            setAdditemopen(true);
-                            setCategoryID(item.category.id);
-                          }}
-                        >
-                          Add Item
-                        </button>
+                        <div className="inputlabel">Product Price</div>
+                        <div class="POC" data-placeholder="Rp.">
+                          <input
+                            type="text"
+                            className="inputpricefile"
+                            onChange={(e) => setItemPrice(e.target.value)}
+                            data-mask="000.000.000"
+                            data-mask-reverse="true"
+                          />
+                        </div>
+                      </div>
+                      <div className="productinputimage">
+                        <div className="inputlabel">Product Picture</div>
+                        <div className="productimagepreview">
+                          <img src={productImage} className="productimage" />
+                        </div>
+                        <div className="imagebuttoncontainer">
+                          <div className="productimagebutton">
+                            <label for="file-input">
+                              <img src={inputimage} />
+                            </label>
+
+                            <input
+                              id="file-input"
+                              type="file"
+                              name="menu"
+                              className="productinputfile"
+                              onChange={(handleChange, imageHandler)}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="catmenucontainer">
-                      {item.category.menu.length == 0 && (
-                        <div className="emptymenu"> No item</div>
-                      )}
-                      {item.category.menu.map((post, index) => {
-                        return (
-                          <div className="detailmenucontainer">
-                            <div className="catmenuimagecontainer">
-                              <img
-                                src={post.menuImage}
-                                className="menuimage"
-                              />
-                            </div>
-                            <div className="catmenutext">
-                              <div className="catmenutitle">{post.name}</div>
-                              <div className="recommended">
-                                {post.isRecommended === true ? (
-                                  <img src={recommended} />
-                                ) : (
-                                  "null"
-                                )}
+                    <div className="inputlabel">Product Detail</div>
+                    <textarea
+                      type="text"
+                      className="inputdetailfile"
+                      onChange={(e) => setItemDescription(e.target.value)}
+                    />
+
+                    <div className="recommendcontainer">
+                      <div className="recommendtext">
+                        Do you recommend this product?
+                      </div>
+                      <div className="switchbutton">
+                        <Switch
+                          classes={iosStyles}
+                          checked={itemIsRecommended}
+                          onChange={(e) => {
+                            setItemIsRecommended(e.target.checked);
+                  
+                          }}
+                        />
+                        <img src={recommended} className="recommendimage" />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="modalbutton">
+                  <button
+                    onClick={() => {
+                      setAdditemopen(false);
+                      setProductImage();
+                      setItemIsRecommended();
+                    }}
+                    className="cancelbutton"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={() => handleAddItem()}
+                    className="savebutton"
+                  >
+                    Save Product
+                  </button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+
+          <Modal open={edititemopen}>
+            <Box className="productmodalbox">
+              <div className="productinnerbox">
+                <div className="modaltitle">Product Edit</div>
+                {ValidCategoryName ? (
+                  <div className="productnoerrormessage">&nbsp;</div>
+                ) : (
+                  <div className="producterrormessage">
+                    Menu with these details already exists!
+                  </div>
+                )}
+                <div className="modalform">
+                  <form>
+                    <div className="productinputrow">
+                      <div className="productinputtext">
+                        <div className="inputlabel">Product Name</div>
+                        <input
+                          type="text"
+                          value={itemName}
+                          className="inputfile"
+                          onChange={(e) => {
+                            setItemName(e.target.value);
+                            setValidCategoryName(true);
+                          }}
+                        />
+
+                        <div className="inputlabel">Product Category</div>
+                        <div className="catselector">
+                          <Select
+                            disableUnderline
+                            classes={{ root: minimalSelectClasses.select }}
+                            MenuProps={menuProps}
+                            IconComponent={iconComponent}
+                            value={categoryID}
+                            onChange={(e) => setCategoryID(e.target.value)}
+                          >
+                            {inventoryRetrieved == true &&
+                              inventoryData.map((post) => {
+                                return post.map((posts, index) => {
+                                  return (
+                                    <MenuItem value={posts.category.id}>
+                                      {" "}
+                                      {posts.category.name}
+                                    </MenuItem>
+                                  );
+                                });
+                              })}
+                          </Select>
+                        </div>
+                        <div className="inputlabel">Product Cooking Time</div>
+                        <div class="MPOC" data-placeholder="Minutes"></div>
+                        <input
+                          type="text"
+                          className="inputcookingtime"
+                          value={itemDuration}
+                          onChange={(e) => {
+                            setItemDuration(e.target.value);
+                            setValidCategoryName(true);
+                          }}
+                        />
+                        <div className="inputlabel">Product Price</div>
+                        <div class="POC" data-placeholder="Rp.">
+                          <input
+                            type="text"
+                            value={itemPrice}
+                            className="inputpricefile"
+                            onChange={(e) => setItemPrice(e.target.value)}
+                            data-mask="000.000.000"
+                            data-mask-reverse="true"
+                          />
+                        </div>
+                      </div>
+                      <div className="productinputimage">
+                        <div className="inputlabel">Product Picture</div>
+                        <div className="productimagepreview">
+                          <img src={productImage} className="productimage" />
+                        </div>
+                        <div className="imagebuttoncontainer">
+                          <div className="productimagebutton">
+                            <label for="file-input">
+                              <img src={inputimage} />
+                            </label>
+
+                            <input
+                              id="file-input"
+                              type="file"
+                              name="menu"
+                              className="productinputfile"
+                              onChange={(handleChange, imageHandler)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="inputlabel">Product Detail</div>
+                    <textarea
+                      type="text"
+                      className="inputdetailfile"
+                      value={itemDescription}
+                      onChange={(e) => {
+                        setItemDescription(e.target.value);
+                        setValidCategoryName(true);
+                      }}
+                    />
+
+                    <div className="recommendcontainer">
+                      <div className="recommendtext">
+                        Do you recommend this product?
+                      </div>
+                      <div className="switchbutton">
+                        <Switch
+                          classes={iosStyles}
+                          checked={itemIsRecommended}
+                          onChange={(e) => {
+                            setItemIsRecommended(e.target.checked);
+                            setValidCategoryName(true);
+                          }}
+                        />
+                        <img src={recommended} className="recommendimage" />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="modalbutton">
+                  <button
+                    onClick={() => {
+                      setEditItemOpen(false);
+                      setProductImage();
+                      setItemIsRecommended();
+                    }}
+                    className="cancelbutton"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={() => handleRemoveItem()}
+                    className="removebutton"
+                  >
+                    Remove Product
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={() => handleEditItem()}
+                    className="savebutton"
+                  >
+                    Save Product
+                  </button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+
+          <Modal open={removecategoryopen}>
+            <Box className="removecatmodalbox">
+              <div className="removecatinnerbox">
+                <div className="removecatheading">
+                  <img src={removecat} className="removecatimage" />
+                  <div className="removecatmodaltitle">Remove Category</div>
+                </div>
+                <div className="removecatmodaltext">
+                  Are you sure to remove the{" "}
+                  <span style={{ color: "#f10c0c" }}>"{categoryName}"</span>{" "}
+                  category in your menu?
+                </div>
+
+                <div className="removecatmodalbuttoncontainer">
+                  <div>
+                    <button
+                      className="modalcancelbutton"
+                      onClick={() => {
+                        setRemoveCategoryOpen(false);
+                        setCategoryName();
+                        setCategoryID();
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      className="modalconfirmbutton"
+                      onClick={() => handleRemoveCategory(categoryID)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+
+          <div className="inventoryoutercontainer">
+            <div
+              className={
+                categoryAdded ||
+                categoryEditted ||
+                menuAdded ||
+                menuEditted ||
+                menuRemoved
+                  ? "inventorynotification"
+                  : "hidden"
+              }
+            >
+              <div className="notificationtextcontainer">
+                <div className="notificationtext">
+                  {categoryAdded
+                    ? "New Category Added "
+                    : categoryEditted
+                    ? "Category Saved"
+                    : menuAdded
+                    ? "New Menu Added"
+                    : menuEditted
+                    ? "Menu Edited"
+                    : " Menu Removed"}{" "}
+                </div>
+              </div>
+
+              <div className="notificationclose">
+                <button
+                  className="notifclosebutton"
+                  onClick={handlenotification}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              </div>
+            </div>
+
+            <div className="inventorycontainergrid">
+              {inventoryRetrieved == true &&
+                inventoryData.map((post) => {
+                  return post.map((item, index) => {
+                    return (
+                      <div className="categorycontainer" key={item.category.id}>
+                        <div className="inventorycatergoryheading">
+                          <div className="categoryname">
+                            {item.category.name}
+                          </div>
+                          {editcategory ? (
+                            <>
+                              <div className="categorynumber">
+                                <div className="catdown">
+                                  <button
+                                    className={
+                                      index + 2 > inventoryData[0].length
+                                        ? "catdownbutton"
+                                        : "catdownbuttonactive"
+                                    }
+                                    onClick={() => {
+                                      handleMove(item.category.id, DOWN);
+                                
+                                    }}
+                                    //disabled={index<=1? true: false}
+                                  >
+                                    <FontAwesomeIcon icon={faAngleDown} />
+                                  </button>
+                                </div>
+                                <div className="cattext">{index + 1}</div>
+                                <div className="catup">
+                                  <button
+                                    className={
+                                      index + 1 <= 1
+                                        ? "catupbutton"
+                                        : "catupbuttonactive"
+                                    }
+                                    onClick={() =>
+                                      handleMove(item.category.id, UP)
+                                    }
+                                    //disabled={index >= 5? true : false}
+                                  >
+                                    <FontAwesomeIcon icon={faAngleUp} />
+                                  </button>
+                                </div>
                               </div>
-                              {post.quantity == 0 ? (
-                                <div className="soldout">Sold Out</div>
-                              ) : (
-                                <div className="catmenuprice">
-                                  <NumberFormat
-                                    value={post.price}
-                                    prefix="Rp. "
-                                    decimalSeparator="."
-                                    thousandSeparator=","
-                                    displayType="text"
+                              <div className="categoryremove">
+                                <button
+                                  className="buttonremove"
+                                  onClick={() => {
+                                    setRemoveCategoryOpen(() => true);
+                                    setCategoryName(item.category.name);
+                                    setCategoryID(item.category.id);
+                                  }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </>
+                          ) : null}
+
+                          <div className="additem">
+                            <button
+                              className="add"
+                              onClick={() => {
+                                setAdditemopen(true);
+                                setCategoryID(item.category.id);
+                              }}
+                            >
+                              Add Item
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="catmenucontainer">
+                          {item.category.menu.length == 0 && (
+                            <div className="emptymenu"> No item</div>
+                          )}
+                          {item.category.menu.map((post, index) => {
+                            return (
+                              <div className="detailmenucontainer">
+                                <div className="catmenuimagecontainer">
+                                  <img
+                                    src={post.menuImage + "?time" + new Date()}
+                                    className="menuimage"
                                   />
                                 </div>
-                              )}
-                            </div>
-                            <div
-                              className={
-                                post.quantity <= 0
-                                  ? "catquanbutton"
-                                  : "catquanbuttonactive"
-                              }
-                            >
-                              <div className="decrement">
-                                <button
+                                <div className="catmenutext">
+                                  <div className="catmenutitle">
+                                    {post.name}
+                                  </div>
+                                  <div className="recommended">
+                                    {post.isRecommended === true ? (
+                                      <img src={recommended} />
+                                    ) : (
+                                      "null"
+                                    )}
+                                  </div>
+                                  {post.quantity == 0 ? (
+                                    <div className="soldout">Sold Out</div>
+                                  ) : (
+                                    <div className="catmenuprice">
+                                      <NumberFormat
+                                        value={post.price}
+                                        prefix="Rp. "
+                                        decimalSeparator="."
+                                        thousandSeparator=","
+                                        displayType="text"
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                                <div
                                   className={
                                     post.quantity <= 0
-                                      ? "negative"
-                                      : "negativeactive"
+                                      ? "catquanbutton"
+                                      : "catquanbuttonactive"
                                   }
-                                  disabled={post.quantity <= 0 ? true : false}
-                                  onClick={handleDecrement.bind(
-                                    this,
-                                    item.category.id,
-                                    post.id
-                                  )}
                                 >
-                                  <FontAwesomeIcon
-                                    className={
-                                      post.quantity > 0
-                                        ? "cartbuttontext"
-                                        : "disabledcartbuttontext"
-                                    }
-                                    icon={faMinus}
-                                  />
-                                </button>
-                              </div>
-                              <div className="quanttext">
-                                <input
-                                  defaultValue={post.quantity}
-                                  type="text"
-                                  className="inputquantityfile"
-                                  value={post.quantity}
-                                  onChange={(e) =>
-                                    handlequantityvalChange(
-                                      item.category.id,
-                                      post.id,
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
-                              <div className="increment">
-                                <button
-                                  className={
-                                    post.quantity > 0 ? "plus" : "plusactive"
-                                  }
-                                  onClick={handleIncrement.bind(
-                                    this,
-                                    item.category.id,
-                                    post.id
-                                  )}
-                                >
-                                  <FontAwesomeIcon
-                                    className={
-                                      post.quantity > 0
-                                        ? "cartbuttontext"
-                                        : "disabledcartbuttontext"
-                                    }
-                                    icon={faPlus}
-                                  />
-                                </button>
-                              </div>
-                            </div>
+                                  <div className="decrement">
+                                    <button
+                                      className={
+                                        post.quantity <= 0
+                                          ? "negative"
+                                          : "negativeactive"
+                                      }
+                                      disabled={
+                                        post.quantity <= 0 ? true : false
+                                      }
+                                      onClick={handleDecrement.bind(
+                                        this,
+                                        item.category.id,
+                                        post.id
+                                      )}
+                                    >
+                                      <FontAwesomeIcon
+                                        className={
+                                          post.quantity > 0
+                                            ? "cartbuttontext"
+                                            : "disabledcartbuttontext"
+                                        }
+                                        icon={faMinus}
+                                      />
+                                    </button>
+                                  </div>
+                                  <div className="quanttext">
+                                    <input
+                                      defaultValue={post.quantity}
+                                      type="text"
+                                      className="inputquantityfile"
+                                      value={post.quantity}
+                                      onChange={(e) =>
+                                        handlequantityvalChange(
+                                          item.category.id,
+                                          post.id,
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                  <div className="increment">
+                                    <button
+                                      className={
+                                        post.quantity > 0
+                                          ? "plus"
+                                          : "plusactive"
+                                      }
+                                      onClick={handleIncrement.bind(
+                                        this,
+                                        item.category.id,
+                                        post.id
+                                      )}
+                                    >
+                                      <FontAwesomeIcon
+                                        className={
+                                          post.quantity > 0
+                                            ? "cartbuttontext"
+                                            : "disabledcartbuttontext"
+                                        }
+                                        icon={faPlus}
+                                      />
+                                    </button>
+                                  </div>
+                                </div>
 
-                            <div className="editbutton">
-                              <button
-                                className="edit"
-                                onClick={() => {
-                                  setItemID(post.id);
-                                  handlePassInfoShow(
-                                    post.name,
-                                    post.menuImage,
-                                    item.category.id,
-                                    post.duration,
-                                    post.price,
-                                    post.isRecommended,
-                                    post.description
-                                  );
-                                }}
-                              >
-                                Edit Item
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
+                                <div className="editbutton">
+                                  <button
+                                    className="edit"
+                                    onClick={() => {
+                                      setItemID(post.id);
+              
+                                      handlePassInfoShow(
+                                        post.name,
+                                        post.menuImage,
+                                        item.category.id,
+                                        post.duration,
+                                        post.price,
+                                        post.isRecommended,
+                                        post.description,
+                                        post.quantity
+                                      );
+                                    }}
+                                  >
+                                    Edit Item
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  });
+                })}
+            </div>
+          </div>
+
+          <div className="buttongrid">
+            <div className="inventorybuttoncontainer"></div>
+            <div className="inventorybuttoncontainer">
+              <button
+                className={editcategory ? "buttonaddinactive" : "buttonadd"}
+                disabled={editcategory ? true : false}
+                type="button"
+                onClick={() => setAddCategoryOpen(true)}
+              >
+                + Add New Category
+              </button>
+              <button
+                className="buttonedit"
+                type="button"
+                onClick={handleEditCategory}
+              >
+                {editcategory ? "Save Category" : "Edit Category"}
+              </button>
+            </div>
           </div>
         </div>
-
-        <div className="buttongrid">
-          <div className="inventorybuttoncontainer"></div>
-          <div className="inventorybuttoncontainer">
-            <button
-              className={editcategory ? "buttonaddinactive" : "buttonadd"}
-              disabled={editcategory ? true : false}
-              type="button"
-              onClick={() => setAddCategoryOpen(true)}
-            >
-              + Add New Category
-            </button>
-            <button
-              className="buttonedit"
-              type="button"
-              onClick={handleEditCategory}
-            >
-              {editcategory ? "Save Category" : "Edit Category"}
-            </button>
-          </div>
-        </div>
-      </div>):(
+      ) : (
         <div
           style={{
             display: "flex",
@@ -1110,7 +1340,6 @@ function InventoryPage({ tenant }) {
           <ThreeDots color="#f10c0c" height={80} width={80} />
         </div>
       )}
-    
     </div>
   );
 }
