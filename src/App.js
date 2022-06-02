@@ -105,7 +105,7 @@ function App({ checked, tenant }) {
 
   return (
     
-    <Router basename="/oasisone_tenant">
+    <Router>
       {checked && (
         <div className="app">
           <Switch>

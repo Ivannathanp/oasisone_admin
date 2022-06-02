@@ -17,10 +17,6 @@ import { connect } from "react-redux";
 import { logoutUser } from "../Auth/actions/userActions";
 import { SocketContext } from "../socketContext";
 
-<<<<<<< HEAD
-function SideBar({logoutUser}) {
-  let history = useHistory();
-=======
 function SideBar({ logoutUser, tenant }) {
   let history = useHistory();
 
@@ -90,7 +86,6 @@ function SideBar({ logoutUser, tenant }) {
       setTenantData(newData);
     }
   }
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   return (
     <>

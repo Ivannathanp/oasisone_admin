@@ -12,14 +12,6 @@ import NumberFormat from "react-number-format";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { connect } from "react-redux";
-<<<<<<< HEAD
-
-
-
-function CustomerPage({tenant}) {
-  const [page, setPage] = useState(0);
-  const rowsPerPage = 7;
-=======
 import TopBar from "../TopBar/TopBar";
 import moment from "moment";
 import jsPDF from "jspdf";
@@ -31,149 +23,11 @@ function CustomerPage({ tenant }) {
   const [page, setPage] = useState(0);
   const rowsPerPage = 7;
   const [index, setIndex] = useState(1);
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   const localUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
 
-<<<<<<< HEAD
-  const [restaurantname, setRestaurantname] = useState("");
-  const [time, setTime] = useState("");
-  const [date, setDate] = useState("");
-  const [status, setStatus] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [instruction, setInstruction] = useState("");
-  const [table, setTable] = useState("");
-  const [customeritems, setcustomeritems] = useState([]);
-  const [itemtotal, setItemtotal] = useState("");
-  const [subtotal, setSubtotal] = useState("");
-  const [service, setService] = useState("");
-  const [tax, setTax] = useState("");
-  const [index, setIndex] = useState(1);
-
-
-  function TablePaginationActions(props) {
-    const { count, page, onPageChange } = props;
-  
-    const handleBackButtonClick = (event) => {
-      onPageChange(event, page - 1);
-      setIndex(index - 7);
-    };
-
-    const handleNextButtonClick = (event) => {
-      onPageChange(event, page + 1);
-
-      setIndex(index + 7);
-    };
-  
-    return (
-      <div className="containerbutton">
-        <button
-          onClick={handleBackButtonClick}
-          disabled={page === 0}
-          className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
-        >
-          {" "}
-          <FontAwesomeIcon icon={faAngleLeft} style={page === 0? {color: "#BEBEBE"} : {color: "#949494"}}/>
-        </button>
-  
-        <button
-          onClick={handleNextButtonClick}
-          disabled={page >= Math.ceil(count / 7) - 1}
-          className={
-            page >= Math.ceil(count / 7) - 1
-              ? "rightdisabledbutton"
-              : "rightdisplaybutton"
-          }
-        >
-          <FontAwesomeIcon icon={faAngleRight} style={page >= Math.ceil(count / 7) - 1? {color: "#BEBEBE"} : {color: "#949494"}}/>
-        </button>
-      </div>
-    );
-  }
-  
-  TablePaginationActions.propTypes = {
-    count: PropTypes.number.isRequired,
-    onPageChange: PropTypes.func.isRequired,
-    page: PropTypes.number.isRequired,
-    rowsPerPage: PropTypes.number.isRequired,
-  };
-
-const CustomerData = [
-  {
-    id:1,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 1,
-  },
-  {
-    id:2,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 1,
-  },
-  {
-    id:3,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-  {
-    id:4,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-  {
-    id:5,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-  {
-    id:6,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-  {
-    id:7,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-  {
-    id:8,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-  {
-    id:9,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-  {
-    id:10,
-    customername: "Chris",
-    customerphone: "089998983929",
-    lastorder: "28 October 2021, 10:21 AM",
-    status: 2,
-  },
-]
-=======
   // Get Order Data
   useEffect(() => {
     let mounted = true;
@@ -183,7 +37,6 @@ const CustomerData = [
       if (tenant.tenant_id != undefined) {
         const url = localUrl + "/retrieve/" + tenant.tenant_id;
         console.log(url);
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
         fetch(url, {
           method: "GET",
@@ -324,59 +177,6 @@ const CustomerData = [
       <div className="topbar">
         <div className="left">Customer</div>
 
-<<<<<<< HEAD
-        <div className="right">
-          <div className="imagecontainer">
-            <img src={tenant.profileimage} className="image" />
-          </div>
-          <div className="toptext">{tenant.name}</div>
-        </div>
-      </div>
-
-      <div className="customercontainer">
-        <div className="customertable">
-          <div className="customerheader">
-            <div className="customerleft">All Customer</div>
-            <div className="customerright">
-              <button className="downloadbutton">Download as PDF</button>
-            </div>
-          </div>
-          <div className="customerheadertitlegrid">
-            <div className="customerheadertitle">NO</div>
-            <div className="customerheadertitle">NAME</div>
-            <div className="customerheadertitle">PHONE NUMBER</div>
-            <div className="customerheadertitle">LAST ORDER</div>
-            <div className="customerheadertitle">STATUS</div>
-          </div>
-
-          <div className="customerrendercontainer">
-    
-            {(rowsPerPage > 0
-              ? CustomerData.slice(
-                  page * rowsPerPage,
-                  page * rowsPerPage + rowsPerPage
-                )
-              : CustomerData
-            ).map((post, i) => (
-              <div className={i != 7 ? "bordered" : "noborder"}>
-                <div className="customerrendergrid">
-                  <div className="customertext">{i + index}</div>
-                  <div className="customertext">{post.customername}</div>
-                  <div className="customertext">{post.customerphone}
-                   
-                  </div>
-                  <div className="customertext">{post.lastorder}
-                   
-                   </div>
-                  <div className="status">
-                    {" "}
-                    {post.status == 1 ? (
-                      <div className="atrestaurant">At restaurant</div>
-                    ) : post.status == 2 ? (
-                      <div className="notinrestaurant">Not in here</div>
-                    ) : null}
-                  </div>
-=======
         <TopBar />
       </div>
 
@@ -390,7 +190,6 @@ const CustomerData = [
                   <button className="downloadbutton" onClick={generatePdf}>
                     Download as PDF{" "}
                   </button>
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                 </div>
               </div>
               <div className="customerheadertitlegrid">
@@ -463,14 +262,8 @@ const CustomerData = [
   );
 }
 
-<<<<<<< HEAD
-const mapStateToProps = ({session}) => ({
-  tenant: session.user
-})
-=======
 const mapStateToProps = ({ session }) => ({
   tenant: session.user,
 });
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
 export default connect(mapStateToProps)(CustomerPage);

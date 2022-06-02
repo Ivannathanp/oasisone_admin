@@ -5,11 +5,6 @@ import logo from "../../icons/Logo.png";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
-<<<<<<< HEAD
-
-function DashboardPage({ tenant }) {
-  let history = useHistory();
-=======
 import NumberFormat from "react-number-format";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -30,7 +25,6 @@ function DashboardPage({ tenant }) {
   const [tableRetrieved, setTableRetrieved] = useState(false);
   const [availableTable, setAvailableTable] = useState(0);
   const [filledTable, setFilledTable] = useState(0);
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
 
   // socket connection
   const socket = useContext(SocketContext);
@@ -418,16 +412,7 @@ function DashboardPage({ tenant }) {
       <div className="topbar">
         <div className="left">Dashboard</div>
 
-<<<<<<< HEAD
-        <div className="right">
-          <div className="imagecontainer">
-            <img src={tenant.profileimage} className="image" />
-          </div>
-          <div className="toptext">{tenant.name}</div>
-        </div>
-=======
         <TopBar />
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
       </div>
 
       {tableRetrieved ? (
@@ -517,124 +502,11 @@ function DashboardPage({ tenant }) {
                         );
                       });
                     })}
-<<<<<<< HEAD
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="tablecolumn2">
-              <div className="tablerow">
-                <div className="number">14</div>
-                <div className="tablerowtext">
-                  <div className="up">Table</div>
-                  <div className="down">Occupied</div>
-                </div>
-              </div>
-              <div className="tablerow">
-                <div className="number2">12</div>
-                <div className="tablerowtext">
-                  <div className="up">Table</div>
-                  <div className="down">Available</div>
-=======
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
                 </div>
               </div>
             </div>
           </div>
 
-<<<<<<< HEAD
-        <div className="inventory">
-          Inventory
-          <div className="dashboardinventorycol">
-            <div className="invcolumn1">
-              <div className="tablerow">
-                <div className="number">12</div>
-                <div className="tablerowtext">
-                  <div className="up">Menu</div>
-                  <div className="down">Sold Out</div>
-                </div>
-              </div>
-              <div className="buttoncontainer">
-                <button className="button" onClick={redirectinventory}>
-                  View Detail
-                </button>
-              </div>
-            </div>
-            <div className="invcolumn2">
-              <div className="headerrow">
-                <div className="text1">No.</div>
-                <div className="text2">Name</div>
-                <div className="text3">Available Stock</div>
-              </div>
-              <div className="list">
-                {InventoryData.map((post, index) => (
-                  <div className="inventorylistgrid">
-                    <div className="inventoryindex">
-                      <div className="index">{post.id}</div>
-                    </div>
-                    <div className="inventoryname">{post.name}</div>
-                    <div className="inventorystock">{post.stock}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="orderscreen">
-          Order Screen
-          <div className="outer">
-            <div className="dashboardouterborder">
-              <div className="ordergrid">
-                {OrderData.map((post) => {
-                  return (
-                    <>
-                      <div className="orderdetails">
-                        <div className="orderID">{post.order_ID}</div>
-                        <div className="orderdetail">
-                          <div className="orderdetailtime">{post.time} -</div>
-                          <div className="tableID"> Table {post.table_ID}</div>
-                        </div>
-                        <div className="orderbuttoncontainer">
-                          <button
-                            className="orderbutton"
-                            onClick={redirectorder}
-                          >
-                            View Detail
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="promo">
-          Promo Banner
-          <div className="dashboardpromocontainer">
-            {RestaurantData.map((post) => {
-              return post.promo.map((posts, index) => {
-                return (
-                  <div className="promodetails">
-                    <button
-                      key={index}
-                      className="promodetailbutton"
-                      type="button"
-                      onClick={redirectpromo}
-                    >
-                      <img
-                        src={require("../../icons/Banner1.jpg")}
-                        className="picture"
-                      />
-                    </button>
-                  </div>
-                );
-              });
-            })}
-          </div>
-=======
           <div className="orderscreen">
             Order Screen
             <div className="dashboardordercontainer">
@@ -916,7 +788,6 @@ function DashboardPage({ tenant }) {
           }}
         >
           <ThreeDots color="#f10c0c" height={80} width={80} />
->>>>>>> 6975d07bc900b6551a12849b964634c3d5428e53
         </div>
       )}
     </div>
