@@ -549,19 +549,19 @@ function DashboardPage({ tenant }) {
                         <div className="ordermodalstatus">
                           <div className="statustext">STATUS</div>
                           <div className="statuscoloredtext">
-                            {orderStatus == 1 ? (
-                              <div className="pending">PENDING</div>
-                            ) : orderStatus == 2 ? (
-                              <div className="orderplaced">ORDER PLACED</div>
-                            ) : orderStatus == 3 ? (
-                              <div className="served">SERVED</div>
-                            ) : orderStatus == 4 ? (
-                              <div className="complete">COMPLETE</div>
-                            ) : orderStatus == 5 ? (
-                              <div className="modalrejectedstatus">
-                                REJECTED
-                              </div>
-                            ) : null}
+                          {orderStatus == 1 ? (
+                          <div className="pending">PENDING</div>
+                        ) : orderStatus == 2 ? (
+                          <div className="orderplaced">ORDER PLACED</div>
+                        ) : orderStatus == 3 ? (
+                          <div className="served">SERVED</div>
+                        ) : orderStatus == 4 ? (
+                          <div className="payment">PAYMENT</div>
+                        ) : orderStatus == 5 ? (
+                          <div className="complete">COMPLETE</div>
+                        ) : orderStatus == 6 ? (
+                          <div className="modalrejectedstatus">REJECTED</div>
+                        ) : null}
                           </div>
                         </div>
                       </div>
@@ -603,7 +603,7 @@ function DashboardPage({ tenant }) {
                               className="ordermodalinputfile"
                               disabled={true}
                             />
-                            {orderStatus == 5 ? (
+                            {orderStatus == 6 ? (
                               <>
                                 {" "}
                                 <div className="ordermodalinputlabel">

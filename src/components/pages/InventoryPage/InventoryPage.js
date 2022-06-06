@@ -85,9 +85,7 @@ function InventoryPage({ tenant }) {
   function handleMove(id, direction) {
     const items = inventoryData[0];
 
-
     const position = items.findIndex((i) => i.category.id === id);
-
 
     if (position < 0) {
       throw new Error("Given item not found.");
@@ -128,10 +126,9 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-               
                       socket.emit("update category", result.data);
                       setInventoryData([result.data]);
-                    } 
+                    }
                   });
               }
             });
@@ -150,7 +147,7 @@ function InventoryPage({ tenant }) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
                 posts.quantity = parseInt(posts.quantity) - 1;
-               
+
                 const url = localUrl + "/edit/" + tenant.tenant_id;
                 fetch(url, {
                   method: "POST",
@@ -164,10 +161,9 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                     
                       socket.emit("update category", result.data);
                       setInventoryData([result.data]);
-                    } 
+                    }
                   });
               }
             });
@@ -203,10 +199,9 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                
                       socket.emit("update category", result.data);
                       setInventoryData([result.data]);
-                    } 
+                    }
                   });
               }
             });
@@ -314,29 +309,20 @@ function InventoryPage({ tenant }) {
       socket.on("add order", (data) => handleOrderAdded(data));
       socket.on("update category", (data) => handleCategoryUpdated(data));
       socket.on("delete category", (data) => handleCategoryRemoved(data));
-
     }
   });
 
   function handleCategoryAdded(user) {
-
-
     if (inventoryRetrieved) {
-
-
       let newData = inventoryData.splice();
 
       newData.push(user);
       setInventoryData(newData);
-
     }
   }
 
-  function handleOrderAdded(){
+  function handleOrderAdded() {
     if (inventoryRetrieved) {
-
-    
-  
       const url = localUrl + "/category/" + tenant.tenant_id;
 
       fetch(url, {
@@ -352,40 +338,26 @@ function InventoryPage({ tenant }) {
             setInventoryRetrieved(() => false);
           }
         });
-  
-    
+
       console.log("NEW Inventory DATA IS!!!!!!!!!: ");
-  
-     
-      }
-    
+    }
   }
 
   function handleCategoryUpdated(user) {
-
-
     if (inventoryRetrieved) {
-
-
       let newData = inventoryData.splice();
 
       newData.push(user);
       setInventoryData(newData);
-
     }
   }
 
   function handleCategoryRemoved(user) {
-   
-
     if (inventoryRetrieved) {
-     
-
       let newData = inventoryData.splice();
 
       newData.push(user);
       setInventoryData(newData);
-   
     }
   }
 
@@ -406,14 +378,13 @@ function InventoryPage({ tenant }) {
           setTimeout(() => {
             setCategoryAdded(false);
           }, 3000);
-      
+
           socket.emit("add category", result.data);
           setInventoryData([result.data]);
 
           setAddCategoryOpen(false);
           setValidCategoryName(true);
         } else {
-    
           setValidCategoryName(false);
         }
       });
@@ -430,8 +401,6 @@ function InventoryPage({ tenant }) {
       }, 3000);
 
       inventoryData[0].map(async (item, index) => {
-   
-
         await fetch(url, {
           method: "POST",
           body: JSON.stringify({
@@ -442,7 +411,6 @@ function InventoryPage({ tenant }) {
         })
           .then((response) => response.json())
           .then((result) => {
-       
             socket.emit("update category", result.data);
             setInventoryData([result.data]);
           });
@@ -460,7 +428,6 @@ function InventoryPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-   
         socket.emit("delete category", result.data);
         setInventoryData([result.data]);
       });
@@ -479,9 +446,7 @@ function InventoryPage({ tenant }) {
       body: formData,
     })
       .then((response) => response.json())
-      .then((result) => {
-   
-      })
+      .then((result) => {})
       .catch((error) => {
         console.error("Error Upload Logo:", error);
       });
@@ -500,7 +465,6 @@ function InventoryPage({ tenant }) {
       menu_image:
         imageUrl + "/menu/render/" + tenant.tenant_id + "/" + itemName + ".jpg",
     });
-  
 
     fetch(url, {
       method: "POST",
@@ -509,23 +473,20 @@ function InventoryPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-     
         if (result.status === "SUCCESS") {
           setMenuAdded(true);
           setTimeout(() => {
             setMenuAdded(false);
-          }, 3000); //wait 5 seconds
+          }, 3000); 
 
-        
           socket.emit("add category", result.data);
           setInventoryData([result.data]);
-     
+          setItemPrice();
           setAdditemopen(false);
           setProductImage();
           setItemIsRecommended();
           setValidCategoryName(true);
         } else {
-   
           setValidCategoryName(false);
         }
       });
@@ -538,64 +499,19 @@ function InventoryPage({ tenant }) {
     const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
     var input = document.querySelector('input[type="file"]');
 
-    if(input.files[0] != undefined){
-     
+    if (input.files[0] != undefined) {
       formData.append("menu", input.files[0]);
- 
 
       fetch(menuUrl, {
         method: "POST",
         body: formData,
       })
         .then((response) => response.json())
-        .then((result) => {
-
-        })
+        .then((result) => {})
         .catch((error) => {
           console.error("Error Upload Logo:", error);
         });
 
-        const payload = JSON.stringify({
-          cat_id: categoryID,
-          menu_id: itemID,
-          menu_name: itemName,
-          menu_duration: itemDuration,
-          menu_desc: itemDescription,
-          menu_isRecommended: itemIsRecommended,
-          menu_price: itemPrice,
-          menu_quantity: itemQuantity,
-          menu_isAvailable: itemQuantity > 0 ? true : false,
-          menu_image:
-            imageUrl + "/menu/render/" + tenant.tenant_id + "/" + itemName + ".jpg",
-        });
-
-        fetch(url, {
-          method: "POST",
-          body: payload,
-          headers: { "content-type": "application/JSON" },
-        })
-          .then((response) => response.json())
-          .then((result) => {
-            if (result.status === "SUCCESS") {
-              setMenuEditted(true);
-              setTimeout(() => {
-                setMenuEditted(false);
-              }, 3000);
-            
-              socket.emit("update category", result.data);
-              setInventoryData([result.data]);
-         
-              setEditItemOpen(false);
-              setProductImage();
-              setItemIsRecommended();
-              setValidCategoryName(true);
-            } else {
-  
-              setValidCategoryName(false);
-            }
-          });
-
-    } else {
       const payload = JSON.stringify({
         cat_id: categoryID,
         menu_id: itemID,
@@ -605,7 +521,14 @@ function InventoryPage({ tenant }) {
         menu_isRecommended: itemIsRecommended,
         menu_price: itemPrice,
         menu_quantity: itemQuantity,
-        menu_isAvailable: itemQuantity > 0 ? true : false,        
+        menu_isAvailable: itemQuantity > 0 ? true : false,
+        menu_image:
+          imageUrl +
+          "/menu/render/" +
+          tenant.tenant_id +
+          "/" +
+          itemName +
+          ".jpg",
       });
 
       fetch(url, {
@@ -620,7 +543,45 @@ function InventoryPage({ tenant }) {
             setTimeout(() => {
               setMenuEditted(false);
             }, 3000);
- 
+
+            socket.emit("update category", result.data);
+            setInventoryData([result.data]);
+
+            setEditItemOpen(false);
+            setProductImage();
+            setItemPrice();
+            setItemIsRecommended();
+            setValidCategoryName(true);
+          } else {
+            setValidCategoryName(false);
+          }
+        });
+    } else {
+      const payload = JSON.stringify({
+        cat_id: categoryID,
+        menu_id: itemID,
+        menu_name: itemName,
+        menu_duration: itemDuration,
+        menu_desc: itemDescription,
+        menu_isRecommended: itemIsRecommended,
+        menu_price: itemPrice,
+        menu_quantity: itemQuantity,
+        menu_isAvailable: itemQuantity > 0 ? true : false,
+      });
+
+      fetch(url, {
+        method: "POST",
+        body: payload,
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            setMenuEditted(true);
+            setTimeout(() => {
+              setMenuEditted(false);
+            }, 3000);
+
             socket.emit("update category", result.data);
             setInventoryData([result.data]);
 
@@ -629,20 +590,10 @@ function InventoryPage({ tenant }) {
             setItemIsRecommended();
             setValidCategoryName(true);
           } else {
-           
             setValidCategoryName(false);
           }
         });
     }
-    
-
-    
-
-   
-
-   
-
-    
   }
 
   async function handleRemoveItem() {
@@ -657,14 +608,15 @@ function InventoryPage({ tenant }) {
           setMenuRemoved(true);
           setTimeout(() => {
             setMenuRemoved(false);
-          }, 3000); //wait 5 seconds
+          }, 3000); 
           socket.emit("delete category", result.data);
           setInventoryData([result.data]);
           setEditItemOpen(false);
           setProductImage();
           setItemIsRecommended();
+          setItemPrice();
           setValidCategoryName(true);
-        } 
+        }
       });
   }
 
@@ -756,9 +708,7 @@ function InventoryPage({ tenant }) {
                           >
                             {inventoryRetrieved == true &&
                               inventoryData.map((post) => {
-                       
                                 return post.map((posts, index) => {
-                             
                                   return (
                                     <MenuItem value={posts.category.id}>
                                       {posts.category.name}
@@ -778,12 +728,16 @@ function InventoryPage({ tenant }) {
 
                         <div className="inputlabel">Product Price</div>
                         <div class="POC" data-placeholder="Rp.">
-                          <input
-                            type="text"
+                          <NumberFormat
+                            thousandsGroupStyle="thousand"
                             className="inputpricefile"
+                            value={itemPrice}
+                            decimalSeparator="."
+                            displayType="input"
+                            type="text"
+                            thousandSeparator={true}
+                            allowNegative={true}
                             onChange={(e) => setItemPrice(e.target.value)}
-                            data-mask="000.000.000"
-                            data-mask-reverse="true"
                           />
                         </div>
                       </div>
@@ -827,7 +781,6 @@ function InventoryPage({ tenant }) {
                           checked={itemIsRecommended}
                           onChange={(e) => {
                             setItemIsRecommended(e.target.checked);
-                  
                           }}
                         />
                         <img src={recommended} className="recommendimage" />
@@ -842,6 +795,7 @@ function InventoryPage({ tenant }) {
                       setAdditemopen(false);
                       setProductImage();
                       setItemIsRecommended();
+                      setItemPrice();
                     }}
                     className="cancelbutton"
                   >
@@ -921,13 +875,16 @@ function InventoryPage({ tenant }) {
                         />
                         <div className="inputlabel">Product Price</div>
                         <div class="POC" data-placeholder="Rp.">
-                          <input
-                            type="text"
-                            value={itemPrice}
+                          <NumberFormat
+                            thousandsGroupStyle="thousand"
                             className="inputpricefile"
+                            value={itemPrice}
+                            decimalSeparator="."
+                            displayType="input"
+                            type="text"
+                            thousandSeparator={true}
+                            allowNegative={true}
                             onChange={(e) => setItemPrice(e.target.value)}
-                            data-mask="000.000.000"
-                            data-mask-reverse="true"
                           />
                         </div>
                       </div>
@@ -990,6 +947,7 @@ function InventoryPage({ tenant }) {
                       setEditItemOpen(false);
                       setProductImage();
                       setItemIsRecommended();
+                      setItemPrice();
                     }}
                     className="cancelbutton"
                   >
@@ -1053,43 +1011,40 @@ function InventoryPage({ tenant }) {
             </Box>
           </Modal>
 
-          <div className="inventoryoutercontainer">
-            <div
-              className={
-                categoryAdded ||
-                categoryEditted ||
-                menuAdded ||
-                menuEditted ||
-                menuRemoved
-                  ? "inventorynotification"
-                  : "hidden"
-              }
-            >
-              <div className="notificationtextcontainer">
-                <div className="notificationtext">
-                  {categoryAdded
-                    ? "New Category Added "
-                    : categoryEditted
-                    ? "Category Saved"
-                    : menuAdded
-                    ? "New Menu Added"
-                    : menuEditted
-                    ? "Menu Edited"
-                    : " Menu Removed"}{" "}
-                </div>
-              </div>
-
-              <div className="notificationclose">
-                <button
-                  className="notifclosebutton"
-                  onClick={handlenotification}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
+          <div
+            className={
+              categoryAdded ||
+              categoryEditted ||
+              menuAdded ||
+              menuEditted ||
+              menuRemoved
+                ? "inventorynotification"
+                : "hidden"
+            }
+          >
+            <div className="notificationtextcontainer">
+              <div className="notificationtext">
+                {categoryAdded
+                  ? "New Category Added "
+                  : categoryEditted
+                  ? "Category Saved"
+                  : menuAdded
+                  ? "New Menu Added"
+                  : menuEditted
+                  ? "Menu Edited"
+                  : " Menu Removed"}{" "}
               </div>
             </div>
 
-            <div className="inventorycontainergrid">
+            <div className="notificationclose">
+              <button className="notifclosebutton" onClick={handlenotification}>
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </div>
+          </div>
+
+          <div className="inventorycontainergrid">
+            <div className="innerinventorycontainergrid">
               {inventoryRetrieved == true &&
                 inventoryData.map((post) => {
                   return post.map((item, index) => {
@@ -1111,7 +1066,6 @@ function InventoryPage({ tenant }) {
                                     }
                                     onClick={() => {
                                       handleMove(item.category.id, DOWN);
-                                
                                     }}
                                     //disabled={index<=1? true: false}
                                   >
@@ -1279,7 +1233,7 @@ function InventoryPage({ tenant }) {
                                     className="edit"
                                     onClick={() => {
                                       setItemID(post.id);
-              
+
                                       handlePassInfoShow(
                                         post.name,
                                         post.menuImage,

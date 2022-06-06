@@ -201,16 +201,8 @@ function OrderStatusPage({ tenant }) {
       </Modal>
     );
   }
-  
-  function handleChange(e) {
-    setFormValues({ value: e.target.value });
-  }
 
-  function handleacceptincrement(i) {
-    setAcceptance({acceptance: i + 1});
 
-    console.log("acc", acceptance);
-  }
 
   return (
     <div className="container">
@@ -379,6 +371,7 @@ function OrderStatusPage({ tenant }) {
                                       post.order_table
                                     );
                                   }}
+                                  disabled={true}
                                 >
                                   <FontAwesomeIcon
                                     icon={faCheck}

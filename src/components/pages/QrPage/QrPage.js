@@ -32,7 +32,7 @@ function QrPage({ tenant }) {
           .then((response) => response.json())
           .then((result) => {
             if (result.status === "SUCCESS") {
-              setTenantData(() => result.data);
+              setTenantData([result.data]);
               setTenantRetrieved(() => true);
             } else {
               setTenantRetrieved(() => false);
@@ -50,7 +50,7 @@ function QrPage({ tenant }) {
 
     if (mounted) {
       if (tenantRetrieved === true) {
-        setQrCode(tenantData.qrCode);
+        setQrCode(tenantData[0].qrCode);
         console.log("Tenant Data is defined");
       }
     }
@@ -67,12 +67,15 @@ function QrPage({ tenant }) {
     console.log(qrCodeURL);
     let aEl = document.createElement("a");
     aEl.href = qrCodeURL;
-    aEl.download = tenantData.name + "qrcode.png";
+    aEl.download = tenantData[0].name + "qrcode.png";
     document.body.appendChild(aEl);
     aEl.click();
     document.body.removeChild(aEl);
   }
 
+  if(tenantRetrieved){
+    console.log("qrcode",tenantData[0])
+  }
   return (
     <div className="qrcontainer">
       <div className="topbar">

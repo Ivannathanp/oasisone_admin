@@ -80,11 +80,15 @@ function SettingsPage({ tenant }) {
   const [profileName, setProfileName] = useState();
   const [taxchargeedit, setTaxChargeEdit] = useState(false);
   const [servicechargeedit, setServiceChargeEdit] = useState(false);
+  const [LocationTextEdit, setLocationTextEdit] = useState(false);
+  const [PhoneTextEdit, setPhoneTextEdit] = useState(false);
   const [AddressTextEdit, setAddressTextEdit] = useState(false);
   const [profileImage, setProfileImage] = useState();
   const [taxChargeValue, setTaxChargeValue] = useState();
   const [serviceChargeValue, setServiceChargeValue] = useState();
   const [textAddress, setTextAddress] = useState();
+  const [textLocation, setTextLocation] = useState();
+  const [textPhone, setTextPhone] = useState();
 
   useEffect(() => {
     let mounted = true;
@@ -92,8 +96,10 @@ function SettingsPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
+        setTextPhone(tenantData[0].phoneNumber);
         setColor(tenantData[0].profileColor);
         setTextAddress(tenantData[0].address);
+        setTextLocation(tenantData[0].location);
         setTaxChargeValue(tenantData[0].taxCharge);
         setServiceChargeValue(tenantData[0].serviceCharge);
         console.log("Tenant Data socket is called");
@@ -124,7 +130,7 @@ function SettingsPage({ tenant }) {
     setSettingSavedNotif(true);
     setTimeout(() => {
       setSettingSavedNotif(false);
-    }, 5000); //wait 5 seconds
+    }, 3000); 
 
     var tenantID= tenant.tenant_id;
     console.log("tenant IDDDDD:", tenantID);
@@ -169,10 +175,6 @@ function SettingsPage({ tenant }) {
   }
   //console.log("change2?", textareatext);
 
-  const [profileimage, setPofileimage] = useState(tenant.profileimage);
-
-
-
   async function handleTaxChargeEdit() {
     setTaxChargeEdit(() => !taxchargeedit);
 
@@ -190,6 +192,7 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
+          socket.emit('update user', result.data);
           console.log(result);
         });
     }
@@ -212,6 +215,7 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
+          socket.emit('update user', result.data);
           console.log(result);
         });
     }
@@ -237,6 +241,48 @@ function SettingsPage({ tenant }) {
         method: "POST",
         body: JSON.stringify({
           address: textAddress,
+        }),
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          socket.emit('update user', result.data);
+       
+        });
+    }
+  }
+
+  async function handleLocationTextEdit() {
+    setLocationTextEdit(() => !LocationTextEdit);
+
+    if (LocationTextEdit == true) {
+      const editUrl = localUrl + "/edit/" + tenant.tenant_id;
+
+      fetch(editUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          location: textLocation,
+        }),
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          socket.emit('update user', result.data);
+       
+        });
+    }
+  }
+
+  async function handlePhoneTextEdit() {
+    setPhoneTextEdit(() => !PhoneTextEdit);
+
+    if (PhoneTextEdit == true) {
+      const editUrl = localUrl + "/edit/" + tenant.tenant_id;
+
+      fetch(editUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          phoneNumber: textPhone,
         }),
         headers: { "content-type": "application/JSON" },
       })
@@ -823,7 +869,8 @@ function SettingsPage({ tenant }) {
                     <div className="editprofileinputlabel">Product Picture</div>
                     <div className="editprofileimagecontainer">
                       <img
-                        src={profileImage + "?time" + new Date()}
+                        src={profileImage}
+                        // src={profileImage + "?time" + new Date()}
                         className="editprofileimage"
                       />
                     </div>
@@ -896,6 +943,7 @@ function SettingsPage({ tenant }) {
                     <div className="profileimg">
                       <img
                         className="profilelogo"
+                        // src={profileImage}
                         src={profileImage + "?time" + new Date()}
                       />
                     </div>
@@ -919,7 +967,62 @@ function SettingsPage({ tenant }) {
                     </div>
                   </div>
 
+                  
+
                   <div className="profilecontainer2">
+                  <div className="profileaddressheader">
+                      <div className="profiletitle">Phone Number</div>
+                      <div className="editcontainer">
+                        <button
+                          className={
+                            PhoneTextEdit
+                              ? "editbuttoncontainer"
+                              : "editbuttoncontaineractive"
+                          }
+                          type="button"
+                          onClick={() => handlePhoneTextEdit()}
+                        >
+                          {PhoneTextEdit ? "Save" : "Edit"}
+                        </button>
+                      </div>
+                    </div>
+                    <form>
+                      {tenantRetrieved == true && (
+                        <textarea
+                          disabled={PhoneTextEdit ? false : true}
+                          value={textPhone}
+                          className="profilelocation"
+                          onChange={(e) => setTextPhone(e.target.value)}
+                        />
+                      )}
+                    </form>
+                  <div className="profileaddressheader">
+                      <div className="profiletitle">Location</div>
+                      <div className="editcontainer">
+                        <button
+                          className={
+                            LocationTextEdit
+                              ? "editbuttoncontainer"
+                              : "editbuttoncontaineractive"
+                          }
+                          type="button"
+                          onClick={() => handleLocationTextEdit()}
+                        >
+                          {LocationTextEdit ? "Save" : "Edit"}
+                        </button>
+                      </div>
+                    </div>
+                    <form>
+                      {tenantRetrieved == true && (
+                        <textarea
+                          disabled={LocationTextEdit ? false : true}
+                          value={textLocation}
+                          className="profilelocation"
+                          onChange={(e) => setTextLocation(e.target.value)}
+                        />
+                      )}
+                    </form>
+
                     <div className="profileaddressheader">
                       <div className="profiletitle">Address</div>
                       <div className="editcontainer">

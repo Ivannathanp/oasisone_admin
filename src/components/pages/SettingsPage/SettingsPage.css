@@ -59,8 +59,13 @@
 }
 
 .settingsinsidegrid {
-  display: grid;
-  grid-row: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
+  margin-left: 5%;
+}
+
+.taxandservicecontainer{
+  margin-bottom: 10%;
 }
 
 .profilesettings {
@@ -188,7 +193,7 @@
 }
 .profileaddress {
   display: grid;
-  margin: 2%;
+  margin: -2% 0 4% 2% ;
   grid-template-columns: 2fr 0.5fr;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
@@ -207,6 +212,25 @@
 .profileaddress::-webkit-scrollbar {
   display: none;
 }
+.profilelocation {
+  display: grid;
+  margin: -2% 0 4% 2% ;
+  grid-template-columns: 2fr 0.5fr;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #424242;
+  width: 400px;
+  height: 20px;
+  border: 0px solid;
+  resize: none;
+  outline: none;
+  background-color: transparent;
+}
+.profilelocation::-webkit-scrollbar {
+  display: none;
+}
 .profileopenheader {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -215,8 +239,7 @@
 .profileopen {
   display: flex;
   flex-direction: column;
-  margin: 2%;
-  margin-bottom: 5%;
+  margin: -1% 0 4% 2% ;
 }
 .opentext {
   display: grid;

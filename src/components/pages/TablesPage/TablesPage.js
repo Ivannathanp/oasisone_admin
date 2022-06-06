@@ -324,7 +324,6 @@ const [tableIndex, setTableIndex] = useState();
     setTimeout(() => {
       setAddTableNotif(false);
     }, 5000);
-    setTableRetrieved(() => false);
 
     const url = localUrl + "/create/" + tenant.tenant_id;
     fetch(url, {

@@ -337,8 +337,10 @@ return item.map((post,index)=>{
                         ) : orderStatus == 3 ? (
                           <div className="served">SERVED</div>
                         ) : orderStatus == 4 ? (
-                          <div className="complete">COMPLETE</div>
+                          <div className="payment">PAYMENT</div>
                         ) : orderStatus == 5 ? (
+                          <div className="complete">COMPLETE</div>
+                        ) : orderStatus == 6 ? (
                           <div className="modalrejectedstatus">REJECTED</div>
                         ) : null}
                       </div>
@@ -382,7 +384,7 @@ return item.map((post,index)=>{
                           className="ordermodalinputfile"
                           disabled={true}
                         />
-                        {orderStatus == 5 ? (
+                        {orderStatus == 6 ? (
                           <>
                             {" "}
                             <div className="ordermodalinputlabel">

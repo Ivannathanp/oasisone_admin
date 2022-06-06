@@ -1,7 +1,5 @@
 .inventorysection {
-  margin-left: 4%;
-  margin-right: 8%;
-  margin-top: 5%;
+  padding: 55px 4% 0 4%;
   height: 80vh;
   position: relative;
   display: flex;
@@ -12,24 +10,21 @@
   align-content: center;
 }
 
-.inventoryoutercontainer {
+.inventorycontainergrid{
   width: 100%;
+  
   overflow: scroll;
 }
 
-.inventoryoutercontainer::-webkit-scrollbar {
-  display: none;
-}
-.inventorycontainergrid::-webkit-scrollbar {
-  display: none;
-}
-.inventorycontainergrid {
-  width: 100%;
+.innerinventorycontainergrid {
+width: 100%;
   min-width: min-content;
   height: 740px;
-  justify-content: space-between;
   column-count: 2;
-  overflow: scroll;
+}
+
+.inventorycontainergrid::-webkit-scrollbar {
+  display: none;
 }
 
 .inventorynotification {
@@ -38,8 +33,8 @@
   flex-direction: row;
   position: absolute;
   z-index: 3;
-  top: -35px;
-  right: 0px;
+  top: 0px;
+  right: 4%;
   width: 227px;
   height: 49px;
   background-color: #e52c32;

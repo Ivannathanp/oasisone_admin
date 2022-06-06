@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 import TablePagination from "../../Pagination/index";
@@ -46,7 +46,7 @@ function CustomerPage({ tenant }) {
           .then((result) => {
             if (result.status === "SUCCESS") {
               // console.log(result)
-              setOrderData(() => result.data);
+              setOrderData([result.data]);
               setOrderRetrieved(() => true);
             } else {
               // console.log(result);
@@ -61,6 +61,32 @@ function CustomerPage({ tenant }) {
     };
   }, [tenant, orderRetrieved]);
 
+  // socket connection
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("add order", (data) => handleOrderAdded(data));
+      socket.on("update order", (data) => handleOrderAdded(data));
+    }
+  });
+
+  function handleOrderAdded(user) {
+    console.log("TABLE1", user);
+    console.log(" TABLE original ", orderData);
+
+    if (orderRetrieved) {
+      console.log("I am order retrieved!!!!!!!!!!!!!", user);
+
+      let newData = orderData.splice();
+
+      newData.push(user);
+      setOrderData(newData);
+      console.log("NEW DATA IS!!!!!!!!!: ", newData);
+      console.log("...user is", orderData);
+    }
+  }
+
   const generatePdf = () => {
     const doc = new jsPDF();
     const tableColumn = [
@@ -70,7 +96,7 @@ function CustomerPage({ tenant }) {
       "Last Order Placed",
     ];
     const tableRows = [];
-    orderData.map((post, index) => {
+    orderData[0].map((post, index) => {
       const dateOptions = {
         weekday: "short",
         year: "numeric",
@@ -201,20 +227,14 @@ function CustomerPage({ tenant }) {
 
               <div className="customerrendercontainer">
                 {(rowsPerPage > 0
-                  ? orderData.slice(
+                  ? orderData[0].slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
                     )
                   : orderData
                 ).map((post, i) => {
                   const orderDate = new Date(post.order_time);
-                  console.log(
-                    "slice",
-                    orderData.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  );
+                  
                   return (
                     <div className={i != 7 ? "bordered" : "noborder"}>
                       <div className="customerrendergrid">

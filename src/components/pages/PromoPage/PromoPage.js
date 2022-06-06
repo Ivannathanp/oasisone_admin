@@ -211,7 +211,7 @@ function PromoPage({ tenant }) {
     setPromoAddNotif(true);
     setTimeout(() => {
       setPromoAddNotif(false);
-    }, 5000); //wait 5 seconds
+    }, 5000); 
 
     let formData = new FormData();
     const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
@@ -269,7 +269,7 @@ function PromoPage({ tenant }) {
     setPromoRemoveNotif(true);
     setTimeout(() => {
       setPromoRemoveNotif(false);
-    }, 5000); //wait 5 seconds
+    }, 5000); 
 
     await fetch(url, {
       method: "POST",
@@ -436,7 +436,7 @@ function PromoPage({ tenant }) {
                       <div className="right-column">
                         <div className="promotitle">{item.name}</div>                   
                         <div className="promotext">
-                          Promo ends at{" "}
+                          Promo ends at
                           <span className="promodate">
                             {endDate.toLocaleDateString("en-ID", dateOptions)},
                             23:55 PM
