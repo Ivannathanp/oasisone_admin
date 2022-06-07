@@ -87,7 +87,7 @@ function App({ checked, tenant }) {
     console.log("tenant is: ", tenant);
 
     if (tenant.tenant_id != undefined) {
-      const newSocket = io("ws://oasis-one.com:5000", {
+      const newSocket = io("ws://backend.oasis-one.com", {
         query: {
           tenant_id: tenant.tenant_id,
         },
