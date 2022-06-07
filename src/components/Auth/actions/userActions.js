@@ -1,7 +1,7 @@
 import { sessionService } from "redux-react-session";
 
 // the remote endpoint and local
-const currentUrl = "http://backend.oasis-one.com/";
+const currentUrl = "https://backend.oasis-one.com/";
 
 export const loginUser = (
   credentials,
@@ -90,10 +90,7 @@ export const signupUser = (
           }
         } else if (result.status === "PENDING") {
           //display message for email verification
-          const { email } = credentials.email;
-          history.push(`/emailsent/${email}`);
-
-          //dispatch(loginUser({email,password},history,setFieldError,setSubmitting));
+          history.push(`/emailsent/${credentials.email}`);
         }
         //complete submission
         setSubmitting(false);
