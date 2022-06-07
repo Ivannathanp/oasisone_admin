@@ -14,6 +14,7 @@ export const loginUser = (
   return () => {
     fetch(`${currentUrl}api/tenant/signin`, {
       method: "POST",
+      mode: 'cors',
       body: JSON.stringify({email: credentials.email, password: credentials.password}),
       headers: { "content-type": "application/JSON" },
     })
@@ -67,6 +68,7 @@ export const signupUser = (
   return (dispatch) => {
     fetch(`${currentUrl}api/tenant/signup`, {
       method: "POST",
+      mode: 'cors',
       body: JSON.stringify({name: credentials.name, email: credentials.email, password: credentials.password}),
       headers: { "content-type": "application/JSON" },
     })

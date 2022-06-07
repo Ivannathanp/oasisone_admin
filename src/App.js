@@ -87,7 +87,7 @@ function App({ checked, tenant }) {
     console.log("tenant is: ", tenant);
 
     if (tenant.tenant_id != undefined) {
-      const newSocket = io("ws://backend.oasis-one.com", {
+      const newSocket = io("https://backend.oasis-one.com", {transports: ['polling']}, {
         query: {
           tenant_id: tenant.tenant_id,
         },
@@ -109,22 +109,21 @@ function App({ checked, tenant }) {
       {checked && (
         <div className="app">
           <Switch>
-            <Route path="/" exact component={Login} />
+            <Route exact path="/" component={Login} />
 
-            <BasicRoute path="/login/:userEmail?" exact component={Login} />
+            <BasicRoute exact path="/login/:userEmail?" component={Login} />
 
             <BasicRoute
-              path="/emailsent/:userEmail?/:reset?"
-              exact
-              component={EmailSent}
+              exact path="/emailsent/:userEmail?/:reset?"
+                            component={EmailSent}
             />
             <BasicRoute
-              path="/passwordreset/:userID/:resetString"
-              exact
+            exact  path="/passwordreset/:userID/:resetString"
+              
               component={PasswordReset}
             />
-            <BasicRoute path="/register" exact component={Register} />
-            <BasicRoute path="/forgetpassword" exact component={Forget} />
+            <BasicRoute exact path="/register"  component={Register} />
+            <BasicRoute exact path="/forgetpassword"  component={Forget} />
 
             <SocketContext.Provider value={socket}>
               <div class="box">
@@ -132,7 +131,7 @@ function App({ checked, tenant }) {
                   <SideBar />
                 </div>
                 <div class="column2">
-                  <AuthRoute path="/dashboard" exact component={Dashboard} />
+                  <AuthRoute exact path="/dashboard" component={Dashboard} />
                   <AuthRoute path="/orders" exact component={Order} />
                   <AuthRoute
                     path="/orderstatus"
