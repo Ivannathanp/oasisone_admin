@@ -236,6 +236,7 @@ useEffect(() => {
   const iconComponent = (props) => {
     return (
       <ExpandMoreRoundedIcon
+      // style={{color:tenant.profileColor}}
         className={props.className + " " + outlineSelectClasses.icon}
       />
     );
@@ -470,7 +471,7 @@ const [tableIndex, setTableIndex] = useState();
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left">Tables</div>
+        <div className="left"  style={{color: tenant.profileColor}}>Tables</div>
 
         <TopBar />
       </div>
@@ -753,7 +754,7 @@ const [tableIndex, setTableIndex] = useState();
       <Modal open={duplicatetableOpen}>
         <Box className="duplicatetablemodalbox">
           <div className="duplicateinnerbox">
-            <div className="duplicatetablemodaltitle">Duplicate Table</div>
+            <div className="duplicatetablemodaltitle"  style={{color: tenant.profileColor}}>Duplicate Table</div>
             <div className="duplicatetabletext">Select the table</div>
             <div className="tableselectorcontainer">
               <div className="tableselector1">
@@ -836,6 +837,7 @@ const [tableIndex, setTableIndex] = useState();
               </div>
               <div>
                 <button
+                 style={{background: tenant.profileColor}}
                   className="modalconfirmbutton"
                   onClick={handleduplicatetable}
                 >
@@ -850,7 +852,7 @@ const [tableIndex, setTableIndex] = useState();
       <Modal open={removetableOpen}>
         <Box className="duplicatetablemodalbox">
           <div className="duplicateinnerbox">
-            <div className="duplicatetablemodaltitle">Remove Table Content</div>
+            <div className="duplicatetablemodaltitle"  style={{color: tenant.profileColor}}>Remove Table Content</div>
             <div className="duplicatetabletext">Select the table</div>
             <div className="tableselectorcontainer">
               <div className="tableselector1">
@@ -862,6 +864,7 @@ const [tableIndex, setTableIndex] = useState();
                   IconComponent={iconComponent}
                   value={removeval}
                   onChange={(e) => setRemoveVal(e.target.value)}
+          
                 >
                   {tableRetrieved == true &&
                     tableData.map((post) => {
@@ -895,6 +898,7 @@ const [tableIndex, setTableIndex] = useState();
               </div>
               <div>
                 <button
+                 style={{background: tenant.profileColor}}
                   className="modalconfirmbutton"
                   onClick={handleRemoveTableContent}
                 >
@@ -908,6 +912,7 @@ const [tableIndex, setTableIndex] = useState();
 
 {tableRetrieved? ( <div className="tablescontainer">
         <div
+         style={{background: tenant.profileColor}}
           className={
             addtablenotif ||
             removetablenotif ||
@@ -951,6 +956,7 @@ const [tableIndex, setTableIndex] = useState();
                       <div className="emptygrid">
                         <div className={edittable ? "emptytable" : "null"}>
                           <button
+                           style={{color: tenant.profileColor}}
                             className="deletetablebutton"
                             type="button"
                             onClick={() =>
@@ -983,6 +989,7 @@ const [tableIndex, setTableIndex] = useState();
                   return (
                     <div className="innergrid">
                       <button
+                       style={posts.table.isWaiterCalled? null : {background: tenant.profileColor}}
                         className={
                           posts.table.isWaiterCalled
                             ? "tablewaiteractive"
@@ -1071,11 +1078,12 @@ const [tableIndex, setTableIndex] = useState();
               })
             
             })}
+            
         </div>
-
         <div className="tablebuttoncontainer">
           <div className="addtablecontainer">
             <button
+             style={edittable? null : {background: tenant.profileColor}}
               className={edittable ? "addtableinactive" : "addtableactive"}
               disabled={edittable ? true : false}
               onClick={() => {
@@ -1088,6 +1096,7 @@ const [tableIndex, setTableIndex] = useState();
 
           <div className="duplicatetablecontainer">
             <button
+             style={duplicatetableOpen? {borderColor: tenant.profileColor, color: tenant.profileColor} : {background: tenant.profileColor}}
               className={
                 edittable
                   ? duplicatetableOpen
@@ -1102,6 +1111,7 @@ const [tableIndex, setTableIndex] = useState();
           </div>
           <div className="removetablecontainer">
             <button
+                        style={removetableOpen? {borderColor: tenant.profileColor, color: tenant.profileColor} : {background: tenant.profileColor}}
               className={
                 edittable
                   ? removetableOpen
@@ -1117,6 +1127,7 @@ const [tableIndex, setTableIndex] = useState();
 
           <div className="edittablecontainer">
             <button
+             style={{background: tenant.profileColor}}
               className="edittablebutton"
               onClick={edittable ? handlesavetable : handleedittable}
             >
@@ -1124,6 +1135,7 @@ const [tableIndex, setTableIndex] = useState();
             </button>
           </div>
         </div>
+       
       </div>):(
         <div
           style={{
@@ -1134,7 +1146,7 @@ const [tableIndex, setTableIndex] = useState();
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
      

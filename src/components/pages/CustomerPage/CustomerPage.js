@@ -201,7 +201,7 @@ function CustomerPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left">Customer</div>
+        <div className="left"  style={{color: tenant.profileColor}}>Customer</div>
 
         <TopBar />
       </div>
@@ -211,9 +211,9 @@ function CustomerPage({ tenant }) {
           <div className="outercustomertable">
             <div className="customertable">
               <div className="customerheader">
-                <div className="customerleft">All Customer</div>
+                <div className="customerleft"  style={{color: tenant.profileColor}}>All Customer</div>
                 <div className="customerright">
-                  <button className="downloadbutton" onClick={generatePdf}>
+                  <button className="downloadbutton"  style={{borderColor: tenant.profileColor, color: tenant.profileColor}} onClick={generatePdf}>
                     Download as PDF{" "}
                   </button>
                 </div>
@@ -275,7 +275,7 @@ function CustomerPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
     </div>

@@ -79,7 +79,7 @@ function QrPage({ tenant }) {
   return (
     <div className="qrcontainer">
       <div className="topbar">
-        <div className="left">Print QR Codes</div>
+        <div className="left"  style={{color: tenant.profileColor}}>Print QR Codes</div>
 
         <TopBar />
       </div>
@@ -91,7 +91,7 @@ function QrPage({ tenant }) {
           <div className="qrsettings">
             
             <div className="downloadqr">
-              <button className="downloadqrbutton" onClick={downloadQRCode}>
+              <button  style={{background: tenant.profileColor}} className="downloadqrbutton" onClick={downloadQRCode}>
                 Download as PNG
               </button>
             </div>
@@ -107,7 +107,7 @@ function QrPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
       

@@ -13,7 +13,7 @@
   flex-direction: row;
   position: absolute;
   z-index: 3;
-  top: 0px;
+  top: 5px;
   right: 4%;
   width: 227px;
   height: 49px;
@@ -333,18 +333,28 @@ input[class~="promodetailinputfile"] {
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  margin-top: -3%;
+  margin-top: -4%;
 }
 
 .promoimagebutton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
   height: 35px;
   width: 35px;
   position: relative;
+  background-color:#e52c32;
+  border-radius: 100px;
+}
+.promoinput {
+  width: 14px;
+  height: 16px;
+  color: #fff;
 }
 
 input[class~="promoinputfile"]::file-selector-button {
-  border: 0.5px solid #e52c32;
-  padding: 10px 20px;
+  background-color:#e52c32;
   border-radius: 30px;
   background-color: #fff;
   font-family: "Nunito Sans", sans-serif;
@@ -353,8 +363,11 @@ input[class~="promoinputfile"]::file-selector-button {
   color: #424242;
   position: absolute;
   top: 0px;
-  width: 2px;
-  visibility: hidden;
+  right: -5px;
+  width: 100%;
+  height: 35px;
+  opacity: 0;
+  visibility: show;
 }
 
 input[class~="promoinputfile"] {

@@ -11,7 +11,7 @@ import {
   faAngleUp,
   faXmark,
   faMinus,
-  faPlus,
+  faPlus,faPencil
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -623,7 +623,7 @@ function InventoryPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left">Inventory</div>
+        <div className="left"  style={{color: tenant.profileColor}}>Inventory</div>
 
         <TopBar />
       </div>
@@ -655,6 +655,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
+                   style={{color: tenant.profileColor}}
                     onClick={() => {
                       setAddCategoryOpen(false);
                     }}
@@ -663,6 +664,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
+                   style={{background: tenant.profileColor}}
                     type="submit"
                     onClick={() => handleAddCategory(newCategoryName)}
                     className="savebutton"
@@ -747,9 +749,11 @@ function InventoryPage({ tenant }) {
                           <img src={productImage} className="productimage" />
                         </div>
                         <div className="imagebuttoncontainer">
-                          <div className="productimagebutton">
+                          <div className="promoimagebutton" style={{background: tenant.profileColor}}>
                             <label for="file-input">
-                              <img src={inputimage} />
+                            <FontAwesomeIcon
+                                  icon={faPencil}
+                                  className="promoinput"/>
                             </label>
 
                             <input
@@ -772,7 +776,7 @@ function InventoryPage({ tenant }) {
                     />
 
                     <div className="recommendcontainer">
-                      <div className="recommendtext">
+                      <div className="recommendtext" style={{color: tenant.profileColor}}>
                         Do you recommend this product?
                       </div>
                       <div className="switchbutton">
@@ -791,6 +795,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
+                  style={{color: tenant.profileColor}}
                     onClick={() => {
                       setAdditemopen(false);
                       setProductImage();
@@ -802,6 +807,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
+                  style={{background: tenant.profileColor}}
                     type="submit"
                     onClick={() => handleAddItem()}
                     className="savebutton"
@@ -894,9 +900,11 @@ function InventoryPage({ tenant }) {
                           <img src={productImage} className="productimage" />
                         </div>
                         <div className="imagebuttoncontainer">
-                          <div className="productimagebutton">
+                          <div className="promoimagebutton"  style={{background: tenant.profileColor}}>
                             <label for="file-input">
-                              <img src={inputimage} />
+                            <FontAwesomeIcon
+                                  icon={faPencil}
+                                  className="promoinput"/>
                             </label>
 
                             <input
@@ -923,7 +931,7 @@ function InventoryPage({ tenant }) {
                     />
 
                     <div className="recommendcontainer">
-                      <div className="recommendtext">
+                      <div className="recommendtext"  style={{color: tenant.profileColor}}>
                         Do you recommend this product?
                       </div>
                       <div className="switchbutton">
@@ -943,6 +951,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
+                   style={{color: tenant.profileColor}}
                     onClick={() => {
                       setEditItemOpen(false);
                       setProductImage();
@@ -954,6 +963,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
+                   style={{background: tenant.profileColor}}
                     type="submit"
                     onClick={() => handleRemoveItem()}
                     className="removebutton"
@@ -961,6 +971,7 @@ function InventoryPage({ tenant }) {
                     Remove Product
                   </button>
                   <button
+                   style={{background: tenant.profileColor}}
                     type="submit"
                     onClick={() => handleEditItem()}
                     className="savebutton"
@@ -977,11 +988,11 @@ function InventoryPage({ tenant }) {
               <div className="removecatinnerbox">
                 <div className="removecatheading">
                   <img src={removecat} className="removecatimage" />
-                  <div className="removecatmodaltitle">Remove Category</div>
+                  <div className="removecatmodaltitle"     style={{color: tenant.profileColor}}>Remove Category</div>
                 </div>
                 <div className="removecatmodaltext">
                   Are you sure to remove the{" "}
-                  <span style={{ color: "#f10c0c" }}>"{categoryName}"</span>{" "}
+                  <span style={{ color: tenant.profileColor }}>"{categoryName}"</span>{" "}
                   category in your menu?
                 </div>
 
@@ -1000,6 +1011,7 @@ function InventoryPage({ tenant }) {
                   </div>
                   <div>
                     <button
+                        style={{background: tenant.profileColor}}
                       className="modalconfirmbutton"
                       onClick={() => handleRemoveCategory(categoryID)}
                     >
@@ -1012,6 +1024,7 @@ function InventoryPage({ tenant }) {
           </Modal>
 
           <div
+           style={{background: tenant.profileColor}}
             className={
               categoryAdded ||
               categoryEditted ||
@@ -1049,7 +1062,7 @@ function InventoryPage({ tenant }) {
                 inventoryData.map((post) => {
                   return post.map((item, index) => {
                     return (
-                      <div className="categorycontainer" key={item.category.id}>
+                      <div className="categorycontainer" key={item.category.id} >
                         <div className="inventorycatergoryheading">
                           <div className="categoryname">
                             {item.category.name}
@@ -1059,6 +1072,7 @@ function InventoryPage({ tenant }) {
                               <div className="categorynumber">
                                 <div className="catdown">
                                   <button
+                                   style={index + 2 > inventoryData[0].length? null :{color: tenant.profileColor}}
                                     className={
                                       index + 2 > inventoryData[0].length
                                         ? "catdownbutton"
@@ -1075,6 +1089,7 @@ function InventoryPage({ tenant }) {
                                 <div className="cattext">{index + 1}</div>
                                 <div className="catup">
                                   <button
+                                   style={index + 1 <= 1? null:{color: tenant.profileColor}}
                                     className={
                                       index + 1 <= 1
                                         ? "catupbutton"
@@ -1091,6 +1106,7 @@ function InventoryPage({ tenant }) {
                               </div>
                               <div className="categoryremove">
                                 <button
+                                 style={{color: tenant.profileColor}}
                                   className="buttonremove"
                                   onClick={() => {
                                     setRemoveCategoryOpen(() => true);
@@ -1106,6 +1122,7 @@ function InventoryPage({ tenant }) {
 
                           <div className="additem">
                             <button
+                             style={{color: tenant.profileColor}}
                               className="add"
                               onClick={() => {
                                 setAdditemopen(true);
@@ -1117,7 +1134,7 @@ function InventoryPage({ tenant }) {
                           </div>
                         </div>
 
-                        <div className="catmenucontainer">
+                        <div className="catmenucontainer"  style={{borderColor: tenant.profileColor}} >
                           {item.category.menu.length == 0 && (
                             <div className="emptymenu"> No item</div>
                           )}
@@ -1156,6 +1173,7 @@ function InventoryPage({ tenant }) {
                                   )}
                                 </div>
                                 <div
+                                 style={post.quantity > 0 ? {background: tenant.profileColor} : null}
                                   className={
                                     post.quantity <= 0
                                       ? "catquanbutton"
@@ -1179,6 +1197,7 @@ function InventoryPage({ tenant }) {
                                       )}
                                     >
                                       <FontAwesomeIcon
+                                       style={post.quantity>0?{color: tenant.profileColor}:null}
                                         className={
                                           post.quantity > 0
                                             ? "cartbuttontext"
@@ -1217,6 +1236,7 @@ function InventoryPage({ tenant }) {
                                       )}
                                     >
                                       <FontAwesomeIcon
+                                               style={post.quantity>0?{color: tenant.profileColor}:null}
                                         className={
                                           post.quantity > 0
                                             ? "cartbuttontext"
@@ -1230,6 +1250,7 @@ function InventoryPage({ tenant }) {
 
                                 <div className="editbutton">
                                   <button
+                                   style={{color: tenant.profileColor}}
                                     className="edit"
                                     onClick={() => {
                                       setItemID(post.id);
@@ -1264,6 +1285,7 @@ function InventoryPage({ tenant }) {
             <div className="inventorybuttoncontainer"></div>
             <div className="inventorybuttoncontainer">
               <button
+               style={editcategory? null : {background: tenant.profileColor}}
                 className={editcategory ? "buttonaddinactive" : "buttonadd"}
                 disabled={editcategory ? true : false}
                 type="button"
@@ -1272,6 +1294,7 @@ function InventoryPage({ tenant }) {
                 + Add New Category
               </button>
               <button
+               style={{background: tenant.profileColor}}
                 className="buttonedit"
                 type="button"
                 onClick={handleEditCategory}
@@ -1291,7 +1314,7 @@ function InventoryPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={ tenant.profileColor} height={80} width={80} />
         </div>
       )}
     </div>

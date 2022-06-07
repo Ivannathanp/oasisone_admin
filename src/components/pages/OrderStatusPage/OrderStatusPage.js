@@ -207,7 +207,7 @@ function OrderStatusPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left">Order Status Screen</div>
+        <div className="left" style={{color: tenant.profileColor}}>Order Status Screen</div>
 
         <TopBar />
       </div>
@@ -215,7 +215,7 @@ function OrderStatusPage({ tenant }) {
         <div className="orderstatusoutercontainer">
           <div className="orderstatuscontainer">
             {rejectOrdermodal()}
-            <div className={removeitemnotif ? "notification" : "hidden"}>
+            <div  style={{background: tenant.profileColor}} className={removeitemnotif ? "notification" : "hidden"}>
               <div className="notificationtextcontainer">
                 <div className="notificationtext">Order Removed</div>
               </div>
@@ -253,7 +253,7 @@ function OrderStatusPage({ tenant }) {
                             <div className="orderstatustime">
                               {moment(post.order_time).fromNow()}-{" "}
                             </div>
-                            <div className="tableID">
+                            <div className="tableID" style={{color: tenant.profileColor}}>
                               {" "}
                               Table {post.order_table}
                             </div>
@@ -436,7 +436,7 @@ function OrderStatusPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
     </div>

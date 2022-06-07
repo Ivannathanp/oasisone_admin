@@ -19,6 +19,7 @@ import moment from "moment";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import { BorderColor } from "@material-ui/icons";
 
 function OrderPage({ tenant }) {
   const localUrl = process.env.REACT_APP_ORDERURL;
@@ -267,7 +268,7 @@ return item.map((post,index)=>{
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left">Orders</div>
+        <div className="left" style={{color: tenant.profileColor}}>Orders</div>
 
         <TopBar />
       </div>
@@ -276,9 +277,9 @@ return item.map((post,index)=>{
         <div className="outerordertable">
           <div className="ordertable">
           <div className="orderheader">
-            <div className="orderleft">All Orders</div>
+            <div className="orderleft" style={{color: tenant.profileColor}}>All Orders</div>
             <div className="orderright">
-              <button className="downloadbutton" onClick={generatePdf}>
+              <button className="downloadbutton" style={{color: tenant.profileColor, borderColor: tenant.profileColor}} onClick={generatePdf}>
                 Download as PDF
               </button>
             </div>
@@ -296,7 +297,7 @@ return item.map((post,index)=>{
 
           <div className="orderrendercontainer">
             <Modal open={orderOpen}>
-              <Box className="ordermodalbox">
+              <Box className="ordermodalbox" >
                 <div className="modalclose">
                   <button
                     className="modalclosebutton"
@@ -304,13 +305,14 @@ return item.map((post,index)=>{
                   >
                     <FontAwesomeIcon
                       className="closebuttonicon"
+                      style={{color: tenant.profileColor}}
                       icon={faCircleXmark}
                     />
                   </button>
                 </div>
 
                 <div className="innermodalbox">
-                  <div className="ordermodaltitle">{tenant.name}</div>
+                  <div className="ordermodaltitle" style={{color: tenant.profileColor}}>{tenant.name}</div>
                   <div className="ordermodalsubtitle">
                     <div className="ordermodaldate">
                       <div className="ordertime">
@@ -320,7 +322,7 @@ return item.map((post,index)=>{
                         />
                         {ordertime.toLocaleTimeString("en-US")}{" "}
                         <span className="space">/</span>{" "}
-                        <span className="orderdate">
+                        <span className="orderdate" style={{color: tenant.profileColor}}>
                           {" "}
                           {ordertime.toLocaleDateString("en-ID", dateOptions)}
                         </span>
@@ -598,7 +600,7 @@ return item.map((post,index)=>{
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
      

@@ -455,6 +455,7 @@ function SettingsPage({ tenant }) {
 
       return (
         <button
+        style={selected? {background: tenant.profileColor, borderColor: tenant.profileColor, color:"#fff"} : null}
           type="button"
           className={selected ? "daysbutton" : "daysbuttonoff"}
           onClick={() => {
@@ -524,6 +525,7 @@ function SettingsPage({ tenant }) {
                         classes={neonStyles}
                         checkedIcon={<span />}
                         icon={<span />}
+                        
                       />
                     }
                     label="Closed"
@@ -732,6 +734,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="openhourmodalbutton">
               <button
+              style={{color: tenant.profileColor}}
                 onClick={() => {
                   setDay();
                   setOpenHourEdit((state) => !state);
@@ -743,6 +746,7 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
+              style={{background: tenant.profileColor}}
                 type="submit"
                 onClick={handlesavehour}
                 className="savebutton"
@@ -826,7 +830,7 @@ function SettingsPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left">Settings</div>
+        <div className="left"  style={{color: tenant.profileColor}}>Settings</div>
 
         <TopBar />
       </div>
@@ -876,9 +880,11 @@ function SettingsPage({ tenant }) {
                     </div>
                     <div className="editprofileimagebuttoncontainer">
                       <div className="imagebuttoncontainer">
-                        <div className="productimagebutton">
+                      <div className="promoimagebutton" style={{background: tenant.profileColor}}>
                           <label htmlFor="file-input">
-                            <img src={inputimage} />
+                          <FontAwesomeIcon
+                                  icon={faPencil}
+                                  className="promoinput"/>
                           </label>
 
                           <input
@@ -898,6 +904,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="editprofilemodalbutton">
               <button
+              style={{color: tenant.profileColor}}
                 onClick={() => setEditprofile(false)}
                 className="cancelbutton"
               >
@@ -905,6 +912,7 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
+              style={{background: tenant.profileColor}}
                 type="submit"
                 onClick={HandleSaveProfile}
                 className="savebutton"
@@ -919,6 +927,7 @@ function SettingsPage({ tenant }) {
       {tenantRetrieved ? (
         <div className="settingsoutercontainer">
           <div
+           style={{background: tenant.profileColor}}
             className={settingsavednotif ? "settingsnotification" : "hidden"}
           >
             <div className="notificationtextcontainer">
@@ -959,6 +968,7 @@ function SettingsPage({ tenant }) {
                     </div>
                     <div className="editprofile">
                       <button
+                       style={{background: tenant.profileColor}}
                         className="editprofilebutton"
                         onClick={handleEditprofileopen}
                       >
@@ -974,7 +984,9 @@ function SettingsPage({ tenant }) {
                       <div className="profiletitle">Phone Number</div>
                       <div className="editcontainer">
                         <button
+                         style={ PhoneTextEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
                           className={
+                            
                             PhoneTextEdit
                               ? "editbuttoncontainer"
                               : "editbuttoncontaineractive"
@@ -1000,6 +1012,7 @@ function SettingsPage({ tenant }) {
                       <div className="profiletitle">Location</div>
                       <div className="editcontainer">
                         <button
+                        style={ LocationTextEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
                           className={
                             LocationTextEdit
                               ? "editbuttoncontainer"
@@ -1027,6 +1040,7 @@ function SettingsPage({ tenant }) {
                       <div className="profiletitle">Address</div>
                       <div className="editcontainer">
                         <button
+                        style={ AddressTextEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
                           className={
                             AddressTextEdit
                               ? "editbuttoncontainer"
@@ -1054,6 +1068,7 @@ function SettingsPage({ tenant }) {
                       <div className="profiletitle">Opening Hour</div>
                       <div className="editcontainer">
                         <button
+                        style={ OpenTimeEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
                           className={
                             OpenTimeEdit
                               ? "editbuttoncontainer"
@@ -1088,6 +1103,7 @@ function SettingsPage({ tenant }) {
                                   </>
                                 )}
                                 <FontAwesomeIcon
+                                style={{color: tenant.profileColor}}
                                   icon={faPencil}
                                   className={
                                     OpenTimeEdit ? "edithouricon" : "hidden"
@@ -1123,7 +1139,7 @@ function SettingsPage({ tenant }) {
                   <div className="taxcontents">
                     <div className="taxtext">Tax Charge</div>
                     <div className="taxdetails">
-                      <div className="percentagetext">
+                      <div className="percentagetext" style={{background: tenant.profileColor}}>
                         {tenantRetrieved && (
                           <div>
                             <input
@@ -1141,6 +1157,7 @@ function SettingsPage({ tenant }) {
                       </div>
                       <div className="taxedit">
                         <button
+                        style={{color: tenant.profileColor}}
                           type="button"
                           className="taxeditbutton"
                           onClick={handleTaxChargeEdit}
@@ -1154,7 +1171,7 @@ function SettingsPage({ tenant }) {
                   <div className="taxcontents">
                     <div className="taxtext">Service Charge</div>
                     <div className="taxdetails">
-                      <div className="percentagetext">
+                      <div className="percentagetext" style={{background: tenant.profileColor}}>
                         <input
                           type="number"
                           className="percentageinput"
@@ -1168,6 +1185,7 @@ function SettingsPage({ tenant }) {
                       </div>
                       <div className="taxedit">
                         <button
+                        style={{color: tenant.profileColor}}
                           type="button"
                           className="taxeditbutton"
                           onClick={handleServiceChargeEdit}
@@ -1190,14 +1208,15 @@ function SettingsPage({ tenant }) {
                     </div>
                     <div style={{ width: "90%" }}>
                       <div className="helpbuttoncontainer">
-                        <button className="helpbutton">
+                        <button style={{background: tenant.profileColor}} className="helpbutton">
                           <FontAwesomeIcon
                             className="helpicons"
                             icon={faEnvelope}
                           />
                           Email
                         </button>
-                        <button className="helpbutton2">
+                        <button style={{background: tenant.profileColor}} className="helpbutton2">
+                          
                           <FontAwesomeIcon
                             className="helpicons"
                             icon={faPhone}
@@ -1225,7 +1244,7 @@ function SettingsPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
     </div>

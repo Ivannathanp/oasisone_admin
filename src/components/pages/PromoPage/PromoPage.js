@@ -7,7 +7,7 @@ import inputimage from "../../icons/Edit Profile Pict.png";
 import DatePicker from "../../datepicker/components/date_picker/date_picker";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faXmark,   faPencil } from "@fortawesome/free-solid-svg-icons";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
@@ -296,17 +296,20 @@ function PromoPage({ tenant }) {
                   <div className="promopreview">
                     <img src={promoImage} className="promobannerimage" />
                   </div>
-                  <div className="promobannerbuttoncontainer">
-                    <div className="promoimagebutton">
-                      <label for="file-input">
-                        <img src={inputimage} />
+                  <div className="promobannerbuttoncontainer" >
+                    <div className="promoimagebutton" style={{background: tenant.profileColor}}>
+                      <label html-for="file-input" >
+                      <FontAwesomeIcon
+                                  icon={faPencil}
+                                  className="promoinput"/>
                       </label>
                       <input
                        id="file-input"
                        type="file"
                        name="promo"
                        accept=".png, .jpg"
-                       className="productinputfile"
+                       style={{background: tenant.profileColor}}
+                       className="promoinputfile"
                        onChange={imageHandler}
                       />
                     </div>
@@ -363,6 +366,7 @@ function PromoPage({ tenant }) {
                   setStartDate();
                   setEndDate();
                 }}
+                style={{color: tenant.profileColor}}
                 className="cancelbutton"
               >
                 Cancel
@@ -372,6 +376,7 @@ function PromoPage({ tenant }) {
                 onClick={
                   bannerType == "Add" ? HandleCreatePromo : HandleEditPromo
                 }
+                style={{background: tenant.profileColor}}
                 className="savebutton"
               >
                 Save Product
@@ -386,12 +391,13 @@ function PromoPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left">Promo Banner</div>
+        <div className="left" style={{color: tenant.profileColor}}>Promo Banner</div>
 
         <TopBar/>
       </div>
 {promoRetrieved? promoData.length != 0 ? ( <div className="promocontainer">
         <div
+        style={{background: tenant.profileColor}}
           className={
             promoaddnotif || promoeditnotif || promoremovenotif
               ? "promonotification"
@@ -434,10 +440,10 @@ function PromoPage({ tenant }) {
                         </div>
                       </div>
                       <div className="right-column">
-                        <div className="promotitle">{item.name}</div>                   
+                        <div className="promotitle" style={{color: tenant.profileColor}}>{item.name}</div>                   
                         <div className="promotext">
                           Promo ends at
-                          <span className="promodate">
+                          <span className="promodate" style={{color: tenant.profileColor}}>
                             {endDate.toLocaleDateString("en-ID", dateOptions)},
                             23:55 PM
                           </span>
@@ -450,6 +456,7 @@ function PromoPage({ tenant }) {
                         <div className="promobutton">
                           <button
                             className="buttonpromoedit"
+                            style={{background: tenant.profileColor}}
                             onClick={() => {
                               setpromobanneropen(() => true);
                               setPromoImage(()=> item.promoImage);
@@ -468,6 +475,7 @@ function PromoPage({ tenant }) {
                             or
                             <button
                               type="button"
+                              style={{color: tenant.profileColor}}
                               className="buttonremove"
                               onClick={() => {
                                 HandleDeletePromo(item.id);
@@ -488,6 +496,7 @@ function PromoPage({ tenant }) {
 
         <div className="addpromobutton">
           <button
+           style={{background: tenant.profileColor}}
             className="buttonadd"
             type="button"
             onClick={() => {
@@ -499,9 +508,11 @@ function PromoPage({ tenant }) {
           </button>
         </div>
       </div> ): ( <div className="form">
-          {PromoModal()} <div className="addpromobutton">
+          {PromoModal()} <div className="addpromobutton" >
           <button
+           style={{background: tenant.profileColor}}
             className="buttonadd"
+           
             type="button"
             onClick={() => {
               setpromobanneropen(() => true);
@@ -520,7 +531,7 @@ function PromoPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
      

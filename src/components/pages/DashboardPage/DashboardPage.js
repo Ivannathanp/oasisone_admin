@@ -408,9 +408,9 @@ function DashboardPage({ tenant }) {
   }
 
   return (
-    <div className="container">
+    <div className="container" >
       <div className="topbar">
-        <div className="left">Dashboard</div>
+        <div className="left" style={{color: tenant.profileColor}}>Dashboard</div>
 
         <TopBar />
       </div>
@@ -787,7 +787,7 @@ function DashboardPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color="#f10c0c" height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
     </div>

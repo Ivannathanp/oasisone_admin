@@ -81,7 +81,7 @@ function TopBar({ tenant }) {
       <div className="imagecontainer">
         <img src={profileImage + "?time" + new Date()} className="image" />
       </div>
-      <div className="toptext">{profileName}</div>
+      <div className="toptext" style={{color: tenant.profileColor}}>{profileName}</div>
     </div>
   );
 }
