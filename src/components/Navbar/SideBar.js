@@ -92,7 +92,7 @@ function SideBar({ logoutUser, tenant }) {
       <nav className="sidebar"  style={{background: tenant.profileColor}}>
         <div className="sidebar-container">
           <div className="sidebar-header">
-            {profileName} <i className="fab fa-typo3"></i>
+            {profileName}
           </div>
           <ul className="side-menu">
             <li className="side-item">

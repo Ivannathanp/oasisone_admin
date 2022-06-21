@@ -22,10 +22,10 @@ import Customer from "./components/pages/CustomerPage/CustomerPage";
 import Settings from "./components/pages/SettingsPage/SettingsPage";
 import MissingRoute from "./components/pages/MissingRoute";
 import RedirectDashboard from "./components/pages/RedirectDashboard";
-import "./App.css";
+
 import { io } from "socket.io-client";
 import { SocketContext } from "./components/socketContext";
-
+import "./App.css";
 //Auth & redux
 import AuthRoute from "./components/Auth/routes/AuthRoute";
 import BasicRoute from "./components/Auth/routes/BasicRoute";
@@ -55,56 +55,33 @@ function App({ checked, tenant }) {
         : `${online - 1} person is online`;
   }
 
-  console.log(onlineText);
-
   useEffect(() => {
     if (socket) {
       socket.on("visitor enters", (data) => setOnline(data));
       socket.on("visitor exits", (data) => setOnline(data));
-
-      socket.on("roomUsers", ({ room, users }) => {
-        outputRoomName(room);
-        // outputUsers(users);
-      });
       socket.emit("joinRoom", tenant.tenant_id);
-      console.log("I am app socket", socket.emit("joinRoom", tenant.tenant_id));
     }
   });
 
-  // function outputUsers(users) {
-  //   const userList = [];
-  //   users.forEach((user) => {
-  //     userList.push(user);
-  //   });
-  //   console.log("users :", userList);
-  // }
-
-  function outputRoomName(room) {
-    console.log("Room is :", room);
-  }
-
   useEffect(() => {
-    console.log("tenant is: ", tenant);
-
     if (tenant.tenant_id != undefined) {
-      const newSocket = io("https://backend.oasis-one.com", {transports: ['polling']}, {
-        query: {
-          tenant_id: tenant.tenant_id,
-        },
-      });
+      const newSocket = io(
+        "https://backend.oasis-one.com",
+        { transports: ["polling"] },
+        {
+          query: {
+            tenant_id: tenant.tenant_id,
+          },
+        }
+      );
 
       setSocket(newSocket);
       setSocketRetrieved(true);
       return () => newSocket.close();
     }
-  }, [tenant]);
-
-  if (socketRetrieved) {
-    console.log("app socket is: ", socket);
-  }
+  }, [socketRetrieved]);
 
   return (
-    
     <Router>
       {checked && (
         <div className="app">
@@ -114,16 +91,17 @@ function App({ checked, tenant }) {
             <BasicRoute exact path="/login/:userEmail?" component={Login} />
 
             <BasicRoute
-              exact path="/emailsent/:userEmail?/:reset?"
-                            component={EmailSent}
+              exact
+              path="/emailsent/:userEmail?/:reset?"
+              component={EmailSent}
             />
             <BasicRoute
-            exact  path="/passwordreset/:userID/:resetString"
-              
+              exact
+              path="/passwordreset/:userID/:resetString"
               component={PasswordReset}
             />
-            <BasicRoute exact path="/register"  component={Register} />
-            <BasicRoute exact path="/forgetpassword"  component={Forget} />
+            <BasicRoute exact path="/register" component={Register} />
+            <BasicRoute exact path="/forgetpassword" component={Forget} />
 
             <SocketContext.Provider value={socket}>
               <div class="box">

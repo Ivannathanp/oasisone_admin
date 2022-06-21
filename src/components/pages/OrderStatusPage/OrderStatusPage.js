@@ -107,7 +107,10 @@ function OrderStatusPage({ tenant }) {
             .then((response) => response.json())
             .then((result) => {
               if (result.status === "SUCCESS") {
-                socket.emit("update order", result.data);
+                if(socket){
+                  socket.emit("update order", result.data);
+                }
+               
               }
             });
         }
@@ -142,7 +145,10 @@ function OrderStatusPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          socket.emit("update order", result.data);
+          if(socket){
+            socket.emit("update order", result.data);
+          }
+
         }
       });
 

@@ -44,7 +44,6 @@ function PasswordResetPage({ resetPassword }) {
                 .required("Required"),
             })}
             onSubmit={(values, { setSubmitting, setFieldError }) => {
-              console.log(values);
               resetPassword(values, history, setFieldError, setSubmitting);
             }}
           >
@@ -70,7 +69,6 @@ function PasswordResetPage({ resetPassword }) {
                   {!isSubmitting && (
                     <button
                       type="submit"
-                      onClick={console.log("pressed", onsubmit)}
                       className="loginbutton"
                     >
                       Proceed

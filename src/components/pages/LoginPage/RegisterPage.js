@@ -58,7 +58,6 @@ function RegisterPage({ signupUser }) {
                 .required("Required"),
             })}
             onSubmit={(values, { setSubmitting, setFieldError }) => {
-              console.log("what", values);
               signupUser(
                 values,
                 history,
@@ -66,7 +65,6 @@ function RegisterPage({ signupUser }) {
                 seterrormessage,
                 setSubmitting
               );
-              console.log(setFieldError);
             }}
           >
             {({ errors, touched, isSubmitting }) => (
@@ -129,11 +127,7 @@ function RegisterPage({ signupUser }) {
 
                 <div className="buttongroup">
                   {!isSubmitting && (
-                    <button
-                      type="submit"
-                      onClick={console.log("pressed", onsubmit)}
-                      className="loginbutton"
-                    >
+                    <button type="submit" className="loginbutton">
                       {" "}
                       Register{" "}
                     </button>

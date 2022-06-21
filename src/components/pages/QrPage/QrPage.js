@@ -22,7 +22,6 @@ function QrPage({ tenant }) {
     let mounted = true;
 
     if (mounted) {
-      console.log("mounted");
       if (tenant.tenant_id != undefined) {
         const url = localUrl + "/user/" + tenant.tenant_id;
         fetch(url, {
@@ -51,7 +50,6 @@ function QrPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setQrCode(tenantData[0].qrCode);
-        console.log("Tenant Data is defined");
       }
     }
     return () => {
@@ -64,7 +62,6 @@ function QrPage({ tenant }) {
       .getElementById("qrCodeEl")
       .toDataURL("image/png")
       .replace("image/png", "image/octet-stream");
-    console.log(qrCodeURL);
     let aEl = document.createElement("a");
     aEl.href = qrCodeURL;
     aEl.download = tenantData[0].name + "qrcode.png";
@@ -74,7 +71,6 @@ function QrPage({ tenant }) {
   }
 
   if(tenantRetrieved){
-    console.log("qrcode",tenantData[0])
   }
   return (
     <div className="qrcontainer">

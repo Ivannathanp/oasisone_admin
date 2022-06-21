@@ -19,7 +19,7 @@ overflow-y: scroll;
   margin-left: -10%;
 }
 
-.sidebar-header {
+/* .sidebar-header {
   display: flex;
   text-align: center;
   justify-content: center;
@@ -29,6 +29,18 @@ overflow-y: scroll;
   font-weight: 700;
   font-size: 26px;
   color: #fff;
+} */
+
+.sidebar-header {
+  display: flex;
+  width: 308px;
+  align-items: center;
+  height: 10%;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: #fff;
+  margin-left: 20%;
 }
 
 .side-menu {

@@ -11,7 +11,8 @@ import {
   faAngleUp,
   faXmark,
   faMinus,
-  faPlus,faPencil
+  faPlus,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -50,10 +51,15 @@ function InventoryPage({ tenant }) {
   const [additemopen, setAdditemopen] = useState(false);
 
   const [itemName, setItemName] = useState();
+  const [itemNameChanged, setItemNameChanged] = useState(false);
   const [itemDuration, setItemDuration] = useState();
+
   const [itemDescription, setItemDescription] = useState();
+
   const [itemIsRecommended, setItemIsRecommended] = useState(false);
+
   const [itemPrice, setItemPrice] = useState();
+
   const [itemQuantity, setItemQuantity] = useState(0);
 
   const [edititemopen, setEditItemOpen] = useState(false);
@@ -126,8 +132,10 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                      socket.emit("update category", result.data);
-                      setInventoryData([result.data]);
+                      if (socket) {
+                        socket.emit("update category", result.data);
+                        setInventoryData([result.data]);
+                      }
                     }
                   });
               }
@@ -161,8 +169,10 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                      socket.emit("update category", result.data);
-                      setInventoryData([result.data]);
+                      if (socket) {
+                        socket.emit("update category", result.data);
+                        setInventoryData([result.data]);
+                      }
                     }
                   });
               }
@@ -199,8 +209,10 @@ function InventoryPage({ tenant }) {
                   .then((response) => response.json())
                   .then((result) => {
                     if (result.status === "SUCCESS") {
-                      socket.emit("update category", result.data);
-                      setInventoryData([result.data]);
+                      if (socket) {
+                        socket.emit("update category", result.data);
+                        setInventoryData([result.data]);
+                      }
                     }
                   });
               }
@@ -338,8 +350,6 @@ function InventoryPage({ tenant }) {
             setInventoryRetrieved(() => false);
           }
         });
-
-      console.log("NEW Inventory DATA IS!!!!!!!!!: ");
     }
   }
 
@@ -373,17 +383,19 @@ function InventoryPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== "FAILED") {
-          setCategoryAdded(true);
+          if (socket) {
+            setCategoryAdded(true);
 
-          setTimeout(() => {
-            setCategoryAdded(false);
-          }, 3000);
+            setTimeout(() => {
+              setCategoryAdded(false);
+            }, 3000);
 
-          socket.emit("add category", result.data);
-          setInventoryData([result.data]);
+            socket.emit("add category", result.data);
+            setInventoryData([result.data]);
 
-          setAddCategoryOpen(false);
-          setValidCategoryName(true);
+            setAddCategoryOpen(false);
+            setValidCategoryName(true);
+          }
         } else {
           setValidCategoryName(false);
         }
@@ -411,8 +423,10 @@ function InventoryPage({ tenant }) {
         })
           .then((response) => response.json())
           .then((result) => {
-            socket.emit("update category", result.data);
-            setInventoryData([result.data]);
+            if (socket) {
+              socket.emit("update category", result.data);
+              setInventoryData([result.data]);
+            }
           });
       });
     } else {
@@ -428,8 +442,10 @@ function InventoryPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        socket.emit("delete category", result.data);
-        setInventoryData([result.data]);
+        if (socket) {
+          socket.emit("delete category", result.data);
+          setInventoryData([result.data]);
+        }
       });
 
     setRemoveCategoryOpen(false);
@@ -474,18 +490,20 @@ function InventoryPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          setMenuAdded(true);
-          setTimeout(() => {
-            setMenuAdded(false);
-          }, 3000); 
+          if (socket) {
+            setMenuAdded(true);
+            setTimeout(() => {
+              setMenuAdded(false);
+            }, 3000);
 
-          socket.emit("add category", result.data);
-          setInventoryData([result.data]);
-          setItemPrice();
-          setAdditemopen(false);
-          setProductImage();
-          setItemIsRecommended();
-          setValidCategoryName(true);
+            socket.emit("add category", result.data);
+            setInventoryData([result.data]);
+            setItemPrice();
+            setAdditemopen(false);
+            setProductImage();
+            setItemIsRecommended();
+            setValidCategoryName(true);
+          }
         } else {
           setValidCategoryName(false);
         }
@@ -539,19 +557,21 @@ function InventoryPage({ tenant }) {
         .then((response) => response.json())
         .then((result) => {
           if (result.status === "SUCCESS") {
-            setMenuEditted(true);
-            setTimeout(() => {
-              setMenuEditted(false);
-            }, 3000);
+            if (socket) {
+              setMenuEditted(true);
+              setTimeout(() => {
+                setMenuEditted(false);
+              }, 3000);
 
-            socket.emit("update category", result.data);
-            setInventoryData([result.data]);
+              socket.emit("update category", result.data);
+              setInventoryData([result.data]);
 
-            setEditItemOpen(false);
-            setProductImage();
-            setItemPrice();
-            setItemIsRecommended();
-            setValidCategoryName(true);
+              setEditItemOpen(false);
+              setProductImage();
+              setItemPrice();
+              setItemIsRecommended();
+              setValidCategoryName(true);
+            }
           } else {
             setValidCategoryName(false);
           }
@@ -577,18 +597,20 @@ function InventoryPage({ tenant }) {
         .then((response) => response.json())
         .then((result) => {
           if (result.status === "SUCCESS") {
-            setMenuEditted(true);
-            setTimeout(() => {
-              setMenuEditted(false);
-            }, 3000);
+            if (socket) {
+              setMenuEditted(true);
+              setTimeout(() => {
+                setMenuEditted(false);
+              }, 3000);
 
-            socket.emit("update category", result.data);
-            setInventoryData([result.data]);
+              socket.emit("update category", result.data);
+              setInventoryData([result.data]);
 
-            setEditItemOpen(false);
-            setProductImage();
-            setItemIsRecommended();
-            setValidCategoryName(true);
+              setEditItemOpen(false);
+              setProductImage();
+              setItemIsRecommended();
+              setValidCategoryName(true);
+            }
           } else {
             setValidCategoryName(false);
           }
@@ -605,17 +627,19 @@ function InventoryPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          setMenuRemoved(true);
-          setTimeout(() => {
-            setMenuRemoved(false);
-          }, 3000); 
-          socket.emit("delete category", result.data);
-          setInventoryData([result.data]);
-          setEditItemOpen(false);
-          setProductImage();
-          setItemIsRecommended();
-          setItemPrice();
-          setValidCategoryName(true);
+          if (socket) {
+            setMenuRemoved(true);
+            setTimeout(() => {
+              setMenuRemoved(false);
+            }, 3000);
+            socket.emit("delete category", result.data);
+            setInventoryData([result.data]);
+            setEditItemOpen(false);
+            setProductImage();
+            setItemIsRecommended();
+            setItemPrice();
+            setValidCategoryName(true);
+          }
         }
       });
   }
@@ -623,7 +647,9 @@ function InventoryPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left"  style={{color: tenant.profileColor}}>Inventory</div>
+        <div className="left" style={{ color: tenant.profileColor }}>
+          Inventory
+        </div>
 
         <TopBar />
       </div>
@@ -655,7 +681,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
-                   style={{color: tenant.profileColor}}
+                    style={{ color: tenant.profileColor }}
                     onClick={() => {
                       setAddCategoryOpen(false);
                     }}
@@ -664,7 +690,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
-                   style={{background: tenant.profileColor}}
+                    style={{ background: tenant.profileColor }}
                     type="submit"
                     onClick={() => handleAddCategory(newCategoryName)}
                     className="savebutton"
@@ -723,7 +749,7 @@ function InventoryPage({ tenant }) {
                         <div className="inputlabel">Product Cooking Time</div>
                         <div class="MPOC" data-placeholder="Minutes"></div>
                         <input
-                          type="text"
+                          type="number"
                           className="inputcookingtime"
                           onChange={(e) => setItemDuration(e.target.value)}
                         />
@@ -749,11 +775,15 @@ function InventoryPage({ tenant }) {
                           <img src={productImage} className="productimage" />
                         </div>
                         <div className="imagebuttoncontainer">
-                          <div className="promoimagebutton" style={{background: tenant.profileColor}}>
+                          <div
+                            className="promoimagebutton"
+                            style={{ background: tenant.profileColor }}
+                          >
                             <label for="file-input">
-                            <FontAwesomeIcon
-                                  icon={faPencil}
-                                  className="promoinput"/>
+                              <FontAwesomeIcon
+                                icon={faPencil}
+                                className="promoinput"
+                              />
                             </label>
 
                             <input
@@ -776,7 +806,10 @@ function InventoryPage({ tenant }) {
                     />
 
                     <div className="recommendcontainer">
-                      <div className="recommendtext" style={{color: tenant.profileColor}}>
+                      <div
+                        className="recommendtext"
+                        style={{ color: tenant.profileColor }}
+                      >
                         Do you recommend this product?
                       </div>
                       <div className="switchbutton">
@@ -795,7 +828,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
-                  style={{color: tenant.profileColor}}
+                    style={{ color: tenant.profileColor }}
                     onClick={() => {
                       setAdditemopen(false);
                       setProductImage();
@@ -807,7 +840,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
-                  style={{background: tenant.profileColor}}
+                    style={{ background: tenant.profileColor }}
                     type="submit"
                     onClick={() => handleAddItem()}
                     className="savebutton"
@@ -841,6 +874,7 @@ function InventoryPage({ tenant }) {
                           className="inputfile"
                           onChange={(e) => {
                             setItemName(e.target.value);
+                            setItemNameChanged(true);
                             setValidCategoryName(true);
                           }}
                         />
@@ -871,7 +905,7 @@ function InventoryPage({ tenant }) {
                         <div className="inputlabel">Product Cooking Time</div>
                         <div class="MPOC" data-placeholder="Minutes"></div>
                         <input
-                          type="text"
+                          type="number"
                           className="inputcookingtime"
                           value={itemDuration}
                           onChange={(e) => {
@@ -900,11 +934,15 @@ function InventoryPage({ tenant }) {
                           <img src={productImage} className="productimage" />
                         </div>
                         <div className="imagebuttoncontainer">
-                          <div className="promoimagebutton"  style={{background: tenant.profileColor}}>
+                          <div
+                            className="promoimagebutton"
+                            style={{ background: tenant.profileColor }}
+                          >
                             <label for="file-input">
-                            <FontAwesomeIcon
-                                  icon={faPencil}
-                                  className="promoinput"/>
+                              <FontAwesomeIcon
+                                icon={faPencil}
+                                className="promoinput"
+                              />
                             </label>
 
                             <input
@@ -931,7 +969,10 @@ function InventoryPage({ tenant }) {
                     />
 
                     <div className="recommendcontainer">
-                      <div className="recommendtext"  style={{color: tenant.profileColor}}>
+                      <div
+                        className="recommendtext"
+                        style={{ color: tenant.profileColor }}
+                      >
                         Do you recommend this product?
                       </div>
                       <div className="switchbutton">
@@ -951,7 +992,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
-                   style={{color: tenant.profileColor}}
+                    style={{ color: tenant.profileColor }}
                     onClick={() => {
                       setEditItemOpen(false);
                       setProductImage();
@@ -963,7 +1004,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
-                   style={{background: tenant.profileColor}}
+                    style={{ background: tenant.profileColor }}
                     type="submit"
                     onClick={() => handleRemoveItem()}
                     className="removebutton"
@@ -971,7 +1012,12 @@ function InventoryPage({ tenant }) {
                     Remove Product
                   </button>
                   <button
-                   style={{background: tenant.profileColor}}
+                    disabled={itemNameChanged ? false : true}
+                    style={
+                      !itemNameChanged
+                        ? { background: "#c4c4c4" }
+                        : { background: tenant.profileColor }
+                    }
                     type="submit"
                     onClick={() => handleEditItem()}
                     className="savebutton"
@@ -988,11 +1034,18 @@ function InventoryPage({ tenant }) {
               <div className="removecatinnerbox">
                 <div className="removecatheading">
                   <img src={removecat} className="removecatimage" />
-                  <div className="removecatmodaltitle"     style={{color: tenant.profileColor}}>Remove Category</div>
+                  <div
+                    className="removecatmodaltitle"
+                    style={{ color: tenant.profileColor }}
+                  >
+                    Remove Category
+                  </div>
                 </div>
                 <div className="removecatmodaltext">
                   Are you sure to remove the{" "}
-                  <span style={{ color: tenant.profileColor }}>"{categoryName}"</span>{" "}
+                  <span style={{ color: tenant.profileColor }}>
+                    "{categoryName}"
+                  </span>{" "}
                   category in your menu?
                 </div>
 
@@ -1011,7 +1064,7 @@ function InventoryPage({ tenant }) {
                   </div>
                   <div>
                     <button
-                        style={{background: tenant.profileColor}}
+                      style={{ background: tenant.profileColor }}
                       className="modalconfirmbutton"
                       onClick={() => handleRemoveCategory(categoryID)}
                     >
@@ -1024,7 +1077,7 @@ function InventoryPage({ tenant }) {
           </Modal>
 
           <div
-           style={{background: tenant.profileColor}}
+            style={{ background: tenant.profileColor }}
             className={
               categoryAdded ||
               categoryEditted ||
@@ -1062,7 +1115,7 @@ function InventoryPage({ tenant }) {
                 inventoryData.map((post) => {
                   return post.map((item, index) => {
                     return (
-                      <div className="categorycontainer" key={item.category.id} >
+                      <div className="categorycontainer" key={item.category.id}>
                         <div className="inventorycatergoryheading">
                           <div className="categoryname">
                             {item.category.name}
@@ -1072,7 +1125,11 @@ function InventoryPage({ tenant }) {
                               <div className="categorynumber">
                                 <div className="catdown">
                                   <button
-                                   style={index + 2 > inventoryData[0].length? null :{color: tenant.profileColor}}
+                                    style={
+                                      index + 2 > inventoryData[0].length
+                                        ? null
+                                        : { color: tenant.profileColor }
+                                    }
                                     className={
                                       index + 2 > inventoryData[0].length
                                         ? "catdownbutton"
@@ -1089,7 +1146,11 @@ function InventoryPage({ tenant }) {
                                 <div className="cattext">{index + 1}</div>
                                 <div className="catup">
                                   <button
-                                   style={index + 1 <= 1? null:{color: tenant.profileColor}}
+                                    style={
+                                      index + 1 <= 1
+                                        ? null
+                                        : { color: tenant.profileColor }
+                                    }
                                     className={
                                       index + 1 <= 1
                                         ? "catupbutton"
@@ -1106,7 +1167,7 @@ function InventoryPage({ tenant }) {
                               </div>
                               <div className="categoryremove">
                                 <button
-                                 style={{color: tenant.profileColor}}
+                                  style={{ color: tenant.profileColor }}
                                   className="buttonremove"
                                   onClick={() => {
                                     setRemoveCategoryOpen(() => true);
@@ -1122,7 +1183,7 @@ function InventoryPage({ tenant }) {
 
                           <div className="additem">
                             <button
-                             style={{color: tenant.profileColor}}
+                              style={{ color: tenant.profileColor }}
                               className="add"
                               onClick={() => {
                                 setAdditemopen(true);
@@ -1134,7 +1195,10 @@ function InventoryPage({ tenant }) {
                           </div>
                         </div>
 
-                        <div className="catmenucontainer"  style={{borderColor: tenant.profileColor}} >
+                        <div
+                          className="catmenucontainer"
+                          style={{ borderColor: tenant.profileColor }}
+                        >
                           {item.category.menu.length == 0 && (
                             <div className="emptymenu"> No item</div>
                           )}
@@ -1173,7 +1237,11 @@ function InventoryPage({ tenant }) {
                                   )}
                                 </div>
                                 <div
-                                 style={post.quantity > 0 ? {background: tenant.profileColor} : null}
+                                  style={
+                                    post.quantity > 0
+                                      ? { background: tenant.profileColor }
+                                      : null
+                                  }
                                   className={
                                     post.quantity <= 0
                                       ? "catquanbutton"
@@ -1197,7 +1265,11 @@ function InventoryPage({ tenant }) {
                                       )}
                                     >
                                       <FontAwesomeIcon
-                                       style={post.quantity>0?{color: tenant.profileColor}:null}
+                                        style={
+                                          post.quantity > 0
+                                            ? { color: tenant.profileColor }
+                                            : null
+                                        }
                                         className={
                                           post.quantity > 0
                                             ? "cartbuttontext"
@@ -1236,7 +1308,11 @@ function InventoryPage({ tenant }) {
                                       )}
                                     >
                                       <FontAwesomeIcon
-                                               style={post.quantity>0?{color: tenant.profileColor}:null}
+                                        style={
+                                          post.quantity > 0
+                                            ? { color: tenant.profileColor }
+                                            : null
+                                        }
                                         className={
                                           post.quantity > 0
                                             ? "cartbuttontext"
@@ -1250,7 +1326,7 @@ function InventoryPage({ tenant }) {
 
                                 <div className="editbutton">
                                   <button
-                                   style={{color: tenant.profileColor}}
+                                    style={{ color: tenant.profileColor }}
                                     className="edit"
                                     onClick={() => {
                                       setItemID(post.id);
@@ -1285,7 +1361,9 @@ function InventoryPage({ tenant }) {
             <div className="inventorybuttoncontainer"></div>
             <div className="inventorybuttoncontainer">
               <button
-               style={editcategory? null : {background: tenant.profileColor}}
+                style={
+                  editcategory ? null : { background: tenant.profileColor }
+                }
                 className={editcategory ? "buttonaddinactive" : "buttonadd"}
                 disabled={editcategory ? true : false}
                 type="button"
@@ -1294,7 +1372,7 @@ function InventoryPage({ tenant }) {
                 + Add New Category
               </button>
               <button
-               style={{background: tenant.profileColor}}
+                style={{ background: tenant.profileColor }}
                 className="buttonedit"
                 type="button"
                 onClick={handleEditCategory}
@@ -1314,7 +1392,7 @@ function InventoryPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={ tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
     </div>

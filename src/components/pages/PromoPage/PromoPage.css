@@ -7,7 +7,7 @@
   position: relative;
 }
 
-.promonotification{
+.promonotification {
   display: flex;
   justify-content: center;
   flex-direction: row;
@@ -17,7 +17,7 @@
   right: 4%;
   width: 227px;
   height: 49px;
-  background-color: #E52C32;
+  background-color: #e52c32;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 0px;
@@ -51,15 +51,14 @@
 }
 
 .insidepromoform {
-   width: 1263px;;
+  width: 1263px;
   height: 300px;
   align-items: center;
-  
+
   border-radius: 20px;
 
   display: flex;
   flex-direction: row;
-
 }
 
 .promotext {
@@ -69,7 +68,6 @@
   line-height: 22px;
   color: #9b9b9b;
 }
-
 
 .promotitle {
   font-family: "Nunito Sans", sans-serif;
@@ -95,11 +93,18 @@
   font-weight: 400;
   font-size: 18px;
   line-height: 25px;
+  width: 414px;
   height: 90px;
   color: #424242;
   margin-top: 1%;
+  overflow-wrap: break-word;
+  overflow: scroll;
+  text-align: justify;
+  margin-bottom: 3%;
 }
-
+.promoinfo::-webkit-scrollbar {
+  display: none;
+}
 .promotext {
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
@@ -135,7 +140,7 @@
 }
 
 .promopreview {
-  background-color: #F8FAFB;
+  background-color: #f8fafb;
   width: 690px;
   height: 200px;
   border-radius: 30px;
@@ -153,11 +158,11 @@
 }
 
 img[src=""],
-img:not([src]){
+img:not([src]) {
   opacity: 0;
 }
 
-img[src="*"]{
+img[src="*"] {
   opacity: 1;
 }
 
@@ -165,8 +170,6 @@ input[class~="promodetailinputfile"] {
   word-wrap: break-word;
   word-break: break-all;
   width: 694px;
-  
-  
 }
 
 .promobutton {
@@ -302,7 +305,7 @@ input[class~="promodetailinputfile"] {
   resize: none;
 }
 
-.promodetailinputfile::-webkit-scrollbar{
+.promodetailinputfile::-webkit-scrollbar {
   display: none;
 }
 
@@ -344,7 +347,7 @@ input[class~="promodetailinputfile"] {
   height: 35px;
   width: 35px;
   position: relative;
-  background-color:#e52c32;
+  background-color: #e52c32;
   border-radius: 100px;
 }
 .promoinput {
@@ -354,7 +357,7 @@ input[class~="promodetailinputfile"] {
 }
 
 input[class~="promoinputfile"]::file-selector-button {
-  background-color:#e52c32;
+  background-color: #e52c32;
   border-radius: 30px;
   background-color: #fff;
   font-family: "Nunito Sans", sans-serif;
@@ -383,5 +386,5 @@ input[class~="promoinputfile"] {
   align-items: flex-end;
   display: flex;
   margin-top: 5%;
-  margin-bottom: 5% ;
+  margin-bottom: 5%;
 }

@@ -22,7 +22,6 @@ export const loginUser = (
     .then((response) => response.json())
       .then((result) => {
         
-        console.log(result)
         if (result.status === "FAILED") {
           const { message } = result;
 

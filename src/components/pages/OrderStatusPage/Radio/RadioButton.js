@@ -77,8 +77,6 @@ export function CustomizedRadios( {setStatus}) {
 
   const [selected, setSelected] = useState("")
   const [other, setOther] = useState()
-  console.log(selected);
-  console.log(other)
 
 return (
   <FormControl>

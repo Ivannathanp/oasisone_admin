@@ -31,12 +31,10 @@ function CustomerPage({ tenant }) {
   // Get Order Data
   useEffect(() => {
     let mounted = true;
-    console.log("called");
 
     if (mounted) {
       if (tenant.tenant_id != undefined) {
         const url = localUrl + "/retrieve/" + tenant.tenant_id;
-        console.log(url);
 
         fetch(url, {
           method: "GET",
@@ -45,11 +43,9 @@ function CustomerPage({ tenant }) {
           .then((response) => response.json())
           .then((result) => {
             if (result.status === "SUCCESS") {
-              // console.log(result)
               setOrderData([result.data]);
               setOrderRetrieved(() => true);
             } else {
-              // console.log(result);
               setOrderRetrieved(() => false);
             }
           });
@@ -72,18 +68,13 @@ function CustomerPage({ tenant }) {
   });
 
   function handleOrderAdded(user) {
-    console.log("TABLE1", user);
-    console.log(" TABLE original ", orderData);
 
     if (orderRetrieved) {
-      console.log("I am order retrieved!!!!!!!!!!!!!", user);
 
       let newData = orderData.splice();
 
       newData.push(user);
       setOrderData(newData);
-      console.log("NEW DATA IS!!!!!!!!!: ", newData);
-      console.log("...user is", orderData);
     }
   }
 

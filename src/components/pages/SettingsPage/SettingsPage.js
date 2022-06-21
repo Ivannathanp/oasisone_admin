@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import "./SettingsPage.css";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -27,8 +27,10 @@ import TopBar from "../TopBar/TopBar";
 import { SocketContext } from "../../socketContext";
 import { sessionService } from "redux-react-session";
 import { ThreeDots } from "react-loader-spinner";
+import emailjs from "@emailjs/browser";
 
 function SettingsPage({ tenant }) {
+  const form = useRef();
   const localUrl = process.env.REACT_APP_TENANTURL;
   const imageUrl = process.env.REACT_APP_IMAGEURL;
 
@@ -37,15 +39,12 @@ function SettingsPage({ tenant }) {
 
   // socket connection
   const socket = useContext(SocketContext);
-  console.log("socket context:", SocketContext);
-  console.log("socket", socket);
 
   // Get Tenant Data
   useEffect(() => {
     let mounted = true;
 
     if (mounted) {
-      console.log("mounted");
       if (tenant.tenant_id != undefined) {
         const url = localUrl + "/user/" + tenant.tenant_id;
         fetch(url, {
@@ -70,14 +69,14 @@ function SettingsPage({ tenant }) {
 
   useEffect(() => {
     if (socket) {
-      socket.on('update user', (data) => handleUserUpdated(data));
-
-      console.log("I am setting socket",socket.on('update user', (data) => handleUserUpdated(data)) );
+      socket.on("update user", (data) => handleUserUpdated(data));
     }
   });
 
   const [color, setColor] = useState();
   const [profileName, setProfileName] = useState();
+  const [profileEmail, setProfileEmail] = useState();
+  const [helpMessage, setHelpMessage] = useState();
   const [taxchargeedit, setTaxChargeEdit] = useState(false);
   const [servicechargeedit, setServiceChargeEdit] = useState(false);
   const [LocationTextEdit, setLocationTextEdit] = useState(false);
@@ -96,13 +95,13 @@ function SettingsPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
+        setProfileEmail(tenantData[0].email);
         setTextPhone(tenantData[0].phoneNumber);
         setColor(tenantData[0].profileColor);
         setTextAddress(tenantData[0].address);
         setTextLocation(tenantData[0].location);
         setTaxChargeValue(tenantData[0].taxCharge);
         setServiceChargeValue(tenantData[0].serviceCharge);
-        console.log("Tenant Data socket is called");
         setProfileImage(tenantData[0].profileImage);
       }
     }
@@ -112,43 +111,32 @@ function SettingsPage({ tenant }) {
   }, [tenantRetrieved, tenantData]);
 
   function handleUserUpdated(user) {
-    console.log("update SOCKET IS CALLED!!!!!!!!!")
     if (tenantRetrieved) {
       let newData = tenantData.splice();
 
-     
       newData.push(user);
       setTenantData(newData);
-      console.log("new data is", newData)
     }
-    console.log("tenant new data is", tenantData)
   }
-
 
   async function HandleSaveProfile() {
     setEditprofile(false);
     setSettingSavedNotif(true);
     setTimeout(() => {
       setSettingSavedNotif(false);
-    }, 3000); 
+    }, 3000);
 
-    var tenantID= tenant.tenant_id;
-    console.log("tenant IDDDDD:", tenantID);
+    var tenantID = tenant.tenant_id;
     const profileUrl = imageUrl + "/avatar/" + tenant.tenant_id;
     var input = document.querySelector('input[type="file"]');
-    console.log(input);
-    console.log(input.files[0]);
     let formData = new FormData();
     formData.append("avatar", input.files[0]);
-    console.log(formData);
     fetch(profileUrl, {
       method: "POST",
       body: formData,
     })
       .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-      })
+      .then((result) => {})
       .catch((error) => {
         console.error("Error Upload Logo:", error);
       });
@@ -167,20 +155,36 @@ function SettingsPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log("settings data is:       ", result.data)
-        socket.emit('update user', result.data);
-        sessionService.saveUser(result.data);
-        console.log("SOCKET IS EMITTED!!!!!!!!!",  socket.emit('update user', result.data))
+        if (socket) {
+          socket.emit("update user", result.data);
+          sessionService.saveUser(result.data);
+        }
       });
   }
-  //console.log("change2?", textareatext);
+
+  function HandleSentEmail() {
+    setHelpEmail(false)
+    setEmailSendNotif(true);
+    setTimeout(() => {
+      setEmailSendNotif(false);
+    }, 3000);
+
+setHelpMessage();
+
+    console.log(process.env.REACT_APP_PUBLIC_KEY);
+    emailjs.sendForm(
+      process.env.REACT_APP_USER_ID,
+      process.env.REACT_APP_TEMPLATE_ID,
+      form.current,
+      process.env.REACT_APP_PUBLIC_KEY
+    );
+  }
 
   async function handleTaxChargeEdit() {
     setTaxChargeEdit(() => !taxchargeedit);
 
     if (taxchargeedit == true) {
       const url = localUrl + "/edit/taxcharges";
-      console.log("sent to backend, value : " + taxChargeValue);
 
       await fetch(url, {
         method: "POST",
@@ -192,8 +196,9 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
-          socket.emit('update user', result.data);
-          console.log(result);
+          if (socket) {
+            socket.emit("update user", result.data);
+          }
         });
     }
   }
@@ -203,7 +208,6 @@ function SettingsPage({ tenant }) {
 
     if (servicechargeedit == true) {
       const url = localUrl + "/edit/servicecharges";
-      console.log("sent to backend, value : " + serviceChargeValue);
 
       await fetch(url, {
         method: "POST",
@@ -215,8 +219,7 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
-          socket.emit('update user', result.data);
-          console.log(result);
+          socket.emit("update user", result.data);
         });
     }
   }
@@ -246,8 +249,9 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
-          socket.emit('update user', result.data);
-       
+          if (socket) {
+            socket.emit("update user", result.data);
+          }
         });
     }
   }
@@ -267,8 +271,7 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
-          socket.emit('update user', result.data);
-       
+          socket.emit("update user", result.data);
         });
     }
   }
@@ -288,8 +291,9 @@ function SettingsPage({ tenant }) {
       })
         .then((response) => response.json())
         .then((result) => {
-          socket.emit('update user', result.data);
-       
+          if (socket) {
+            socket.emit("update user", result.data);
+          }
         });
     }
   }
@@ -335,8 +339,8 @@ function SettingsPage({ tenant }) {
   const [OpenTimeEdit, setOpenTimeEdit] = useState(false);
 
   const [editprofile, setEditprofile] = useState(false);
-  const handleEditprofileopen = () => setEditprofile(true);
-  const handleEditProfileClose = () => setEditprofile(false);
+  const [helpemail, setHelpEmail] = useState(true);
+  const [helpcall, setHelpCall] = useState(false);
 
   const [day, setDay] = useState();
   const [open24hrs, setOpen24hrs] = useState(false);
@@ -371,7 +375,6 @@ function SettingsPage({ tenant }) {
     setClosedTimeHour(closeh);
     setClosedTimeMinute(closem);
     setClosedTimeTF(closetf);
-    // console.log(day);
   }
 
   function DateAndTimeModal() {
@@ -383,15 +386,12 @@ function SettingsPage({ tenant }) {
         if (closedtimetf == opentimetf) {
           if (closedtimehour == opentimehour) {
             if (closedtimeminute <= opentimeminute) {
-              console.log("Closed time cant be earlier than open time");
               return false;
             }
           } else if (closedtimehour < opentimehour) {
-            console.log("Closed time cant be earlier than open time");
             return false;
           }
         } else if (closedtimetf == "AM" && opentimetf == "PM") {
-          console.log("Closed time cant be earlier than open time");
           return false;
         } else {
           return true;
@@ -413,8 +413,6 @@ function SettingsPage({ tenant }) {
             CloseTF: closedtimetf,
           });
 
-          console.log(payload);
-
           fetch(url, {
             method: "POST",
             body: payload,
@@ -422,8 +420,7 @@ function SettingsPage({ tenant }) {
           })
             .then((response) => response.json())
             .then((result) => {
-              console.log(result);
-              socket.emit('update user', result.data);
+              socket.emit("update user", result.data);
               sessionService.saveUser(result.data);
               setDaysSelected([]);
             });
@@ -431,7 +428,6 @@ function SettingsPage({ tenant }) {
       }
     }
 
-    console.log(daysSelected);
     function renderButton(item, index) {
       const [selected, setSelected] = useState(false);
 
@@ -455,7 +451,15 @@ function SettingsPage({ tenant }) {
 
       return (
         <button
-        style={selected? {background: tenant.profileColor, borderColor: tenant.profileColor, color:"#fff"} : null}
+          style={
+            selected
+              ? {
+                  background: tenant.profileColor,
+                  borderColor: tenant.profileColor,
+                  color: "#fff",
+                }
+              : null
+          }
           type="button"
           className={selected ? "daysbutton" : "daysbuttonoff"}
           onClick={() => {
@@ -525,7 +529,6 @@ function SettingsPage({ tenant }) {
                         classes={neonStyles}
                         checkedIcon={<span />}
                         icon={<span />}
-                        
                       />
                     }
                     label="Closed"
@@ -734,7 +737,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="openhourmodalbutton">
               <button
-              style={{color: tenant.profileColor}}
+                style={{ color: tenant.profileColor }}
                 onClick={() => {
                   setDay();
                   setOpenHourEdit((state) => !state);
@@ -746,7 +749,7 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
-              style={{background: tenant.profileColor}}
+                style={{ background: tenant.profileColor }}
                 type="submit"
                 onClick={handlesavehour}
                 className="savebutton"
@@ -821,16 +824,20 @@ function SettingsPage({ tenant }) {
   };
 
   const [settingsavednotif, setSettingSavedNotif] = useState(false);
+  const [emailsendnotif, setEmailSendNotif] = useState(false);
   function handlenotification() {
-    if (settingsavednotif) {
+    if (settingsavednotif || emailsendnotif) {
       setSettingSavedNotif(false);
+      setEmailSendNotif(false);
     }
   }
 
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left"  style={{color: tenant.profileColor}}>Settings</div>
+        <div className="left" style={{ color: tenant.profileColor }}>
+          Settings
+        </div>
 
         <TopBar />
       </div>
@@ -880,11 +887,15 @@ function SettingsPage({ tenant }) {
                     </div>
                     <div className="editprofileimagebuttoncontainer">
                       <div className="imagebuttoncontainer">
-                      <div className="promoimagebutton" style={{background: tenant.profileColor}}>
+                        <div
+                          className="promoimagebutton"
+                          style={{ background: tenant.profileColor }}
+                        >
                           <label htmlFor="file-input">
-                          <FontAwesomeIcon
-                                  icon={faPencil}
-                                  className="promoinput"/>
+                            <FontAwesomeIcon
+                              icon={faPencil}
+                              className="promoinput"
+                            />
                           </label>
 
                           <input
@@ -904,7 +915,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="editprofilemodalbutton">
               <button
-              style={{color: tenant.profileColor}}
+                style={{ color: tenant.profileColor }}
                 onClick={() => setEditprofile(false)}
                 className="cancelbutton"
               >
@@ -912,7 +923,166 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
-              style={{background: tenant.profileColor}}
+                style={{ background: tenant.profileColor }}
+                type="submit"
+                onClick={HandleSaveProfile}
+                className="savebutton"
+              >
+                Save Profile
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+
+       <Modal open={helpemail}>
+        <Box className="helpbox">
+          <div className="editprofileinnerbox">
+            <div className="editprofilemodaltitle">Send Email</div>
+
+            <form ref={form}>
+              <div className="helpinnermodalbox">
+          
+                  <div className="profileinputtext">
+                    <div className="editprofileinputlabel">Restaurant Name</div>
+                    <div className="inputtext">
+                      <input
+                        type="text"
+                        name="from_name"
+                        className="editprofileinputfile"
+                        defaultValue={profileName}
+                        onChange={(e) => setProfileName(e.target.value)}
+                      />
+                    </div>
+                    <div className="editprofileinputlabel">Email address</div>
+                    <div className="inputtext">
+                      <input
+                        type="email"
+                        name="user_email"
+                        className="editprofileinputfile"
+                        defaultValue={profileEmail}
+                        onChange={(e) => setProfileEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="editprofileinputlabel">Message</div>
+                    <div className="inputtext">
+                      <textarea
+                        type="text"
+                        name="message"
+                        className="messageinput"
+                        defaultValue={helpMessage}
+                        onChange={(e) => setHelpMessage(e.target.value)}
+                      />
+              
+                  </div>
+                </div>
+
+            
+              
+            </form>
+            <div className="editprofilemodalbutton">
+              <button
+                style={{ color: tenant.profileColor }}
+                onClick={() => setHelpEmail(false)}
+                className="cancelbutton"
+              >
+                Cancel
+              </button>
+
+              <button
+                style={{ background: tenant.profileColor }}
+                type="submit"
+                onClick={HandleSentEmail}
+                className="savebutton"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+
+      <Modal open={helpcall}>
+        <Box className="editprofilebox">
+          <div className="editprofileinnerbox">
+            <div className="editprofilemodaltitle">Edit Profile</div>
+
+            <form>
+              <div className="editprofileinnermodalbox">
+                <div className="editprofileleftmodalcolumn">
+                  <div className="profileinputtext">
+                    <div className="editprofileinputlabel">Restaurant Name</div>
+                    <div className="inputtext">
+                      <input
+                        type="text"
+                        className="editprofileinputfile"
+                        defaultValue={profileName}
+                        onChange={(e) => setProfileName(e.target.value)}
+                      />
+                    </div>
+                    <div className="editprofileinputlabel">Profile Color</div>
+
+                    <div className="colorpaletteselector">
+                      <BlockPicker
+                        color={color}
+                        onChange={(color) => {
+                          setColor(color.hex);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rightmodalcolumn">
+                  <div className="editprofileinputimage">
+                    <div className="editprofileinputlabel">Product Picture</div>
+                    <div className="editprofileimagecontainer">
+                      <img
+                        src={profileImage}
+                        // src={profileImage + "?time" + new Date()}
+                        className="editprofileimage"
+                      />
+                    </div>
+                    <div className="editprofileimagebuttoncontainer">
+                      <div className="imagebuttoncontainer">
+                        <div
+                          className="promoimagebutton"
+                          style={{ background: tenant.profileColor }}
+                        >
+                          <label htmlFor="file-input">
+                            <FontAwesomeIcon
+                              icon={faPencil}
+                              className="promoinput"
+                            />
+                          </label>
+
+                          <input
+                            id="file-input"
+                            type="file"
+                            name="avatar"
+                            accept=".png, .jpg"
+                            className="productinputfile"
+                            onChange={imageHandler}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div className="editprofilemodalbutton">
+              <button
+                style={{ color: tenant.profileColor }}
+                onClick={() => setEditprofile(false)}
+                className="cancelbutton"
+              >
+                Cancel
+              </button>
+
+              <button
+                style={{ background: tenant.profileColor }}
                 type="submit"
                 onClick={HandleSaveProfile}
                 className="savebutton"
@@ -927,14 +1097,12 @@ function SettingsPage({ tenant }) {
       {tenantRetrieved ? (
         <div className="settingsoutercontainer">
           <div
-           style={{background: tenant.profileColor}}
-            className={settingsavednotif ? "settingsnotification" : "hidden"}
+            style={{ background: tenant.profileColor }}
+            className={settingsavednotif || emailsendnotif ? "settingsnotification" : "hidden"}
           >
             <div className="notificationtextcontainer">
-              <div className="notificationtext">Settings Saved</div>
+              <div className="notificationtext">{emailsendnotif? "Email Sent" : "Settings Saved"}</div>
             </div>
-        
-        
 
             <div className="notificationclose">
               <button className="notifclosebutton" onClick={handlenotification}>
@@ -968,25 +1136,29 @@ function SettingsPage({ tenant }) {
                     </div>
                     <div className="editprofile">
                       <button
-                       style={{background: tenant.profileColor}}
+                        style={{ background: tenant.profileColor }}
                         className="editprofilebutton"
-                        onClick={handleEditprofileopen}
+                        onClick={()=>setEditprofile(true)}
                       >
                         Edit Profile
                       </button>
                     </div>
                   </div>
 
-                  
-
                   <div className="profilecontainer2">
-                  <div className="profileaddressheader">
+                    <div className="profileaddressheader">
                       <div className="profiletitle">Phone Number</div>
                       <div className="editcontainer">
                         <button
-                         style={ PhoneTextEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
+                          style={
+                            PhoneTextEdit
+                              ? {
+                                  borderColor: tenant.profileColor,
+                                  color: tenant.profileColor,
+                                }
+                              : { background: tenant.profileColor }
+                          }
                           className={
-                            
                             PhoneTextEdit
                               ? "editbuttoncontainer"
                               : "editbuttoncontaineractive"
@@ -1003,16 +1175,27 @@ function SettingsPage({ tenant }) {
                         <textarea
                           disabled={PhoneTextEdit ? false : true}
                           value={textPhone}
-                          className="profilelocation"
+                          className={
+                            PhoneTextEdit
+                              ? "profilelocationactive"
+                              : "profilelocation"
+                          }
                           onChange={(e) => setTextPhone(e.target.value)}
                         />
                       )}
                     </form>
-                  <div className="profileaddressheader">
+                    <div className="profileaddressheader">
                       <div className="profiletitle">Location</div>
                       <div className="editcontainer">
                         <button
-                        style={ LocationTextEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
+                          style={
+                            LocationTextEdit
+                              ? {
+                                  borderColor: tenant.profileColor,
+                                  color: tenant.profileColor,
+                                }
+                              : { background: tenant.profileColor }
+                          }
                           className={
                             LocationTextEdit
                               ? "editbuttoncontainer"
@@ -1030,7 +1213,11 @@ function SettingsPage({ tenant }) {
                         <textarea
                           disabled={LocationTextEdit ? false : true}
                           value={textLocation}
-                          className="profilelocation"
+                          className={
+                            LocationTextEdit
+                              ? "profilelocationactive"
+                              : "profilelocation"
+                          }
                           onChange={(e) => setTextLocation(e.target.value)}
                         />
                       )}
@@ -1040,7 +1227,14 @@ function SettingsPage({ tenant }) {
                       <div className="profiletitle">Address</div>
                       <div className="editcontainer">
                         <button
-                        style={ AddressTextEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
+                          style={
+                            AddressTextEdit
+                              ? {
+                                  borderColor: tenant.profileColor,
+                                  color: tenant.profileColor,
+                                }
+                              : { background: tenant.profileColor }
+                          }
                           className={
                             AddressTextEdit
                               ? "editbuttoncontainer"
@@ -1058,7 +1252,11 @@ function SettingsPage({ tenant }) {
                         <textarea
                           disabled={AddressTextEdit ? false : true}
                           value={textAddress}
-                          className="profileaddress"
+                          className={
+                            AddressTextEdit
+                              ? "profileaddressactive"
+                              : "profileaddress"
+                          }
                           onChange={(e) => setTextAddress(e.target.value)}
                         />
                       )}
@@ -1068,7 +1266,14 @@ function SettingsPage({ tenant }) {
                       <div className="profiletitle">Opening Hour</div>
                       <div className="editcontainer">
                         <button
-                        style={ OpenTimeEdit?  {borderColor: tenant.profileColor, color: tenant.profileColor}: {background: tenant.profileColor} }
+                          style={
+                            OpenTimeEdit
+                              ? {
+                                  borderColor: tenant.profileColor,
+                                  color: tenant.profileColor,
+                                }
+                              : { background: tenant.profileColor }
+                          }
                           className={
                             OpenTimeEdit
                               ? "editbuttoncontainer"
@@ -1085,7 +1290,6 @@ function SettingsPage({ tenant }) {
                     <div className="profileopen">
                       {tenantRetrieved == true &&
                         tenantData[0].openingDays.map((item, index) => {
-                          // console.log(item)
                           return (
                             <div className="opentext">
                               <div className="openleft">{item.day}</div>
@@ -1103,7 +1307,7 @@ function SettingsPage({ tenant }) {
                                   </>
                                 )}
                                 <FontAwesomeIcon
-                                style={{color: tenant.profileColor}}
+                                  style={{ color: tenant.profileColor }}
                                   icon={faPencil}
                                   className={
                                     OpenTimeEdit ? "edithouricon" : "hidden"
@@ -1139,12 +1343,26 @@ function SettingsPage({ tenant }) {
                   <div className="taxcontents">
                     <div className="taxtext">Tax Charge</div>
                     <div className="taxdetails">
-                      <div className="percentagetext" style={{background: tenant.profileColor}}>
+                      <div
+                        className="percentagetext"
+                        style={
+                          taxchargeedit
+                            ? {
+                                border: "1px solid #424242",
+                                color: "#424242",
+                                background: "transparent",
+                              }
+                            : { background: tenant.profileColor }
+                        }
+                      >
                         {tenantRetrieved && (
                           <div>
                             <input
                               type="number"
                               className="percentageinput"
+                              style={
+                                taxchargeedit ? { color: "#424242" } : null
+                              }
                               disabled={taxchargeedit == true ? false : true}
                               defaultValue={taxChargeValue}
                               onChange={(e) =>
@@ -1157,7 +1375,7 @@ function SettingsPage({ tenant }) {
                       </div>
                       <div className="taxedit">
                         <button
-                        style={{color: tenant.profileColor}}
+                          style={{ color: tenant.profileColor }}
                           type="button"
                           className="taxeditbutton"
                           onClick={handleTaxChargeEdit}
@@ -1171,10 +1389,24 @@ function SettingsPage({ tenant }) {
                   <div className="taxcontents">
                     <div className="taxtext">Service Charge</div>
                     <div className="taxdetails">
-                      <div className="percentagetext" style={{background: tenant.profileColor}}>
+                      <div
+                        className="percentagetext"
+                        style={
+                          servicechargeedit
+                            ? {
+                                border: "1px solid #424242",
+                                color: "#424242",
+                                background: "transparent",
+                              }
+                            : { background: tenant.profileColor }
+                        }
+                      >
                         <input
                           type="number"
                           className="percentageinput"
+                          style={
+                            servicechargeedit ? { color: "#424242" } : null
+                          }
                           disabled={servicechargeedit == true ? false : true}
                           defaultValue={serviceChargeValue}
                           onChange={(e) =>
@@ -1185,7 +1417,7 @@ function SettingsPage({ tenant }) {
                       </div>
                       <div className="taxedit">
                         <button
-                        style={{color: tenant.profileColor}}
+                          style={{ color: tenant.profileColor }}
                           type="button"
                           className="taxeditbutton"
                           onClick={handleServiceChargeEdit}
@@ -1208,31 +1440,35 @@ function SettingsPage({ tenant }) {
                     </div>
                     <div style={{ width: "90%" }}>
                       <div className="helpbuttoncontainer">
-                        <button style={{background: tenant.profileColor}} className="helpbutton">
+                        <button
+                          style={{ background: tenant.profileColor }}
+                          onClick={()=>setHelpEmail(true)}
+                          className="helpbutton"
+                        >
                           <FontAwesomeIcon
                             className="helpicons"
                             icon={faEnvelope}
                           />
                           Email
                         </button>
-                        <button style={{background: tenant.profileColor}} className="helpbutton2">
-                          
+                        {/* <button
+                          style={{ background: tenant.profileColor }}
+                          onClick={()=>setHelpCall(true)}
+                          className="helpbutton2"
+                        >
                           <FontAwesomeIcon
                             className="helpicons"
                             icon={faPhone}
                           />
                           Call
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
             </div>
-
           </div>
-
         </div>
       ) : (
         <div
@@ -1252,9 +1488,7 @@ function SettingsPage({ tenant }) {
 }
 
 function mapStateToProps({ session }) {
-  console.log("session user", session.user);
   return { tenant: session.user };
 }
 
-console.log(mapStateToProps);
 export default connect(mapStateToProps)(SettingsPage);

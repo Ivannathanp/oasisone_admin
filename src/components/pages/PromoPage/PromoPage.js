@@ -7,10 +7,11 @@ import inputimage from "../../icons/Edit Profile Pict.png";
 import DatePicker from "../../datepicker/components/date_picker/date_picker";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark,   faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faPencil } from "@fortawesome/free-solid-svg-icons";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import removecat from "../../icons/RemoveCat.svg";
 
 function PromoPage({ tenant }) {
   const localUrl = process.env.REACT_APP_PROMOURL;
@@ -18,8 +19,6 @@ function PromoPage({ tenant }) {
 
   // socket connection
   const socket = useContext(SocketContext);
-  console.log("socket context:", SocketContext);
-  console.log("socket", socket);
 
   const [promoImage, setPromoImage] = useState();
 
@@ -27,7 +26,7 @@ function PromoPage({ tenant }) {
   const [bannerType, setBannerType] = useState("");
   const [promobanneropen, setpromobanneropen] = useState(false);
   const [promoRetrieved, setPromoRetrieved] = useState(false);
-
+  const [removepromobanner, setRemovePromoBanner] = useState(false);
   const [promoData, setPromoData] = useState([]);
   const [promoID, setPromoID] = useState();
   const [promoName, setPromoName] = useState();
@@ -70,11 +69,9 @@ function PromoPage({ tenant }) {
           .then((response) => response.json())
           .then((result) => {
             if (result.status === "SUCCESS") {
-              console.log(result.data);
               setPromoData([result.data]);
               setPromoRetrieved(() => true);
             } else {
-              console.log("I am not retrieved")
               setPromoRetrieved(() => true);
             }
           });
@@ -86,62 +83,39 @@ function PromoPage({ tenant }) {
     };
   }, [tenant, promoRetrieved]);
 
-  console.log(promoData)
   useEffect(() => {
     if (socket) {
-      socket.on('add promo', (data) => handleAddPromo(data));
-      socket.on('update promo', (data) => handleUpdatePromo(data));
-      socket.on('delete promo', (data) => handleDeletePromo(data));
-
-      console.log("I am setting socket",socket.on('update user', (data) => handleAddPromo(data)) );
+      socket.on("add promo", (data) => handleAddPromo(data));
+      socket.on("update promo", (data) => handleUpdatePromo(data));
+      socket.on("delete promo", (data) => handleDeletePromo(data));
     }
   });
 
   function handleAddPromo(user) {
-    console.log("TABLE1", user);
-    console.log(" TABLE original ", promoData);
-
     if (promoRetrieved) {
-      console.log("I am table retrieved!!!!!!!!!!!!!", user)
-    
       let newData = promoData.splice();
- 
+
       newData.push(user);
       setPromoData(newData);
-      console.log("NEW DATA IS!!!!!!!!!: ", newData);
-      console.log("...user is", promoData)
-     
     }
   }
 
   function handleUpdatePromo(user) {
-    console.log("TABLE1", user);
-    console.log("update SOCKET IS CALLED!!!!!!!!!")
     if (promoRetrieved) {
       let newData = promoData.splice();
- 
+
       newData.push(user);
       setPromoData(newData);
-      console.log("NEW DATA IS!!!!!!!!!: ", newData);
-      console.log("...user is", promoData)
     }
-    console.log("tenant new data is", promoData)
   }
 
   function handleDeletePromo(user) {
-    console.log("TABLE1", user);
-    console.log(" TABLE original ", promoData);
-
     if (tableRetrieved) {
-     console.log("I am table retrieved!!!!!!!!!!!!!", user)
-    
-     let newData = promoData.splice();
- 
-     newData.push(user);
-     setPromoData(newData);
-     console.log("NEW DATA IS!!!!!!!!!: ", newData);
-     console.log("...user is", promoData)
-  }
+      let newData = promoData.splice();
+
+      newData.push(user);
+      setPromoData(newData);
+    }
   }
 
   async function imageHandler(e) {
@@ -155,29 +129,20 @@ function PromoPage({ tenant }) {
   }
 
   async function HandleEditPromo() {
-
-    console.log("edit promo is called.")
-
     let formData = new FormData();
     const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
-    var inputs = document.querySelector('input[type="file"]')
-    console.log("input", inputs)
-    console.log("form", inputs.files[0]);
+    var inputs = document.querySelector('input[type="file"]');
     formData.append("promo", inputs.files[0]);
-
 
     fetch(promoUrl, {
       method: "POST",
       body: formData,
     })
       .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-      })
+      .then((result) => {})
       .catch((error) => {
         console.error("Error Upload Logo:", error);
       });
-
 
     const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
     const payload = JSON.stringify({
@@ -185,7 +150,13 @@ function PromoPage({ tenant }) {
       promo_start: startDate,
       promo_end: endDate,
       promo_details: promoDetails,
-      promo_image: imageUrl + "/promo/render/" + tenant.tenant_id + "/" + promoName + '.jpg',
+      promo_image:
+        imageUrl +
+        "/promo/render/" +
+        tenant.tenant_id +
+        "/" +
+        promoName +
+        ".jpg",
     });
 
     await fetch(url, {
@@ -195,39 +166,33 @@ function PromoPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result)
-        socket.emit('update promo', result.data);
-        setPromoData([result.data]);
-        setPromoRetrieved(() => true);
-        setpromobanneropen(false);
-      })
-  
-   
+        if (socket) {
+          socket.emit("update promo", result.data);
+          setPromoData([result.data]);
+          setPromoRetrieved(() => true);
+          setpromobanneropen(false);
+        }
+      });
   }
 
   async function HandleCreatePromo() {
     const url = localUrl + "/create/" + tenant.tenant_id;
-    console.log("url", url);
     setPromoAddNotif(true);
     setTimeout(() => {
       setPromoAddNotif(false);
-    }, 5000); 
+    }, 3000);
 
     let formData = new FormData();
     const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
-    var input = document.querySelector('input[type="file"]')
+    var input = document.querySelector('input[type="file"]');
     formData.append("promo", input.files[0]);
-    console.log("input", input)
-    console.log("form", input.files[0]);
 
     fetch(promoUrl, {
       method: "POST",
       body: formData,
     })
       .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-      })
+      .then((result) => {})
       .catch((error) => {
         console.error("Error Upload Logo:", error);
       });
@@ -237,9 +202,14 @@ function PromoPage({ tenant }) {
       promo_start: startDate,
       promo_end: endDate,
       promo_details: promoDetails,
-      promo_image: imageUrl + "/promo/render/" + tenant.tenant_id + "/" + promoName + '.jpg',
+      promo_image:
+        imageUrl +
+        "/promo/render/" +
+        tenant.tenant_id +
+        "/" +
+        promoName +
+        ".jpg",
     });
-    console.log("payload", payload);
 
     fetch(url, {
       method: "POST",
@@ -248,28 +218,30 @@ function PromoPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
-        setPromoData([result.data]);
-        socket.emit('add promo', result.data);
-        setPromoRetrieved(() => true);
-        setpromobanneropen(false);
-        setPromoImage();
-        setPromoName();
-        setPromoDetails(); 
-        setStartDate();
-        setEndDate();
+        if (socket) {
+          setPromoData([result.data]);
+          socket.emit("add promo", result.data);
+          setPromoRetrieved(() => true);
+          setpromobanneropen(false);
+          setPromoImage();
+          setPromoName();
+          setPromoDetails();
+          setStartDate();
+          setEndDate();
+        }
       });
   }
 
   async function HandleDeletePromo(ID) {
-    console.log("delete promo data!!!!!1")
-    const url = localUrl + "/delete/" + tenant.tenant_id +  "/" + ID;
-    console.log("url", url);
+    setPromoID();
+    setPromoName();
+
+    const url = localUrl + "/delete/" + tenant.tenant_id + "/" + ID;
 
     setPromoRemoveNotif(true);
     setTimeout(() => {
       setPromoRemoveNotif(false);
-    }, 5000); 
+    }, 3000);
 
     await fetch(url, {
       method: "POST",
@@ -277,9 +249,11 @@ function PromoPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
-        setPromoData([result.data]);
-        socket.emit('delete promo', result.data);
+        if (socket) {
+          setRemovePromoBanner(false);
+          setPromoData([result.data]);
+          socket.emit("delete promo", result.data);
+        }
       });
   }
 
@@ -292,25 +266,31 @@ function PromoPage({ tenant }) {
             <div className="modalform">
               <form>
                 <div className="promoinputimage">
-                  <div className="promoinputlabel">Product Picture</div>
+                  <div className="promoinputlabel">
+                    Product Picture (Recommended Size: 374x110)
+                  </div>
                   <div className="promopreview">
                     <img src={promoImage} className="promobannerimage" />
                   </div>
-                  <div className="promobannerbuttoncontainer" >
-                    <div className="promoimagebutton" style={{background: tenant.profileColor}}>
-                      <label html-for="file-input" >
-                      <FontAwesomeIcon
-                                  icon={faPencil}
-                                  className="promoinput"/>
+                  <div className="promobannerbuttoncontainer">
+                    <div
+                      className="promoimagebutton"
+                      style={{ background: tenant.profileColor }}
+                    >
+                      <label html-for="file-input">
+                        <FontAwesomeIcon
+                          icon={faPencil}
+                          className="promoinput"
+                        />
                       </label>
                       <input
-                       id="file-input"
-                       type="file"
-                       name="promo"
-                       accept=".png, .jpg"
-                       style={{background: tenant.profileColor}}
-                       className="promoinputfile"
-                       onChange={imageHandler}
+                        id="file-input"
+                        type="file"
+                        name="promo"
+                        accept=".png, .jpg"
+                        style={{ background: tenant.profileColor }}
+                        className="promoinputfile"
+                        onChange={imageHandler}
                       />
                     </div>
                   </div>
@@ -346,6 +326,19 @@ function PromoPage({ tenant }) {
                     }}
                   />
                 </div>
+                {endDate < startDate ? (
+                  <div
+                    style={{
+                      marginTop: "-15px",
+                      marginBottom: "10px",
+                      color: "#df3030",
+                    }}
+                  >
+                    Please choose the right end date
+                  </div>
+                ) : (
+                  <div style={{ marginBottom: "10px" }}></div>
+                )}
                 <div className="promoinputlabel">Promo Detail</div>
                 <textarea
                   type="text"
@@ -362,21 +355,38 @@ function PromoPage({ tenant }) {
                   setpromobanneropen(false);
                   setPromoImage();
                   setPromoName();
-                  setPromoDetails(); 
+                  setPromoDetails();
                   setStartDate();
                   setEndDate();
                 }}
-                style={{color: tenant.profileColor}}
+                style={{ color: tenant.profileColor }}
                 className="cancelbutton"
               >
                 Cancel
               </button>
               <button
                 type="submit"
+                disabled={
+                  promoImage == null ||
+                  promoName == null ||
+                  promoDetails == null ||
+                  startDate == null ||
+                  endDate == null
+                    ? true
+                    : false
+                }
                 onClick={
                   bannerType == "Add" ? HandleCreatePromo : HandleEditPromo
                 }
-                style={{background: tenant.profileColor}}
+                style={
+                  promoImage == null ||
+                  promoName == null ||
+                  promoDetails == null ||
+                  startDate == null ||
+                  endDate == null
+                    ? { background: "#c4c4c4" }
+                    : { background: tenant.profileColor }
+                }
                 className="savebutton"
               >
                 Save Product
@@ -388,140 +398,214 @@ function PromoPage({ tenant }) {
     );
   }
 
+  function RemovePromoModal() {
+    return (
+      <Modal open={removepromobanner}>
+        <Box className="removecatmodalbox">
+          <div className="removecatinnerbox">
+            <div className="removecatheading">
+              <img src={removecat} className="removecatimage" />
+              <div
+                className="removecatmodaltitle"
+                style={{ color: tenant.profileColor }}
+              >
+                Remove Promo
+              </div>
+            </div>
+            <div className="removecatmodaltext">
+              Are you sure to remove the{" "}
+              <span style={{ color: tenant.profileColor }}>"{promoName}"</span>{" "}
+              promo?
+            </div>
+
+            <div className="removecatmodalbuttoncontainer">
+              <div>
+                <button
+                  className="modalcancelbutton"
+                  onClick={() => {
+                    setRemovePromoBanner(false);
+                    setPromoID();
+                    setPromoName();
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+              <div>
+                <button
+                  style={{ background: tenant.profileColor }}
+                  className="modalconfirmbutton"
+                  onClick={() => HandleDeletePromo(promoID)}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+    );
+  }
+
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{color: tenant.profileColor}}>Promo Banner</div>
-
-        <TopBar/>
-      </div>
-{promoRetrieved? promoData.length != 0 ? ( <div className="promocontainer">
-        <div
-        style={{background: tenant.profileColor}}
-          className={
-            promoaddnotif || promoeditnotif || promoremovenotif
-              ? "promonotification"
-              : "hidden"
-          }
-        >
-          <div className="notificationtextcontainer">
-            <div className="notificationtext">
-              {promoaddnotif
-                ? "Promo Added"
-                : promoeditnotif
-                ? "Promo Edited"
-                : "Promo Removed"}
-            </div>
-          </div>
-
-          <div className="notificationclose">
-            <button className="notifclosebutton" onClick={handlenotification}>
-              <FontAwesomeIcon icon={faXmark} />
-            </button>
-          </div>
+        <div className="left" style={{ color: tenant.profileColor }}>
+          Promo Banner
         </div>
 
-        <div className="form">
-          {PromoModal()}
+        <TopBar />
+      </div>
+      {promoRetrieved ? (
+        promoData.length != 0 ? (
+          <div className="promocontainer">
+            <div
+              style={{ background: tenant.profileColor }}
+              className={
+                promoaddnotif || promoeditnotif || promoremovenotif
+                  ? "promonotification"
+                  : "hidden"
+              }
+            >
+              <div className="notificationtextcontainer">
+                <div className="notificationtext">
+                  {promoaddnotif
+                    ? "Promo Added"
+                    : promoeditnotif
+                    ? "Promo Edited"
+                    : "Promo Removed"}
+                </div>
+              </div>
 
-          {promoRetrieved == true &&
-            promoData.map((post) => {
-              console.log(post)
-              return post.map((item,index)=>{
-                console.log(item)
-                const endDate = new Date(item.endingPeriod);
-  
-                return (
-                  <div className="promoform" key={index}>
-                    <div className="insidepromoform">
-                      <div className="left-column">
-                        <div className="promopreview" key={index}>
-                          <img src={item.promoImage + "?time" + new Date()} className="bannerimage" />
-                        </div>
-                      </div>
-                      <div className="right-column">
-                        <div className="promotitle" style={{color: tenant.profileColor}}>{item.name}</div>                   
-                        <div className="promotext">
-                          Promo ends at
-                          <span className="promodate" style={{color: tenant.profileColor}}>
-                            {endDate.toLocaleDateString("en-ID", dateOptions)},
-                            23:55 PM
-                          </span>
-                        </div>
-                        <div className="promotext2">
-                          Promo info{" "}
-                          <div className="promoinfo">{item.details}</div>
-                        </div>
-  
-                        <div className="promobutton">
-                          <button
-                            className="buttonpromoedit"
-                            style={{background: tenant.profileColor}}
-                            onClick={() => {
-                              setpromobanneropen(() => true);
-                              setPromoImage(()=> item.promoImage);
-                              setPromoID(() => item.id);
-                              setPromoName(() => item.name);
-                              setStartDate(() => item.startingPeriod);
-                              setEndDate(() => item.endingPeriod);
-                              setPromoDetails(() => item.details);
-                              setBannerType(() => "Edit");
-                            }}
-                          >
-                            Edit Promo Banner
-                          </button>
-  
-                          <div className="buttontext">
-                            or
-                            <button
-                              type="button"
-                              style={{color: tenant.profileColor}}
-                              className="buttonremove"
-                              onClick={() => {
-                                HandleDeletePromo(item.id);
-                              }}
+              <div className="notificationclose">
+                <button
+                  className="notifclosebutton"
+                  onClick={handlenotification}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              </div>
+            </div>
+
+            <div className="form">
+              {PromoModal()}
+              {RemovePromoModal()}
+              {promoRetrieved == true &&
+                promoData.map((post) => {
+                  return post.map((item, index) => {
+                    const endDate = new Date(item.endingPeriod);
+
+                    return (
+                      <div className="promoform" key={index}>
+                        <div className="insidepromoform">
+                          <div className="left-column">
+                            <div className="promopreview" key={index}>
+                              <img
+                                src={item.promoImage + "?time" + new Date()}
+                                className="bannerimage"
+                              />
+                            </div>
+                          </div>
+                          <div className="right-column">
+                            <div
+                              className="promotitle"
+                              style={{ color: tenant.profileColor }}
                             >
-                              Remove Promo Banner
-                            </button>
+                              {item.name}
+                            </div>
+                            <div className="promotext">
+                              Promo ends at
+                              <span
+                                className="promodate"
+                                style={{ color: tenant.profileColor }}
+                              >
+                                {endDate.toLocaleDateString(
+                                  "en-ID",
+                                  dateOptions
+                                )}
+                                , 23:55 PM
+                              </span>
+                            </div>
+                            <div className="promotext2">
+                              Promo info{" "}
+                              <div className="promoinfo">{item.details}</div>
+                            </div>
+
+                            <div className="promobutton">
+                              <button
+                                className="buttonpromoedit"
+                                style={{ background: tenant.profileColor }}
+                                onClick={() => {
+                                  setpromobanneropen(() => true);
+                                  setPromoImage(() => item.promoImage);
+                                  setPromoID(() => item.id);
+                                  setPromoName(() => item.name);
+                                  setStartDate(() => item.startingPeriod);
+                                  setEndDate(() => item.endingPeriod);
+                                  setPromoDetails(() => item.details);
+                                  setBannerType(() => "Edit");
+                                }}
+                              >
+                                Edit Promo Banner
+                              </button>
+
+                              <div className="buttontext">
+                                or
+                                <button
+                                  type="button"
+                                  style={{ color: tenant.profileColor }}
+                                  className="buttonremove"
+                                  onClick={() => {
+                                    setRemovePromoBanner(true);
+                                    setPromoID(() => item.id);
+                                    setPromoName(() => item.name);
+                                  }}
+                                >
+                                  Remove Promo Banner
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })
-           
-            })}
-        </div>
+                    );
+                  });
+                })}
+            </div>
 
-        <div className="addpromobutton">
-          <button
-           style={{background: tenant.profileColor}}
-            className="buttonadd"
-            type="button"
-            onClick={() => {
-              setpromobanneropen(() => true);
-              setBannerType(() => "Add");
-            }}
-          >
-            + Add New Promo
-          </button>
-        </div>
-      </div> ): ( <div className="form">
-          {PromoModal()} <div className="addpromobutton" >
-          <button
-           style={{background: tenant.profileColor}}
-            className="buttonadd"
-           
-            type="button"
-            onClick={() => {
-              setpromobanneropen(() => true);
-              setBannerType(() => "Add");
-            }}
-          >
-            + Add New Promo
-          </button>
-        </div></div>):(
+            <div className="addpromobutton">
+              <button
+                style={{ background: tenant.profileColor }}
+                className="buttonadd"
+                type="button"
+                onClick={() => {
+                  setpromobanneropen(() => true);
+                  setBannerType(() => "Add");
+                }}
+              >
+                + Add New Promo
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="form">
+            {PromoModal()}{" "}
+            <div className="addpromobutton">
+              <button
+                style={{ background: tenant.profileColor }}
+                className="buttonadd"
+                type="button"
+                onClick={() => {
+                  setpromobanneropen(() => true);
+                  setBannerType(() => "Add");
+                }}
+              >
+                + Add New Promo
+              </button>
+            </div>
+          </div>
+        )
+      ) : (
         <div
           style={{
             display: "flex",
@@ -534,7 +618,6 @@ function PromoPage({ tenant }) {
           <ThreeDots color={tenant.profileColor} height={80} width={80} />
         </div>
       )}
-     
     </div>
   );
 }

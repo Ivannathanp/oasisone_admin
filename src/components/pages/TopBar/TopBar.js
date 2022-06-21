@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./TopBar.css";
 import { connect, useSelector } from "react-redux";
 import { SocketContext } from "../../socketContext";
@@ -10,13 +10,12 @@ function TopBar({ tenant }) {
   const [tenantRetrieved, setTenantRetrieved] = useState(false);
   const [profileName, setProfileName] = useState();
   const [profileImage, setProfileImage] = useState();
-  
+
   // Get Tenant Data
   useEffect(() => {
     let mounted = true;
 
     if (mounted) {
-      console.log("mounted");
       if (tenant.tenant_id != undefined) {
         const url = localUrl + "/user/" + tenant.tenant_id;
         fetch(url, {
@@ -40,7 +39,7 @@ function TopBar({ tenant }) {
   }, [tenant, tenantRetrieved]);
 
   // Socket Connection
-  const socket = useContext(SocketContext);;
+  const socket = useContext(SocketContext);
   useEffect(() => {
     if (socket) {
       socket.on("update user", (data) => handleUserUpdated(data));
@@ -66,7 +65,6 @@ function TopBar({ tenant }) {
 
     if (mounted) {
       if (tenantRetrieved === true) {
-      
         setProfileName(tenantData[0].name);
         setProfileImage(tenantData[0].profileImage);
       }
@@ -81,7 +79,9 @@ function TopBar({ tenant }) {
       <div className="imagecontainer">
         <img src={profileImage + "?time" + new Date()} className="image" />
       </div>
-      <div className="toptext" style={{color: tenant.profileColor}}>{profileName}</div>
+      <div className="toptext" style={{ color: tenant.profileColor }}>
+        {profileName}
+      </div>
     </div>
   );
 }

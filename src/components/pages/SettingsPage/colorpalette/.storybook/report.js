@@ -8,7 +8,6 @@ const THIS_STRING_SHOULDNT_MATCH = 'THIS_STRING_SHOULDNT_MATCH'
 
 export const generatePropReport = ({ propTypes, defaultProps }) => {
   const props = {}
-  // console.log(propTypes.foo({ ['foo']: THIS_STRING_SHOULDNT_MATCH }, 'foo', null, 'prop', 'foo', PROP_TYPE_SECRET))
   _.each(propTypes, (type, prop) => {
     const error = type({[prop]: THIS_STRING_SHOULDNT_MATCH}, prop, 'Component', 'prop', prop, PROP_TYPE_SECRET)
     if (error) {

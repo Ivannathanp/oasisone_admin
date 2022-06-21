@@ -4,7 +4,6 @@ import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 const BasicRoute = ({ component: Component, authenticated, ...rest }) => {
-  console.log("auth", authenticated);
   return (
     <Route
       {...rest}

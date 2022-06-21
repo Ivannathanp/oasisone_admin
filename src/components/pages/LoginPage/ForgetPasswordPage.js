@@ -56,7 +56,6 @@ function ForgetPasswordPage({ forgetpassword }) {
                   {!isSubmitting && (
                     <button
                       type="submit"
-                      onClick={console.log("pressed", onsubmit)}
                       className="loginbutton"
                     >
                       {" "}
