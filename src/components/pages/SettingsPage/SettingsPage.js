@@ -339,7 +339,7 @@ setHelpMessage();
   const [OpenTimeEdit, setOpenTimeEdit] = useState(false);
 
   const [editprofile, setEditprofile] = useState(false);
-  const [helpemail, setHelpEmail] = useState(true);
+  const [helpemail, setHelpEmail] = useState(false);
   const [helpcall, setHelpCall] = useState(false);
 
   const [day, setDay] = useState();
