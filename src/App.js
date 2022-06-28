@@ -64,10 +64,13 @@ function App({ checked, tenant }) {
   });
 
   useEffect(() => {
+    console.log(tenant.tenant_id)
     if (tenant.tenant_id != undefined) {
+
       const newSocket = io(
         "https://backend.oasis-one.com",
         { transports: ["polling"] },
+
         {
           query: {
             tenant_id: tenant.tenant_id,
@@ -77,17 +80,21 @@ function App({ checked, tenant }) {
 
       setSocket(newSocket);
       setSocketRetrieved(true);
+
       return () => newSocket.close();
     }
-  }, [socketRetrieved]);
+  },[tenant]);
 
   return (
+    <SocketContext.Provider value={socket}>
     <Router>
       {checked && (
         <div className="app">
+          
           <Switch>
+         
             <Route exact path="/" component={Login} />
-
+       
             <BasicRoute exact path="/login/:userEmail?" component={Login} />
 
             <BasicRoute
@@ -102,8 +109,8 @@ function App({ checked, tenant }) {
             />
             <BasicRoute exact path="/register" component={Register} />
             <BasicRoute exact path="/forgetpassword" component={Forget} />
-
-            <SocketContext.Provider value={socket}>
+          
+           
               <div class="box">
                 <div class="column">
                   <SideBar />
@@ -124,12 +131,15 @@ function App({ checked, tenant }) {
                   <AuthRoute path="/settings" exact component={Settings} />
                 </div>
               </div>
-            </SocketContext.Provider>
+       
             <Route path="*" component={MissingRoute} />
+           
           </Switch>
+          
         </div>
       )}
     </Router>
+     </SocketContext.Provider>
   );
 }
 

@@ -3,8 +3,9 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 55px 4% 4% 4%;
+  padding: 55px 4% 0% 4%;
   position: relative;
+  overflow: hidden;
 }
 
 .promonotification {

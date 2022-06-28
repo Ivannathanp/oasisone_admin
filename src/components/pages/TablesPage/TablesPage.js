@@ -272,6 +272,9 @@ function TablesPage({ tenant }) {
       });
   }
 
+    
+
+
   async function handleaddtable() {
     setAddTableNotif(true);
     setTimeout(() => {
@@ -1053,7 +1056,7 @@ function TablesPage({ tenant }) {
                 style={edittable ? null : { background: tenant.profileColor }}
                 className={edittable ? "addtableinactive" : "addtableactive"}
                 disabled={edittable ? true : false}
-                onClick={() => {}}
+                onClick={() => {handleaddtable()}}
               >
                 + Add New Table
               </button>

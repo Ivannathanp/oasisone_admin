@@ -84,12 +84,18 @@ function PromoPage({ tenant }) {
   }, [tenant, promoRetrieved]);
 
   useEffect(() => {
+    console.log("i am called")
     if (socket) {
+      console.log("i am called")
       socket.on("add promo", (data) => handleAddPromo(data));
       socket.on("update promo", (data) => handleUpdatePromo(data));
       socket.on("delete promo", (data) => handleDeletePromo(data));
     }
   });
+
+    console.log("socket is", socket)
+
+
 
   function handleAddPromo(user) {
     if (promoRetrieved) {
@@ -110,7 +116,7 @@ function PromoPage({ tenant }) {
   }
 
   function handleDeletePromo(user) {
-    if (tableRetrieved) {
+    if (promoRetrieved) {
       let newData = promoData.splice();
 
       newData.push(user);
@@ -129,50 +135,80 @@ function PromoPage({ tenant }) {
   }
 
   async function HandleEditPromo() {
-    let formData = new FormData();
-    const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
+    setpromobanneropen(false);
+
     var inputs = document.querySelector('input[type="file"]');
-    formData.append("promo", inputs.files[0]);
-
-    fetch(promoUrl, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {})
-      .catch((error) => {
-        console.error("Error Upload Logo:", error);
+    if(inputs.files[0] == undefined){
+      const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
+      const payload = JSON.stringify({
+        promo_name: promoName,
+        promo_start: startDate,
+        promo_end: endDate,
+        promo_details: promoDetails,
+        
       });
-
-    const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
-    const payload = JSON.stringify({
-      promo_name: promoName,
-      promo_start: startDate,
-      promo_end: endDate,
-      promo_details: promoDetails,
-      promo_image:
-        imageUrl +
-        "/promo/render/" +
-        tenant.tenant_id +
-        "/" +
-        promoName +
-        ".jpg",
-    });
-
-    await fetch(url, {
-      method: "POST",
-      body: payload,
-      headers: { "content-type": "application/JSON" },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (socket) {
-          socket.emit("update promo", result.data);
-          setPromoData([result.data]);
-          setPromoRetrieved(() => true);
-          setpromobanneropen(false);
-        }
+  
+      await fetch(url, {
+        method: "POST",
+        body: payload,
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (socket) {
+            socket.emit("update promo", result.data);
+            setPromoData([result.data]);
+            setPromoRetrieved(() => true);
+          
+          }
+        });
+    } else {
+      let formData = new FormData();
+      const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
+     
+      formData.append("promo", inputs.files[0]);
+  
+      fetch(promoUrl, {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((result) => {})
+        .catch((error) => {
+          console.error("Error Upload Logo:", error);
+        });
+  
+      const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
+      const payload = JSON.stringify({
+        promo_name: promoName,
+        promo_start: startDate,
+        promo_end: endDate,
+        promo_details: promoDetails,
+        promo_image:
+          imageUrl +
+          "/promo/render/" +
+          tenant.tenant_id +
+          "/" +
+          promoName +
+          ".jpg",
       });
+  
+      await fetch(url, {
+        method: "POST",
+        body: payload,
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (socket) {
+            socket.emit("update promo", result.data);
+            setPromoData([result.data]);
+            setPromoRetrieved(() => true);
+          
+          }
+        });
+    }
+    
   }
 
   async function HandleCreatePromo() {
@@ -218,16 +254,19 @@ function PromoPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
+        setpromobanneropen(false);
+        setPromoData([result.data]);
+        
+        setPromoRetrieved(() => true);
+        
+        setPromoImage();
+        setPromoName();
+        setPromoDetails();
+        setStartDate();
+        setEndDate();
         if (socket) {
-          setPromoData([result.data]);
           socket.emit("add promo", result.data);
-          setPromoRetrieved(() => true);
-          setpromobanneropen(false);
-          setPromoImage();
-          setPromoName();
-          setPromoDetails();
-          setStartDate();
-          setEndDate();
+          console.log("I am called")
         }
       });
   }
@@ -235,7 +274,7 @@ function PromoPage({ tenant }) {
   async function HandleDeletePromo(ID) {
     setPromoID();
     setPromoName();
-
+    setRemovePromoBanner(false);
     const url = localUrl + "/delete/" + tenant.tenant_id + "/" + ID;
 
     setPromoRemoveNotif(true);
@@ -243,19 +282,22 @@ function PromoPage({ tenant }) {
       setPromoRemoveNotif(false);
     }, 3000);
 
-    await fetch(url, {
+    fetch(url, {
       method: "POST",
       headers: { "content-type": "application/JSON" },
     })
       .then((response) => response.json())
       .then((result) => {
+      
         if (socket) {
-          setRemovePromoBanner(false);
+        
           setPromoData([result.data]);
+          console.log("i am deleted")
           socket.emit("delete promo", result.data);
         }
       });
   }
+
 
   function PromoModal() {
     return (
@@ -326,7 +368,7 @@ function PromoPage({ tenant }) {
                     }}
                   />
                 </div>
-                {endDate < startDate ? (
+                {endDate <= startDate ? (
                   <div
                     style={{
                       marginTop: "-15px",
@@ -367,11 +409,11 @@ function PromoPage({ tenant }) {
               <button
                 type="submit"
                 disabled={
-                  promoImage == null ||
-                  promoName == null ||
-                  promoDetails == null ||
-                  startDate == null ||
-                  endDate == null
+                  promoImage == undefined ||
+                  promoName == undefined || promoName == "" ||
+                  promoDetails == undefined || promoDetails == "" ||
+                  startDate == undefined ||
+                  endDate == undefined
                     ? true
                     : false
                 }
@@ -379,17 +421,17 @@ function PromoPage({ tenant }) {
                   bannerType == "Add" ? HandleCreatePromo : HandleEditPromo
                 }
                 style={
-                  promoImage == null ||
-                  promoName == null ||
-                  promoDetails == null ||
-                  startDate == null ||
-                  endDate == null
+                  promoImage == undefined ||
+                  promoName == undefined || promoName == "" ||
+                  promoDetails == undefined || promoDetails == "" ||
+                  startDate == undefined ||
+                  endDate == undefined
                     ? { background: "#c4c4c4" }
                     : { background: tenant.profileColor }
                 }
                 className="savebutton"
               >
-                Save Product
+                Save Promo
               </button>
             </div>
           </div>
@@ -397,6 +439,8 @@ function PromoPage({ tenant }) {
       </Modal>
     );
   }
+
+  console.log(promoName)
 
   function RemovePromoModal() {
     return (
@@ -519,6 +563,7 @@ function PromoPage({ tenant }) {
                                 className="promodate"
                                 style={{ color: tenant.profileColor }}
                               >
+                              
                                 {endDate.toLocaleDateString(
                                   "en-ID",
                                   dateOptions
@@ -596,8 +641,8 @@ function PromoPage({ tenant }) {
                 className="buttonadd"
                 type="button"
                 onClick={() => {
-                  setpromobanneropen(() => true);
-                  setBannerType(() => "Add");
+                  setpromobanneropen(true);
+                  setBannerType("Add");
                 }}
               >
                 + Add New Promo

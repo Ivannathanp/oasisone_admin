@@ -63,6 +63,7 @@ function InventoryPage({ tenant }) {
   const [itemQuantity, setItemQuantity] = useState(0);
 
   const [edititemopen, setEditItemOpen] = useState(false);
+  const [edititemname, setEditItemName] = useState();
 
   const [productImage, setProductImage] = useState();
 
@@ -77,6 +78,7 @@ function InventoryPage({ tenant }) {
     quantity
   ) {
     setEditItemOpen(true);
+    setEditItemName(name);
     setItemName(name);
     setItemDuration(cookingtime);
     setItemPrice(price);
@@ -111,14 +113,14 @@ function InventoryPage({ tenant }) {
 
   const [itemval, setItemval] = useState([]);
 
-  function handleIncrement(i, v) {
+  async function handleIncrement(i, v) {
     {
       inventoryData.map((item) => {
         return item.map((post, index) => {
           if (post.category.id === i) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
-                posts.quantity = parseInt(posts.quantity) + 1;
+                posts.quantity = parseInt(posts.quantity) + 5;
                 const url = localUrl + "/edit/" + tenant.tenant_id;
                 fetch(url, {
                   method: "POST",
@@ -154,27 +156,49 @@ function InventoryPage({ tenant }) {
           if (post.category.id === i) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
-                posts.quantity = parseInt(posts.quantity) - 1;
-
-                const url = localUrl + "/edit/" + tenant.tenant_id;
-                fetch(url, {
-                  method: "POST",
-                  body: JSON.stringify({
-                    cat_id: i,
-                    menu_id: v,
-                    menu_quantity: parseInt(posts.quantity),
-                  }),
-                  headers: { "content-type": "application/JSON" },
-                })
-                  .then((response) => response.json())
-                  .then((result) => {
-                    if (result.status === "SUCCESS") {
-                      if (socket) {
-                        socket.emit("update category", result.data);
-                        setInventoryData([result.data]);
-                      }
-                    }
-                  });
+                posts.quantity = parseInt(posts.quantity) - 5;
+if(posts.quantity <= 0){
+  const url = localUrl + "/edit/" + tenant.tenant_id;
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      cat_id: i,
+      menu_id: v,
+      menu_quantity: 0,
+    }),
+    headers: { "content-type": "application/JSON" },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.status === "SUCCESS") {
+        if (socket) {
+          socket.emit("update category", result.data);
+          setInventoryData([result.data]);
+        }
+      }
+    });
+} else {
+  const url = localUrl + "/edit/" + tenant.tenant_id;
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      cat_id: i,
+      menu_id: v,
+      menu_quantity: parseInt(posts.quantity),
+    }),
+    headers: { "content-type": "application/JSON" },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.status === "SUCCESS") {
+        if (socket) {
+          socket.emit("update category", result.data);
+          setInventoryData([result.data]);
+        }
+      }
+    });
+}
+               
               }
             });
           }
@@ -513,11 +537,53 @@ function InventoryPage({ tenant }) {
   async function handleEditItem() {
     const url = localUrl + "/edit/" + tenant.tenant_id;
 
-    let formData = new FormData();
-    const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
     var input = document.querySelector('input[type="file"]');
 
-    if (input.files[0] != undefined) {
+    if (input.files[0] == undefined) {
+      console.log("no,1");
+      const payload = JSON.stringify({
+        cat_id: categoryID,
+        menu_id: itemID,
+        menu_name: itemName,
+        menu_duration: itemDuration,
+        menu_desc: itemDescription,
+        menu_isRecommended: itemIsRecommended,
+        menu_price: itemPrice,
+        menu_quantity: itemQuantity,
+        menu_isAvailable: itemQuantity > 0 ? true : false,
+      });
+
+      fetch(url, {
+        method: "POST",
+        body: payload,
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            if (socket) {
+              setMenuEditted(true);
+              setTimeout(() => {
+                setMenuEditted(false);
+              }, 3000);
+
+              socket.emit("update category", result.data);
+              setInventoryData([result.data]);
+
+              setEditItemOpen(false);
+              setProductImage();
+              setItemIsRecommended();
+              setValidCategoryName(true);
+            }
+          } else {
+            setValidCategoryName(false);
+          }
+        });
+    } else if (input.files[0] != undefined && edititemname == itemName) {
+      console.log("no,2");
+      let formData = new FormData();
+      const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
+      console.log(menuUrl);
       formData.append("menu", input.files[0]);
 
       fetch(menuUrl, {
@@ -530,6 +596,52 @@ function InventoryPage({ tenant }) {
           console.error("Error Upload Logo:", error);
         });
 
+      const payload = JSON.stringify({
+        cat_id: categoryID,
+        menu_id: itemID,
+        menu_duration: itemDuration,
+        menu_desc: itemDescription,
+        menu_isRecommended: itemIsRecommended,
+        menu_price: itemPrice,
+        menu_quantity: itemQuantity,
+        menu_isAvailable: itemQuantity > 0 ? true : false,
+        menu_image:
+          imageUrl +
+          "/menu/render/" +
+          tenant.tenant_id +
+          "/" +
+          itemName +
+          ".jpg",
+      });
+
+      fetch(url, {
+        method: "POST",
+        body: payload,
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            if (socket) {
+              setMenuEditted(true);
+              setTimeout(() => {
+                setMenuEditted(false);
+              }, 3000);
+
+              socket.emit("update category", result.data);
+              setInventoryData([result.data]);
+
+              setEditItemOpen(false);
+              setProductImage();
+              setItemIsRecommended();
+              setValidCategoryName(true);
+            }
+          } else {
+            setValidCategoryName(false);
+          }
+        });
+    } else if (input.files[0] != undefined && edititemname != itemName) {
+      console.log("no,3");
       const payload = JSON.stringify({
         cat_id: categoryID,
         menu_id: itemID,
@@ -568,7 +680,6 @@ function InventoryPage({ tenant }) {
 
               setEditItemOpen(false);
               setProductImage();
-              setItemPrice();
               setItemIsRecommended();
               setValidCategoryName(true);
             }
@@ -576,44 +687,17 @@ function InventoryPage({ tenant }) {
             setValidCategoryName(false);
           }
         });
-    } else {
-      const payload = JSON.stringify({
-        cat_id: categoryID,
-        menu_id: itemID,
-        menu_name: itemName,
-        menu_duration: itemDuration,
-        menu_desc: itemDescription,
-        menu_isRecommended: itemIsRecommended,
-        menu_price: itemPrice,
-        menu_quantity: itemQuantity,
-        menu_isAvailable: itemQuantity > 0 ? true : false,
-      });
 
-      fetch(url, {
+      formData.append("menu", input.files[0]);
+
+      fetch(menuUrl, {
         method: "POST",
-        body: payload,
-        headers: { "content-type": "application/JSON" },
+        body: formData,
       })
         .then((response) => response.json())
-        .then((result) => {
-          if (result.status === "SUCCESS") {
-            if (socket) {
-              setMenuEditted(true);
-              setTimeout(() => {
-                setMenuEditted(false);
-              }, 3000);
-
-              socket.emit("update category", result.data);
-              setInventoryData([result.data]);
-
-              setEditItemOpen(false);
-              setProductImage();
-              setItemIsRecommended();
-              setValidCategoryName(true);
-            }
-          } else {
-            setValidCategoryName(false);
-          }
+        .then((result) => {})
+        .catch((error) => {
+          console.error("Error Upload Logo:", error);
         });
     }
   }
@@ -840,7 +924,18 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
-                    style={{ background: tenant.profileColor }}
+                    style={
+                      itemName == "" ||
+                      itemName == undefined ||
+                      itemDuration == "" ||
+                      itemDuration == undefined ||
+                      itemDescription == "" ||
+                      itemDescription == undefined || itemPrice == "" ||
+                      itemPrice == undefined ||
+                        productImage == undefined
+                        ? { background: "#c4c4c4" }
+                        : { background: tenant.profileColor }
+                    }
                     type="submit"
                     onClick={() => handleAddItem()}
                     className="savebutton"
@@ -1012,12 +1107,9 @@ function InventoryPage({ tenant }) {
                     Remove Product
                   </button>
                   <button
-                    disabled={itemNameChanged ? false : true}
-                    style={
-                      !itemNameChanged
-                        ? { background: "#c4c4c4" }
-                        : { background: tenant.profileColor }
-                    }
+                    style={{
+                      background: tenant.profileColor,
+                    }}
                     type="submit"
                     onClick={() => handleEditItem()}
                     className="savebutton"

@@ -126,10 +126,33 @@ function SettingsPage({ tenant }) {
       setSettingSavedNotif(false);
     }, 3000);
 
-    var tenantID = tenant.tenant_id;
-    const profileUrl = imageUrl + "/avatar/" + tenant.tenant_id;
+ 
+    
     var input = document.querySelector('input[type="file"]');
-    let formData = new FormData();
+    if(input.files[0] == undefined){
+      const editUrl = localUrl + "/edit/" + tenant.tenant_id;
+
+      fetch(editUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          tenant_id: tenant.tenant_id,
+          profileName: profileName,
+          profileColor: color,
+         
+        }),
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (socket) {
+            socket.emit("update user", result.data);
+            sessionService.saveUser(result.data);
+          }
+        });
+      
+    } else {
+      const profileUrl = imageUrl + "/avatar/" + tenant.tenant_id;
+let formData = new FormData();
     formData.append("avatar", input.files[0]);
     fetch(profileUrl, {
       method: "POST",
@@ -160,6 +183,8 @@ function SettingsPage({ tenant }) {
           sessionService.saveUser(result.data);
         }
       });
+    }
+    
   }
 
   function HandleSentEmail() {
@@ -171,7 +196,6 @@ function SettingsPage({ tenant }) {
 
 setHelpMessage();
 
-    console.log(process.env.REACT_APP_PUBLIC_KEY);
     emailjs.sendForm(
       process.env.REACT_APP_USER_ID,
       process.env.REACT_APP_TEMPLATE_ID,
