@@ -12,6 +12,7 @@ import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
 import removecat from "../../icons/RemoveCat.svg";
+import Compressor from "compressorjs";
 
 function PromoPage({ tenant }) {
   const localUrl = process.env.REACT_APP_PROMOURL;
@@ -84,18 +85,12 @@ function PromoPage({ tenant }) {
   }, [tenant, promoRetrieved]);
 
   useEffect(() => {
-    console.log("i am called")
     if (socket) {
-      console.log("i am called")
       socket.on("add promo", (data) => handleAddPromo(data));
       socket.on("update promo", (data) => handleUpdatePromo(data));
       socket.on("delete promo", (data) => handleDeletePromo(data));
     }
   });
-
-    console.log("socket is", socket)
-
-
 
   function handleAddPromo(user) {
     if (promoRetrieved) {
@@ -138,16 +133,15 @@ function PromoPage({ tenant }) {
     setpromobanneropen(false);
 
     var inputs = document.querySelector('input[type="file"]');
-    if(inputs.files[0] == undefined){
+    if (inputs.files[0] == undefined) {
       const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
       const payload = JSON.stringify({
         promo_name: promoName,
         promo_start: startDate,
         promo_end: endDate,
         promo_details: promoDetails,
-        
       });
-  
+
       await fetch(url, {
         method: "POST",
         body: payload,
@@ -159,25 +153,33 @@ function PromoPage({ tenant }) {
             socket.emit("update promo", result.data);
             setPromoData([result.data]);
             setPromoRetrieved(() => true);
-          
           }
         });
     } else {
-      let formData = new FormData();
-      const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
-     
-      formData.append("promo", inputs.files[0]);
-  
-      fetch(promoUrl, {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((result) => {})
-        .catch((error) => {
-          console.error("Error Upload Logo:", error);
-        });
-  
+      const promoUrl =
+        imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
+
+      const file = inputs.files[0];
+      new Compressor(file, {
+        quality: 0.5,
+
+        success(result) {
+          let formData = new FormData();
+
+          formData.append("promo", result, result.name);
+
+          fetch(promoUrl, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((result) => {})
+            .catch((error) => {
+              console.error("Error Upload Logo:", error);
+            });
+        },
+      });
+
       const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
       const payload = JSON.stringify({
         promo_name: promoName,
@@ -192,7 +194,7 @@ function PromoPage({ tenant }) {
           promoName +
           ".jpg",
       });
-  
+
       await fetch(url, {
         method: "POST",
         body: payload,
@@ -201,14 +203,16 @@ function PromoPage({ tenant }) {
         .then((response) => response.json())
         .then((result) => {
           if (socket) {
+            setPromoEditNotif(true);
+            setTimeout(() => {
+              setPromoEditNotif(false);
+            }, 3000);
             socket.emit("update promo", result.data);
             setPromoData([result.data]);
             setPromoRetrieved(() => true);
-          
           }
         });
     }
-    
   }
 
   async function HandleCreatePromo() {
@@ -218,20 +222,29 @@ function PromoPage({ tenant }) {
       setPromoAddNotif(false);
     }, 3000);
 
-    let formData = new FormData();
     const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
     var input = document.querySelector('input[type="file"]');
-    formData.append("promo", input.files[0]);
 
-    fetch(promoUrl, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {})
-      .catch((error) => {
-        console.error("Error Upload Logo:", error);
-      });
+    const file = input.files[0];
+    new Compressor(file, {
+      quality: 0.5,
+
+      success(result) {
+        let formData = new FormData();
+
+        formData.append("promo", result, result.name);
+
+        fetch(promoUrl, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((result) => {})
+          .catch((error) => {
+            console.error("Error Upload Logo:", error);
+          });
+      },
+    });
 
     const payload = JSON.stringify({
       promo_name: promoName,
@@ -256,9 +269,9 @@ function PromoPage({ tenant }) {
       .then((result) => {
         setpromobanneropen(false);
         setPromoData([result.data]);
-        
+
         setPromoRetrieved(() => true);
-        
+
         setPromoImage();
         setPromoName();
         setPromoDetails();
@@ -266,7 +279,6 @@ function PromoPage({ tenant }) {
         setEndDate();
         if (socket) {
           socket.emit("add promo", result.data);
-          console.log("I am called")
         }
       });
   }
@@ -288,16 +300,13 @@ function PromoPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
-      
         if (socket) {
-        
           setPromoData([result.data]);
-          console.log("i am deleted")
+
           socket.emit("delete promo", result.data);
         }
       });
   }
-
 
   function PromoModal() {
     return (
@@ -353,6 +362,7 @@ function PromoPage({ tenant }) {
                     format="ddd, DD MMM "
                     value={startDate}
                     arrow={false}
+                    editable={false}
                     onChange={(value) => {
                       setStartDate(new Date(value));
                     }}
@@ -363,6 +373,7 @@ function PromoPage({ tenant }) {
                     format="ddd, DD MMM "
                     value={endDate}
                     arrow={false}
+                    editable={false}
                     onChange={(value) => {
                       setEndDate(new Date(value));
                     }}
@@ -410,8 +421,10 @@ function PromoPage({ tenant }) {
                 type="submit"
                 disabled={
                   promoImage == undefined ||
-                  promoName == undefined || promoName == "" ||
-                  promoDetails == undefined || promoDetails == "" ||
+                  promoName == undefined ||
+                  promoName == "" ||
+                  promoDetails == undefined ||
+                  promoDetails == "" ||
                   startDate == undefined ||
                   endDate == undefined
                     ? true
@@ -422,8 +435,10 @@ function PromoPage({ tenant }) {
                 }
                 style={
                   promoImage == undefined ||
-                  promoName == undefined || promoName == "" ||
-                  promoDetails == undefined || promoDetails == "" ||
+                  promoName == undefined ||
+                  promoName == "" ||
+                  promoDetails == undefined ||
+                  promoDetails == "" ||
                   startDate == undefined ||
                   endDate == undefined
                     ? { background: "#c4c4c4" }
@@ -439,8 +454,6 @@ function PromoPage({ tenant }) {
       </Modal>
     );
   }
-
-  console.log(promoName)
 
   function RemovePromoModal() {
     return (
@@ -563,7 +576,6 @@ function PromoPage({ tenant }) {
                                 className="promodate"
                                 style={{ color: tenant.profileColor }}
                               >
-                              
                                 {endDate.toLocaleDateString(
                                   "en-ID",
                                   dateOptions

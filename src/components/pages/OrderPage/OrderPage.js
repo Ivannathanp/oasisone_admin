@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
 import TablePagination from "../../Pagination/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
@@ -19,7 +18,6 @@ import moment from "moment";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
-import { BorderColor } from "@material-ui/icons";
 
 function OrderPage({ tenant }) {
   const localUrl = process.env.REACT_APP_ORDERURL;

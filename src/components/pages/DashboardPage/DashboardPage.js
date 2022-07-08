@@ -87,19 +87,19 @@ function DashboardPage({ tenant }) {
   function handlCallTable() {
     const url = tableUrl + "/" + tenant.tenant_id;
 
-        fetch(url, {
-          method: "GET",
-          headers: { "content-type": "application/JSON" },
-        })
-          .then((response) => response.json())
-          .then((result) => {
-            if (result.status === "SUCCESS") {
-              setTableData([result.data]);
-              setTableRetrieved(() => true);
-            } else {
-              setTableRetrieved(() => false);
-            }
-          });
+    fetch(url, {
+      method: "GET",
+      headers: { "content-type": "application/JSON" },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          setTableData([result.data]);
+          setTableRetrieved(() => true);
+        } else {
+          setTableRetrieved(() => false);
+        }
+      });
   }
 
   function handleAddPromo(user) {
@@ -408,9 +408,11 @@ function DashboardPage({ tenant }) {
   }
 
   return (
-    <div className="container" >
+    <div className="container">
       <div className="topbar">
-        <div className="left" style={{color: tenant.profileColor}}>Dashboard</div>
+        <div className="left" style={{ color: tenant.profileColor }}>
+          Dashboard
+        </div>
 
         <TopBar />
       </div>
@@ -549,19 +551,21 @@ function DashboardPage({ tenant }) {
                         <div className="ordermodalstatus">
                           <div className="statustext">STATUS</div>
                           <div className="statuscoloredtext">
-                          {orderStatus == 1 ? (
-                          <div className="pending">PENDING</div>
-                        ) : orderStatus == 2 ? (
-                          <div className="orderplaced">ORDER PLACED</div>
-                        ) : orderStatus == 3 ? (
-                          <div className="served">SERVED</div>
-                        ) : orderStatus == 4 ? (
-                          <div className="payment">PAYMENT</div>
-                        ) : orderStatus == 5 ? (
-                          <div className="complete">COMPLETE</div>
-                        ) : orderStatus == 6 ? (
-                          <div className="modalrejectedstatus">REJECTED</div>
-                        ) : null}
+                            {orderStatus == 1 ? (
+                              <div className="pending">PENDING</div>
+                            ) : orderStatus == 2 ? (
+                              <div className="orderplaced">ORDER PLACED</div>
+                            ) : orderStatus == 3 ? (
+                              <div className="served">SERVED</div>
+                            ) : orderStatus == 4 ? (
+                              <div className="payment">PAYMENT</div>
+                            ) : orderStatus == 5 ? (
+                              <div className="complete">COMPLETE</div>
+                            ) : orderStatus == 6 ? (
+                              <div className="modalrejectedstatus">
+                                REJECTED
+                              </div>
+                            ) : null}
                           </div>
                         </div>
                       </div>

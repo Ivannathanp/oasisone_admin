@@ -2,32 +2,28 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import "./SettingsPage.css";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import inputimage from "../../icons/Edit Profile Pict.png";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { BlockPicker } from "./colorpalette/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
-  faPhone,
   faPencil,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { useNeonCheckboxStyles } from "./checkbox/index";
-
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
-
 import { useOutlineSelectStyles } from "./select2/index";
 import { useTimeSelectStyles } from "./select1/index";
-import { PostAddOutlined } from "@material-ui/icons";
 import TopBar from "../TopBar/TopBar";
 import { SocketContext } from "../../socketContext";
 import { sessionService } from "redux-react-session";
 import { ThreeDots } from "react-loader-spinner";
 import emailjs from "@emailjs/browser";
+import Compressor from "compressorjs";
 
 function SettingsPage({ tenant }) {
   const form = useRef();
@@ -126,10 +122,8 @@ function SettingsPage({ tenant }) {
       setSettingSavedNotif(false);
     }, 3000);
 
- 
-    
     var input = document.querySelector('input[type="file"]');
-    if(input.files[0] == undefined){
+    if (input.files[0] == undefined) {
       const editUrl = localUrl + "/edit/" + tenant.tenant_id;
 
       fetch(editUrl, {
@@ -138,7 +132,6 @@ function SettingsPage({ tenant }) {
           tenant_id: tenant.tenant_id,
           profileName: profileName,
           profileColor: color,
-         
         }),
         headers: { "content-type": "application/JSON" },
       })
@@ -149,52 +142,60 @@ function SettingsPage({ tenant }) {
             sessionService.saveUser(result.data);
           }
         });
-      
     } else {
       const profileUrl = imageUrl + "/avatar/" + tenant.tenant_id;
-let formData = new FormData();
-    formData.append("avatar", input.files[0]);
-    fetch(profileUrl, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {})
-      .catch((error) => {
-        console.error("Error Upload Logo:", error);
+      const file = input.files[0];
+      new Compressor(file, {
+        quality: 0.5,
+
+        success(result) {
+          let formData = new FormData();
+
+          formData.append("avatar", result, result.name);
+
+          fetch(profileUrl, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((result) => {})
+            .catch((error) => {
+              console.error("Error Upload Logo:", error);
+            });
+        },
       });
 
-    const editUrl = localUrl + "/edit/" + tenant.tenant_id;
+      const editUrl = localUrl + "/edit/" + tenant.tenant_id;
 
-    fetch(editUrl, {
-      method: "POST",
-      body: JSON.stringify({
-        tenant_id: tenant.tenant_id,
-        profileName: profileName,
-        profileColor: color,
-        profileImage: imageUrl + "/avatar/render/" + tenant.tenant_id + ".jpg",
-      }),
-      headers: { "content-type": "application/JSON" },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (socket) {
-          socket.emit("update user", result.data);
-          sessionService.saveUser(result.data);
-        }
-      });
+      fetch(editUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          tenant_id: tenant.tenant_id,
+          profileName: profileName,
+          profileColor: color,
+          profileImage:
+            imageUrl + "/avatar/render/" + tenant.tenant_id + ".jpg",
+        }),
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (socket) {
+            socket.emit("update user", result.data);
+            sessionService.saveUser(result.data);
+          }
+        });
     }
-    
   }
 
   function HandleSentEmail() {
-    setHelpEmail(false)
+    setHelpEmail(false);
     setEmailSendNotif(true);
     setTimeout(() => {
       setEmailSendNotif(false);
     }, 3000);
 
-setHelpMessage();
+    setHelpMessage();
 
     emailjs.sendForm(
       process.env.REACT_APP_USER_ID,
@@ -959,51 +960,46 @@ setHelpMessage();
         </Box>
       </Modal>
 
-       <Modal open={helpemail}>
+      <Modal open={helpemail}>
         <Box className="helpbox">
           <div className="editprofileinnerbox">
             <div className="editprofilemodaltitle">Send Email</div>
 
             <form ref={form}>
               <div className="helpinnermodalbox">
-          
-                  <div className="profileinputtext">
-                    <div className="editprofileinputlabel">Restaurant Name</div>
-                    <div className="inputtext">
-                      <input
-                        type="text"
-                        name="from_name"
-                        className="editprofileinputfile"
-                        defaultValue={profileName}
-                        onChange={(e) => setProfileName(e.target.value)}
-                      />
-                    </div>
-                    <div className="editprofileinputlabel">Email address</div>
-                    <div className="inputtext">
-                      <input
-                        type="email"
-                        name="user_email"
-                        className="editprofileinputfile"
-                        defaultValue={profileEmail}
-                        onChange={(e) => setProfileEmail(e.target.value)}
-                      />
-                    </div>
+                <div className="profileinputtext">
+                  <div className="editprofileinputlabel">Restaurant Name</div>
+                  <div className="inputtext">
+                    <input
+                      type="text"
+                      name="from_name"
+                      className="editprofileinputfile"
+                      defaultValue={profileName}
+                      onChange={(e) => setProfileName(e.target.value)}
+                    />
                   </div>
-                  <div className="editprofileinputlabel">Message</div>
-                    <div className="inputtext">
-                      <textarea
-                        type="text"
-                        name="message"
-                        className="messageinput"
-                        defaultValue={helpMessage}
-                        onChange={(e) => setHelpMessage(e.target.value)}
-                      />
-              
+                  <div className="editprofileinputlabel">Email address</div>
+                  <div className="inputtext">
+                    <input
+                      type="email"
+                      name="user_email"
+                      className="editprofileinputfile"
+                      defaultValue={profileEmail}
+                      onChange={(e) => setProfileEmail(e.target.value)}
+                    />
                   </div>
                 </div>
-
-            
-              
+                <div className="editprofileinputlabel">Message</div>
+                <div className="inputtext">
+                  <textarea
+                    type="text"
+                    name="message"
+                    className="messageinput"
+                    defaultValue={helpMessage}
+                    onChange={(e) => setHelpMessage(e.target.value)}
+                  />
+                </div>
+              </div>
             </form>
             <div className="editprofilemodalbutton">
               <button
@@ -1122,10 +1118,16 @@ setHelpMessage();
         <div className="settingsoutercontainer">
           <div
             style={{ background: tenant.profileColor }}
-            className={settingsavednotif || emailsendnotif ? "settingsnotification" : "hidden"}
+            className={
+              settingsavednotif || emailsendnotif
+                ? "settingsnotification"
+                : "hidden"
+            }
           >
             <div className="notificationtextcontainer">
-              <div className="notificationtext">{emailsendnotif? "Email Sent" : "Settings Saved"}</div>
+              <div className="notificationtext">
+                {emailsendnotif ? "Email Sent" : "Settings Saved"}
+              </div>
             </div>
 
             <div className="notificationclose">
@@ -1162,7 +1164,7 @@ setHelpMessage();
                       <button
                         style={{ background: tenant.profileColor }}
                         className="editprofilebutton"
-                        onClick={()=>setEditprofile(true)}
+                        onClick={() => setEditprofile(true)}
                       >
                         Edit Profile
                       </button>
@@ -1466,7 +1468,7 @@ setHelpMessage();
                       <div className="helpbuttoncontainer">
                         <button
                           style={{ background: tenant.profileColor }}
-                          onClick={()=>setHelpEmail(true)}
+                          onClick={() => setHelpEmail(true)}
                           className="helpbutton"
                         >
                           <FontAwesomeIcon

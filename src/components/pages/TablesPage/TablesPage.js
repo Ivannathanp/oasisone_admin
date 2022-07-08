@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import "../TopBar/TopBar.css";
 import "./TablesPage.css";
-import logo from "../../icons/Logo.png";
-import { ScrollMenu } from "react-horizontal-scrolling-menu";
+import PropTypes from "prop-types";
+import TablePagination from "../../Pagination/index";
 import Customer from "../../icons/Customer.png";
 import Waitercall from "../../icons/waitercall.svg";
 import Modal from "@mui/material/Modal";
@@ -207,11 +207,14 @@ function TablesPage({ tenant }) {
 
   const [edittable, setEditTable] = useState(false);
 
-  async function handlePassinginfo(i) {
+  async function handlePassinginfo(id) {
     const url = orderUrl + "/table/retrieve/" + tenant.tenant_id;
+    console.log(url);
     const payload = JSON.stringify({
-      order_id: i,
+      // order_id: id,
+      order_table: id,
     });
+    console.log(payload);
     await fetch(url, {
       method: "POST",
       body: payload,
@@ -220,13 +223,16 @@ function TablesPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          setTableOrderData(() => result.data);
-
+          setTableOrderData([result.data]);
           setTableOrderRetrieved(() => true);
         } else {
           setTableOrderRetrieved(() => false);
         }
       });
+  }
+
+  if (tableOrderRetrieved) {
+    console.log(tableOrderData[0].length);
   }
 
   async function handlepasswaiterinfo(table) {
@@ -243,7 +249,6 @@ function TablesPage({ tenant }) {
       .then((result) => {
         if (result.status === "SUCCESS") {
           setWaiterData([result.data]);
-
           setWaiterDataRetrieved(() => true);
         } else {
           setWaiterDataRetrieved(() => false);
@@ -253,7 +258,6 @@ function TablesPage({ tenant }) {
 
   async function handleCloseWaiter(table) {
     setTableIndex();
-
     const url = waiterUrl + "/remove/" + tenant.tenant_id;
     const payload = JSON.stringify({
       order_table: table,
@@ -271,9 +275,6 @@ function TablesPage({ tenant }) {
         }
       });
   }
-
-    
-
 
   async function handleaddtable() {
     setAddTableNotif(true);
@@ -370,7 +371,7 @@ function TablesPage({ tenant }) {
               const url = localUrl + "/remove/content/" + tenant.tenant_id;
               const payload = JSON.stringify({
                 table_id: removeval,
-                order_table: posts.table.index,
+                order_table: posts.table.id,
               });
               fetch(url, {
                 method: "POST",
@@ -411,6 +412,70 @@ function TablesPage({ tenant }) {
     }
   }
 
+  const [page, setPage] = useState(0);
+  const rowsPerPage = 1;
+
+  function TablePaginationActions(props) {
+    const { count, page, onPageChange } = props;
+
+    const handleBackButtonClick = (event) => {
+      onPageChange(event, page - 1);
+      setIndex(index - 1);
+    };
+
+    const handleNextButtonClick = (event) => {
+      onPageChange(event, page + 1);
+
+      setIndex(index + 1);
+    };
+
+    return (
+      <div className="containerbutton">
+        <button
+          onClick={handleBackButtonClick}
+          disabled={page === 0}
+          className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
+        >
+          {" "}
+          <FontAwesomeIcon
+            icon={faAngleLeft}
+            style={page === 0 ? { color: "#BEBEBE" } : { color: "#949494" }}
+          />
+        </button>
+
+        <button
+          onClick={handleNextButtonClick}
+          disabled={page >= Math.ceil(count / 1) - 1}
+          className={
+            page >= Math.ceil(count / 1) - 1
+              ? "rightdisabledbutton"
+              : "rightdisplaybutton"
+          }
+        >
+          <FontAwesomeIcon
+            icon={faAngleRight}
+            style={
+              page >= Math.ceil(count / 1) - 1
+                ? { color: "#BEBEBE" }
+                : { color: "#949494" }
+            }
+          />
+        </button>
+      </div>
+    );
+  }
+
+  TablePaginationActions.propTypes = {
+    count: PropTypes.number.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
+    rowsPerPage: PropTypes.number.isRequired,
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
   return (
     <div className="container">
       <div className="topbar">
@@ -423,125 +488,188 @@ function TablesPage({ tenant }) {
 
       <Modal open={tableOrderOpen}>
         <Box className="ordermodalbox">
-          {tableOrderRetrieved == true &&
-            tableOrderData.map((post, index) => {
-              const ordertime = new Date(post.order_time);
-              const dateOptions = {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              };
+          <div>
+            {tableOrderRetrieved == true &&
+              (rowsPerPage > 0
+                ? tableOrderData.map((item) => {
+                    return item.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    );
+                  })
+                : tableOrderData
+              ).map((item) => {
+                return item.map((post, index) => {
+                  const ordertime = new Date(post.order_time);
+                  const dateOptions = {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  };
 
-              return (
-                <>
-                  <div className="modalclose">
-                    <button
-                      className="modalclosebutton"
-                      onClick={() => setTableOrderOpen(false)}
-                    >
-                      <FontAwesomeIcon
-                        className="closebuttonicon"
-                        icon={faCircleXmark}
-                      />
-                    </button>
-                  </div>
-
-                  <div className="innermodalbox">
-                    <div className="ordermodaltitle">{tenant.name}</div>
-                    <div className="ordermodalsubtitle">
-                      <div className="ordermodaldate">
-                        <div className="ordertime">
-                          <CalendarTodayOutlinedIcon
-                            fontSize="small"
-                            className="timeicon"
+                  return (
+                    <>
+                      <div className="modalclose">
+                        <button
+                          className="modalclosebutton"
+                          onClick={() => setTableOrderOpen(false)}
+                        >
+                          <FontAwesomeIcon
+                            className="closebuttonicon"
+                            icon={faCircleXmark}
                           />
-                          {ordertime.toLocaleTimeString("en-US")}{" "}
-                          <span className="space">/</span>{" "}
-                          <span className="orderdate">
-                            {ordertime.toLocaleDateString("en-ID", dateOptions)}
-                          </span>
-                        </div>
+                        </button>
                       </div>
 
-                      <div className="ordermodalstatus">
-                        <div className="statustext">STATUS</div>
-                        <div className="statuscoloredtext">
-                          {post.order_status == 1 ? (
-                            <div className="pending">PENDING</div>
-                          ) : post.order_status == 2 ? (
-                            <div className="orderplaced">ORDER PLACED</div>
-                          ) : post.order_status == 3 ? (
-                            <div className="served">SERVED</div>
-                          ) : post.order_status == 4 ? (
-                            <div className="payment">PAYMENT</div>
-                          ) : post.order_status == 5 ? (
-                            <div className="complete">COMPLETE</div>
-                          ) : post.order_status == 6 ? (
-                            <div className="rejected">REJECTED</div>
-                          ) : null}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="ordermodalitems">
-                      <div className="ordermodalform">
-                        <div className="ordermodalinputlabel">
-                          Name <span style={{ color: "#E52C32" }}>*</span>
-                        </div>
-                        <input
-                          type="text"
-                          value={post.user_name}
-                          className="ordermodalinputfile"
-                        />
-                        <div className="ordermodalinputlabel">
-                          Phone Number
-                          <span style={{ color: "#E52C32" }}>*</span>
-                        </div>
-                        <input
-                          type="text"
-                          value={post.user_phonenumber}
-                          className="ordermodalinputfile"
-                        />
-                        <div className="ordermodalinputlabel">
-                          Special Instructions
-                        </div>
-                        <input
-                          type="text"
-                          value={post.order_instruction}
-                          className="ordermodalinputfile"
-                        />
-                        <div className="ordermodalinputlabel">Table</div>
-                        <input
-                          type="text"
-                          value={post.order_table}
-                          className="ordermodalinputfile"
-                        />
-                      </div>
+                      <div className="innermodalbox">
+                        <div className="ordermodaltitle">{tenant.name}</div>
+                        <div className="ordermodalsubtitle">
+                          <div className="ordermodaldate">
+                            <div className="ordertime">
+                              <CalendarTodayOutlinedIcon
+                                fontSize="small"
+                                className="timeicon"
+                              />
+                              {ordertime.toLocaleTimeString("en-US")}{" "}
+                              <span className="space">/</span>{" "}
+                              <span className="orderdate">
+                                {ordertime.toLocaleDateString(
+                                  "en-ID",
+                                  dateOptions
+                                )}
+                              </span>
+                            </div>
+                          </div>
 
-                      <div className="ordermenuitemcontainer">
-                        <div className="ordermenutitle">Order Items</div>
-                        <div className="ordermenuitem">
-                          {post.order_menu.map((posts, index) => (
-                            <div className="ordermenucontainer">
-                              <div className="ordermenuimagecontainer">
-                                <img
-                                  src={posts.menuImage}
-                                  className="menuimage"
-                                />
+                          <div className="ordermodalstatus">
+                            <div className="statustext">STATUS</div>
+                            <div className="statuscoloredtext">
+                              {post.order_status == 1 ? (
+                                <div className="pending">PENDING</div>
+                              ) : post.order_status == 2 ? (
+                                <div className="orderplaced">ORDER PLACED</div>
+                              ) : post.order_status == 3 ? (
+                                <div className="served">SERVED</div>
+                              ) : post.order_status == 4 ? (
+                                <div className="payment">PAYMENT</div>
+                              ) : post.order_status == 5 ? (
+                                <div className="complete">COMPLETE</div>
+                              ) : post.order_status == 6 ? (
+                                <div className="rejected">REJECTED</div>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="ordermodalitems">
+                          <div className="ordermodalform">
+                            <div className="ordermodalinputlabel">
+                              Name <span style={{ color: "#E52C32" }}>*</span>
+                            </div>
+                            <input
+                              type="text"
+                              value={post.user_name}
+                              className="ordermodalinputfile"
+                            />
+                            <div className="ordermodalinputlabel">
+                              Phone Number
+                              <span style={{ color: "#E52C32" }}>*</span>
+                            </div>
+                            <input
+                              type="text"
+                              value={post.user_phonenumber}
+                              className="ordermodalinputfile"
+                            />
+                            <div className="ordermodalinputlabel">
+                              Special Instructions
+                            </div>
+                            <input
+                              type="text"
+                              value={post.order_instruction}
+                              className="ordermodalinputfile"
+                            />
+                            <div className="ordermodalinputlabel">Table</div>
+                            <input
+                              type="text"
+                              value={post.order_table}
+                              className="ordermodalinputfile"
+                            />
+                          </div>
+
+                          <div className="ordermenuitemcontainer">
+                            <div className="ordermenutitle">Order Items</div>
+                            <div className="ordermenuitem">
+                              {post.order_menu.map((posts, index) => (
+                                <div className="ordermenucontainer">
+                                  <div className="ordermenuimagecontainer">
+                                    <img
+                                      src={posts.menuImage}
+                                      className="menuimage"
+                                    />
+                                  </div>
+                                  <div className="orderdetailsmenutext">
+                                    <div className="orderdetailsmenutitle">
+                                      {posts.name}
+                                    </div>
+                                    <div className="recommended">
+                                      {posts.isRecommended === true ? (
+                                        <img src={recommended} />
+                                      ) : (
+                                        "null"
+                                      )}
+                                    </div>
+                                    <div className="orderdetailmenuprice">
+                                      <NumberFormat
+                                        value={posts.price}
+                                        prefix="Rp. "
+                                        decimalSeparator="."
+                                        thousandSeparator=","
+                                        displayType="text"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="ordertotalsummary">
+                              <div className="ordertotalitems">
+                                <div className="lefttext">Items:</div>
+                                <div className="righttext">
+                                  {post.order_item}
+                                </div>
                               </div>
-                              <div className="orderdetailsmenutext">
-                                <div className="orderdetailsmenutitle">
-                                  {posts.name}
-                                </div>
-                                <div className="recommended">
-                                  {posts.isRecommended === true ? (
-                                    <img src={recommended} />
-                                  ) : (
-                                    "null"
-                                  )}
-                                </div>
-                                <div className="orderdetailmenuprice">
+
+                              <div className="ordertotalitems">
+                                <div className="lefttext">Subtotal:</div>
+                                <div className="righttext">
                                   <NumberFormat
-                                    value={posts.price}
+                                    value={post.order_total}
+                                    prefix="Rp. "
+                                    decimalSeparator="."
+                                    thousandSeparator=","
+                                    displayType="text"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="ordertotalitems">
+                                <div className="lefttext">Service Charge:</div>
+                                <div className="righttext">
+                                  <NumberFormat
+                                    value={post.order_servicecharge}
+                                    prefix="Rp. "
+                                    decimalSeparator="."
+                                    thousandSeparator=","
+                                    displayType="text"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="ordertotalitems-n">
+                                <div className="lefttext">Tax(%):</div>
+                                <div className="righttext">
+                                  <NumberFormat
+                                    value={post.order_taxcharge}
                                     prefix="Rp. "
                                     decimalSeparator="."
                                     thousandSeparator=","
@@ -550,60 +678,26 @@ function TablesPage({ tenant }) {
                                 </div>
                               </div>
                             </div>
-                          ))}
-                        </div>
-
-                        <div className="ordertotalsummary">
-                          <div className="ordertotalitems">
-                            <div className="lefttext">Items:</div>
-                            <div className="righttext">{post.order_item}</div>
-                          </div>
-
-                          <div className="ordertotalitems">
-                            <div className="lefttext">Subtotal:</div>
-                            <div className="righttext">
-                              <NumberFormat
-                                value={post.order_total}
-                                prefix="Rp. "
-                                decimalSeparator="."
-                                thousandSeparator=","
-                                displayType="text"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="ordertotalitems">
-                            <div className="lefttext">Service Charge:</div>
-                            <div className="righttext">
-                              <NumberFormat
-                                value={post.order_servicecharge}
-                                prefix="Rp. "
-                                decimalSeparator="."
-                                thousandSeparator=","
-                                displayType="text"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="ordertotalitems-n">
-                            <div className="lefttext">Tax(%):</div>
-                            <div className="righttext">
-                              <NumberFormat
-                                value={post.order_taxcharge}
-                                prefix="Rp. "
-                                decimalSeparator="."
-                                thousandSeparator=","
-                                displayType="text"
-                              />
-                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </>
-              );
-            })}
+                    </>
+                  );
+                });
+              })}
+            {tableOrderRetrieved && tableOrderData[0].length > 1 ? (
+              <div className="tablepaginationfooter">
+                <TablePagination
+                  colSpan={3}
+                  count={tableOrderRetrieved ? tableOrderData[0].length : 0}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </div>
+            ) : null}
+          </div>
         </Box>
       </Modal>
 
@@ -963,14 +1057,14 @@ function TablesPage({ tenant }) {
                           onClick={
                             posts.table.isWaiterCalled
                               ? () => {
-                                  handlepasswaiterinfo(posts.table.index);
+                                  handlepasswaiterinfo(posts.table.id);
                                   setTableWaiterOpen(true);
                                   setTableIndex(posts.table.index);
                                 }
                               : posts.table.order_id == "NULL"
                               ? () => setTableNoOrderOpen(true)
                               : () => {
-                                  handlePassinginfo(posts.table.order_id);
+                                  handlePassinginfo(posts.table.id);
                                   setTableOrderOpen(true);
                                 }
                           }
@@ -1056,7 +1150,9 @@ function TablesPage({ tenant }) {
                 style={edittable ? null : { background: tenant.profileColor }}
                 className={edittable ? "addtableinactive" : "addtableactive"}
                 disabled={edittable ? true : false}
-                onClick={() => {handleaddtable()}}
+                onClick={() => {
+                  handleaddtable();
+                }}
               >
                 + Add New Table
               </button>

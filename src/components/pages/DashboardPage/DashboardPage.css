@@ -5,7 +5,7 @@
   overflow: scroll;
 }
 
-.container::-webkit-scrollbar{
+.container::-webkit-scrollbar {
   display: none;
 }
 
@@ -129,7 +129,7 @@
   font-weight: 700;
   font-size: 60px;
   line-height: 98px;
-  color: #1cab33;
+  color: #555570ce;
   padding: 0% 5% 0% 5%;
 }
 .tablerowtext {

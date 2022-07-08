@@ -64,9 +64,7 @@ function App({ checked, tenant }) {
   });
 
   useEffect(() => {
-    console.log(tenant.tenant_id)
     if (tenant.tenant_id != undefined) {
-
       const newSocket = io(
         "https://backend.oasis-one.com",
         { transports: ["polling"] },
@@ -83,34 +81,31 @@ function App({ checked, tenant }) {
 
       return () => newSocket.close();
     }
-  },[tenant]);
+  }, [tenant]);
 
   return (
     <SocketContext.Provider value={socket}>
-    <Router>
-      {checked && (
-        <div className="app">
-          
-          <Switch>
-         
-            <Route exact path="/" component={Login} />
-       
-            <BasicRoute exact path="/login/:userEmail?" component={Login} />
+      <Router>
+        {checked && (
+          <div className="app">
+            <Switch>
+              <Route exact path="/" component={Login} />
 
-            <BasicRoute
-              exact
-              path="/emailsent/:userEmail?/:reset?"
-              component={EmailSent}
-            />
-            <BasicRoute
-              exact
-              path="/passwordreset/:userID/:resetString"
-              component={PasswordReset}
-            />
-            <BasicRoute exact path="/register" component={Register} />
-            <BasicRoute exact path="/forgetpassword" component={Forget} />
-          
-           
+              <BasicRoute exact path="/login/:userEmail?" component={Login} />
+
+              <BasicRoute
+                exact
+                path="/emailsent/:userEmail?/:reset?"
+                component={EmailSent}
+              />
+              <BasicRoute
+                exact
+                path="/passwordreset/:userID/:resetString"
+                component={PasswordReset}
+              />
+              <BasicRoute exact path="/register" component={Register} />
+              <BasicRoute exact path="/forgetpassword" component={Forget} />
+
               <div class="box">
                 <div class="column">
                   <SideBar />
@@ -131,15 +126,13 @@ function App({ checked, tenant }) {
                   <AuthRoute path="/settings" exact component={Settings} />
                 </div>
               </div>
-       
-            <Route path="*" component={MissingRoute} />
-           
-          </Switch>
-          
-        </div>
-      )}
-    </Router>
-     </SocketContext.Provider>
+
+              <Route path="*" component={MissingRoute} />
+            </Switch>
+          </div>
+        )}
+      </Router>
+    </SocketContext.Provider>
   );
 }
 

@@ -3,7 +3,6 @@ import "../TopBar/TopBar.css";
 import "./InventoryPage.css";
 import NumberFormat from "react-number-format";
 import recommended from "../../icons/Recommend.png";
-import inputimage from "../../icons/Edit Profile Pict.png";
 import removecat from "../../icons/RemoveCat.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -18,7 +17,6 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Switch from "@material-ui/core/Switch";
 import { useIosSwitchStyles } from "./switch/index";
-
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ExpandMoreRoundedIcon from "@material-ui/icons/ExpandMoreRounded";
@@ -27,6 +25,8 @@ import { useMinimalSelectStyles } from "./select/index";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import { debounce } from "lodash";
+import Compressor from "compressorjs";
 
 const UP = -1;
 const DOWN = 1;
@@ -49,7 +49,6 @@ function InventoryPage({ tenant }) {
 
   const [removecategoryopen, setRemoveCategoryOpen] = useState(false);
   const [additemopen, setAdditemopen] = useState(false);
-
   const [itemName, setItemName] = useState();
   const [itemNameChanged, setItemNameChanged] = useState(false);
   const [itemDuration, setItemDuration] = useState();
@@ -66,6 +65,88 @@ function InventoryPage({ tenant }) {
   const [edititemname, setEditItemName] = useState();
 
   const [productImage, setProductImage] = useState();
+  const [itemval, setItemval] = useState([]);
+
+  // Get Inventory Data
+
+  useEffect(() => {
+    if (tenant.tenant_id != undefined) {
+      const url = localUrl + "/category/" + tenant.tenant_id;
+
+      fetch(url, {
+        method: "GET",
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            setInventoryData([result.data]);
+            setItemval([result.data]);
+            setInventoryRetrieved(() => true);
+          } else {
+            setInventoryRetrieved(() => false);
+          }
+        });
+    }
+  }, [tenant, inventoryRetrieved]);
+
+  // socket connection
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("add category", (data) => handleCategoryAdded(data));
+      socket.on("add order", (data) => handleOrderAdded(data));
+      socket.on("update category", (data) => handleCategoryUpdated(data));
+      socket.on("delete category", (data) => handleCategoryRemoved(data));
+    }
+  });
+
+  function handleCategoryAdded(user) {
+    if (inventoryRetrieved) {
+      let newData = inventoryData.splice();
+
+      newData.push(user);
+      setItemval(newData);
+    }
+  }
+  function handleCategoryUpdated(user) {
+    if (inventoryRetrieved) {
+      let newData = inventoryData.splice();
+
+      newData.push(user);
+      setItemval(newData);
+    }
+  }
+  function handleCategoryRemoved(user) {
+    if (inventoryRetrieved) {
+      let newData = inventoryData.splice();
+
+      newData.push(user);
+      setItemval(newData);
+    }
+  }
+
+  function handleOrderAdded() {
+    if (inventoryRetrieved) {
+      const url = localUrl + "/category/" + tenant.tenant_id;
+
+      fetch(url, {
+        method: "GET",
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === "SUCCESS") {
+            setInventoryData([result.data]);
+            setItemval([result.data]);
+            setInventoryRetrieved(() => true);
+          } else {
+            setInventoryRetrieved(() => false);
+          }
+        });
+    }
+  }
 
   function handlePassInfoShow(
     name,
@@ -101,49 +182,53 @@ function InventoryPage({ tenant }) {
       (direction === UP && position === 0) ||
       (direction === DOWN && position === items.length - 1)
     ) {
-      return; // canot move outside of array
+      return;
     }
 
-    const item = items[position]; // save item for later
-    const newItems = items.filter((i) => i.category.id !== id); // remove item from array
+    const item = items[position];
+    const newItems = items.filter((i) => i.category.id !== id);
     newItems.splice(position + direction, 0, item);
 
     setInventoryData([newItems]);
+    setItemval([newItems]);
   }
 
-  const [itemval, setItemval] = useState([]);
+  const debouncedSearch = debounce(async (i, v, posts) => {
+    const url = localUrl + "/edit/" + tenant.tenant_id;
+    await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        cat_id: i,
+        menu_id: v,
+        menu_quantity: parseInt(posts),
+      }),
+      headers: { "content-type": "application/JSON" },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          setTimeout(() => {
+            if (socket) {
+              socket.emit("update category", result.data);
+            }
+          }, [1000]);
+        }
+      });
+  }, 500);
 
   async function handleIncrement(i, v) {
     {
       inventoryData.map((item) => {
         return item.map((post, index) => {
+          setItemval([item]);
           if (post.category.id === i) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
                 posts.quantity = parseInt(posts.quantity) + 5;
-                const url = localUrl + "/edit/" + tenant.tenant_id;
-                fetch(url, {
-                  method: "POST",
-                  body: JSON.stringify({
-                    cat_id: i,
-                    menu_id: v,
-                    menu_quantity: parseInt(posts.quantity),
-                  }),
-                  headers: { "content-type": "application/JSON" },
-                })
-                  .then((response) => response.json())
-                  .then((result) => {
-                    if (result.status === "SUCCESS") {
-                      if (socket) {
-                        socket.emit("update category", result.data);
-                        setInventoryData([result.data]);
-                      }
-                    }
-                  });
+                debouncedSearch(i, v, posts.quantity);
               }
             });
           }
-          setItemval({ post });
         });
       });
     }
@@ -157,52 +242,17 @@ function InventoryPage({ tenant }) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
                 posts.quantity = parseInt(posts.quantity) - 5;
-if(posts.quantity <= 0){
-  const url = localUrl + "/edit/" + tenant.tenant_id;
-  fetch(url, {
-    method: "POST",
-    body: JSON.stringify({
-      cat_id: i,
-      menu_id: v,
-      menu_quantity: 0,
-    }),
-    headers: { "content-type": "application/JSON" },
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.status === "SUCCESS") {
-        if (socket) {
-          socket.emit("update category", result.data);
-          setInventoryData([result.data]);
-        }
-      }
-    });
-} else {
-  const url = localUrl + "/edit/" + tenant.tenant_id;
-  fetch(url, {
-    method: "POST",
-    body: JSON.stringify({
-      cat_id: i,
-      menu_id: v,
-      menu_quantity: parseInt(posts.quantity),
-    }),
-    headers: { "content-type": "application/JSON" },
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.status === "SUCCESS") {
-        if (socket) {
-          socket.emit("update category", result.data);
-          setInventoryData([result.data]);
-        }
-      }
-    });
-}
-               
+
+                if (posts.quantity <= 0) {
+                  posts.quantity = 0;
+                  debouncedSearch(i, v, 0);
+                } else {
+                  debouncedSearch(i, v, posts.quantity);
+                }
               }
             });
           }
-          setItemval({ post });
+          setItemval([item]);
         });
       });
     }
@@ -242,7 +292,7 @@ if(posts.quantity <= 0){
               }
             });
           }
-          setItemval({ post });
+          setItemval([item]);
         });
       });
     }
@@ -308,93 +358,6 @@ if(posts.quantity <= 0){
     }
   }
 
-  // Get Inventory Data
-  useEffect(() => {
-    let mounted = true;
-
-    if (mounted) {
-      if (tenant.tenant_id != undefined) {
-        const url = localUrl + "/category/" + tenant.tenant_id;
-
-        fetch(url, {
-          method: "GET",
-          headers: { "content-type": "application/JSON" },
-        })
-          .then((response) => response.json())
-          .then((result) => {
-            if (result.status === "SUCCESS") {
-              setInventoryData([result.data]);
-              setInventoryRetrieved(() => true);
-            } else {
-              setInventoryRetrieved(() => false);
-            }
-          });
-      }
-    }
-    return () => {
-      mounted = false;
-    };
-  }, [tenant, inventoryRetrieved]);
-
-  // socket connection
-  const socket = useContext(SocketContext);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("add category", (data) => handleCategoryAdded(data));
-      socket.on("add order", (data) => handleOrderAdded(data));
-      socket.on("update category", (data) => handleCategoryUpdated(data));
-      socket.on("delete category", (data) => handleCategoryRemoved(data));
-    }
-  });
-
-  function handleCategoryAdded(user) {
-    if (inventoryRetrieved) {
-      let newData = inventoryData.splice();
-
-      newData.push(user);
-      setInventoryData(newData);
-    }
-  }
-
-  function handleOrderAdded() {
-    if (inventoryRetrieved) {
-      const url = localUrl + "/category/" + tenant.tenant_id;
-
-      fetch(url, {
-        method: "GET",
-        headers: { "content-type": "application/JSON" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          if (result.status === "SUCCESS") {
-            setInventoryData([result.data]);
-            setInventoryRetrieved(() => true);
-          } else {
-            setInventoryRetrieved(() => false);
-          }
-        });
-    }
-  }
-
-  function handleCategoryUpdated(user) {
-    if (inventoryRetrieved) {
-      let newData = inventoryData.splice();
-
-      newData.push(user);
-      setInventoryData(newData);
-    }
-  }
-
-  function handleCategoryRemoved(user) {
-    if (inventoryRetrieved) {
-      let newData = inventoryData.splice();
-
-      newData.push(user);
-      setInventoryData(newData);
-    }
-  }
-
   async function handleAddCategory(name) {
     const url = localUrl + "/category/create/" + tenant.tenant_id;
     fetch(url, {
@@ -416,7 +379,7 @@ if(posts.quantity <= 0){
 
             socket.emit("add category", result.data);
             setInventoryData([result.data]);
-
+            setItemval([result.data]);
             setAddCategoryOpen(false);
             setValidCategoryName(true);
           }
@@ -450,6 +413,7 @@ if(posts.quantity <= 0){
             if (socket) {
               socket.emit("update category", result.data);
               setInventoryData([result.data]);
+              setItemval([result.data]);
             }
           });
       });
@@ -476,22 +440,29 @@ if(posts.quantity <= 0){
   }
 
   async function handleAddItem() {
-    let formData = new FormData();
+    const url = localUrl + "/create/" + tenant.tenant_id;
     const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
     var input = document.querySelector('input[type="file"]');
-    formData.append("menu", input.files[0]);
+    const file = input.files[0];
+    new Compressor(file, {
+      quality: 0.5,
 
-    fetch(menuUrl, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {})
-      .catch((error) => {
-        console.error("Error Upload Logo:", error);
-      });
+      success(result) {
+        let formData = new FormData();
 
-    const url = localUrl + "/create/" + tenant.tenant_id;
+        formData.append("menu", result, result.name);
+
+        fetch(menuUrl, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((result) => {})
+          .catch((error) => {
+            console.error("Error Upload Logo:", error);
+          });
+      },
+    });
 
     const payload = JSON.stringify({
       cat_id: categoryID,
@@ -505,6 +476,8 @@ if(posts.quantity <= 0){
       menu_image:
         imageUrl + "/menu/render/" + tenant.tenant_id + "/" + itemName + ".jpg",
     });
+
+
 
     fetch(url, {
       method: "POST",
@@ -522,6 +495,9 @@ if(posts.quantity <= 0){
 
             socket.emit("add category", result.data);
             setInventoryData([result.data]);
+            
+   
+            setItemval([result.data]);
             setItemPrice();
             setAdditemopen(false);
             setProductImage();
@@ -536,15 +512,15 @@ if(posts.quantity <= 0){
 
   async function handleEditItem() {
     const url = localUrl + "/edit/" + tenant.tenant_id;
-
+    const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
     var input = document.querySelector('input[type="file"]');
 
     if (input.files[0] == undefined) {
-      console.log("no,1");
       const payload = JSON.stringify({
         cat_id: categoryID,
         menu_id: itemID,
         menu_name: itemName,
+        menu_image: productImage,
         menu_duration: itemDuration,
         menu_desc: itemDescription,
         menu_isRecommended: itemIsRecommended,
@@ -569,7 +545,7 @@ if(posts.quantity <= 0){
 
               socket.emit("update category", result.data);
               setInventoryData([result.data]);
-
+              setItemval([result.data]);
               setEditItemOpen(false);
               setProductImage();
               setItemIsRecommended();
@@ -580,21 +556,26 @@ if(posts.quantity <= 0){
           }
         });
     } else if (input.files[0] != undefined && edititemname == itemName) {
-      console.log("no,2");
-      let formData = new FormData();
-      const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
-      console.log(menuUrl);
-      formData.append("menu", input.files[0]);
+      const file = input.files[0];
+      new Compressor(file, {
+        quality: 0.5,
 
-      fetch(menuUrl, {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((result) => {})
-        .catch((error) => {
-          console.error("Error Upload Logo:", error);
-        });
+        success(result) {
+          let formData = new FormData();
+
+          formData.append("menu", result, result.name);
+
+          fetch(menuUrl, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((result) => {})
+            .catch((error) => {
+              console.error("Error Upload Logo:", error);
+            });
+        },
+      });
 
       const payload = JSON.stringify({
         cat_id: categoryID,
@@ -630,7 +611,7 @@ if(posts.quantity <= 0){
 
               socket.emit("update category", result.data);
               setInventoryData([result.data]);
-
+              setItemval([result.data]);
               setEditItemOpen(false);
               setProductImage();
               setItemIsRecommended();
@@ -641,7 +622,6 @@ if(posts.quantity <= 0){
           }
         });
     } else if (input.files[0] != undefined && edititemname != itemName) {
-      console.log("no,3");
       const payload = JSON.stringify({
         cat_id: categoryID,
         menu_id: itemID,
@@ -677,7 +657,7 @@ if(posts.quantity <= 0){
 
               socket.emit("update category", result.data);
               setInventoryData([result.data]);
-
+              setItemval([result.data]);
               setEditItemOpen(false);
               setProductImage();
               setItemIsRecommended();
@@ -688,17 +668,26 @@ if(posts.quantity <= 0){
           }
         });
 
-      formData.append("menu", input.files[0]);
+      const file = input.files[0];
+      new Compressor(file, {
+        quality: 0.5,
 
-      fetch(menuUrl, {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((result) => {})
-        .catch((error) => {
-          console.error("Error Upload Logo:", error);
-        });
+        success(result) {
+          let formData = new FormData();
+
+          formData.append("menu", result, result.name);
+
+          fetch(menuUrl, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((result) => {})
+            .catch((error) => {
+              console.error("Error Upload Logo:", error);
+            });
+        },
+      });
     }
   }
 
@@ -718,6 +707,7 @@ if(posts.quantity <= 0){
             }, 3000);
             socket.emit("delete category", result.data);
             setInventoryData([result.data]);
+            setItemval([result.data]);
             setEditItemOpen(false);
             setProductImage();
             setItemIsRecommended();
@@ -727,6 +717,30 @@ if(posts.quantity <= 0){
         }
       });
   }
+
+  useEffect(() => {
+    let found;
+    if (itemNameChanged) {
+      found =
+        inventoryRetrieved == true &&
+        inventoryData.some((post) => {
+          return post.some((posts, index) => {
+            return posts.category.menu.some((item) => {
+              if (item.name == itemName) {
+                if (item.id == itemID) {
+                  setValidCategoryName(true);
+                } else {
+                  setValidCategoryName(false);
+                }
+              } else {
+                setValidCategoryName(true);
+              }
+              return item.name == itemName;
+            });
+          });
+        });
+    }
+  });
 
   return (
     <div className="container">
@@ -930,11 +944,25 @@ if(posts.quantity <= 0){
                       itemDuration == "" ||
                       itemDuration == undefined ||
                       itemDescription == "" ||
-                      itemDescription == undefined || itemPrice == "" ||
+                      itemDescription == undefined ||
+                      itemPrice == "" ||
                       itemPrice == undefined ||
-                        productImage == undefined
+                      productImage == undefined
                         ? { background: "#c4c4c4" }
                         : { background: tenant.profileColor }
+                    }
+                    disabled={
+                      itemName == "" ||
+                      itemName == undefined ||
+                      itemDuration == "" ||
+                      itemDuration == undefined ||
+                      itemDescription == "" ||
+                      itemDescription == undefined ||
+                      itemPrice == "" ||
+                      itemPrice == undefined ||
+                      productImage == undefined
+                        ? true
+                        : false
                     }
                     type="submit"
                     onClick={() => handleAddItem()}
@@ -1107,9 +1135,14 @@ if(posts.quantity <= 0){
                     Remove Product
                   </button>
                   <button
-                    style={{
-                      background: tenant.profileColor,
-                    }}
+                    disabled={ValidCategoryName ? false : true}
+                    style={
+                      ValidCategoryName
+                        ? {
+                            background: tenant.profileColor,
+                          }
+                        : { background: "#c4c4c4" }
+                    }
                     type="submit"
                     onClick={() => handleEditItem()}
                     className="savebutton"
@@ -1203,8 +1236,8 @@ if(posts.quantity <= 0){
 
           <div className="inventorycontainergrid">
             <div className="innerinventorycontainergrid">
-              {inventoryRetrieved == true &&
-                inventoryData.map((post) => {
+              {itemval != [] &&
+                itemval.map((post) => {
                   return post.map((item, index) => {
                     return (
                       <div className="categorycontainer" key={item.category.id}>
@@ -1230,7 +1263,6 @@ if(posts.quantity <= 0){
                                     onClick={() => {
                                       handleMove(item.category.id, DOWN);
                                     }}
-                                    //disabled={index<=1? true: false}
                                   >
                                     <FontAwesomeIcon icon={faAngleDown} />
                                   </button>
@@ -1251,7 +1283,6 @@ if(posts.quantity <= 0){
                                     onClick={() =>
                                       handleMove(item.category.id, UP)
                                     }
-                                    //disabled={index >= 5? true : false}
                                   >
                                     <FontAwesomeIcon icon={faAngleUp} />
                                   </button>
