@@ -20,9 +20,42 @@ import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
 
 function OrderPage({ tenant }) {
-  const localUrl = process.env.REACT_APP_ORDERURL;
+  const orderUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
+
+  const tablelUrl = process.env.REACT_APP_TABLEURL;
+  const [tableData, setTableData] = useState([]);
+  const [tableRetrieved, setTableRetrieved] = useState(false);
+
+  // Get Table Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = tablelUrl + "/" + tenant.tenant_id;
+
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTableData([result.data]);
+              setTableRetrieved(() => true);
+            } else {
+              setTableRetrieved(() => false);
+            }
+          });
+      }
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [tableRetrieved]);
 
   // Get Order Data
   useEffect(() => {
@@ -30,7 +63,7 @@ function OrderPage({ tenant }) {
 
     if (mounted) {
       if (tenant.tenant_id != undefined) {
-        const url = localUrl + "/retrieve/" + tenant.tenant_id;
+        const url = orderUrl + "/retrieve/" + tenant.tenant_id;
 
         fetch(url, {
           method: "GET",
@@ -59,7 +92,8 @@ function OrderPage({ tenant }) {
   useEffect(() => {
     if (socket) {
       socket.on("add order", (data) => handleOrderAdded(data));
-      socket.on("update order", (data) => handleOrderUpdated(data));
+      socket.on("update order", (data) => handleOrderAdded(data));
+      socket.on('update user', (data) => handleUserUpdated(data));
     }
   });
 
@@ -74,16 +108,66 @@ function OrderPage({ tenant }) {
     }
   }
 
-  function handleOrderUpdated(user) {
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
 
-    if (orderRetrieved) {
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
 
-      let newData = orderData.splice();
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
 
-      newData.push(user);
-      setOrderData(newData);
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
     }
   }
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor)
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
 
   const generatePdf = () => {
     const doc = new jsPDF();
@@ -128,9 +212,9 @@ return item.map((post,index)=>{
     // we use a date string to generate our filename.
     const dateStr = date[0] + date[1] + date[2] + date[3] + date[4];
     // ticket title. and margin-top + margin-left
-    doc.text(`${tenant.name} Order Report.`, 14, 15);
+    doc.text(`${profileName} Order Report.`, 14, 15);
     // we define the name of our PDF file.
-    doc.save(`${tenant.name}_orderreport.pdf`);
+    doc.save(`${profileName}_orderreport.pdf`);
   };
 
   const [page, setPage] = useState(0);
@@ -139,6 +223,7 @@ return item.map((post,index)=>{
 
   const [orderStatus, setOrderStatus] = useState("");
   const [orderTable, setOrderTable] = useState("");
+  const [orderGuest, setOrderGuest] = useState("");
   const [orderTime, setOrderTime] = useState("");
   const [orderMenu, setOrderMenu] = useState([]);
   const [orderItem, setOrderItem] = useState("");
@@ -155,6 +240,7 @@ return item.map((post,index)=>{
   function handlePassinginfo(
     orderStatus,
     orderTable,
+    orderGuest,
     orderTime,
     orderMenu,
     orderItem,
@@ -167,6 +253,7 @@ return item.map((post,index)=>{
     rejectReason
   ) {
     setOrderStatus(orderStatus);
+    setOrderGuest(orderGuest);
     setOrderTable(orderTable);
     setOrderTime(orderTime);
     setOrderMenu(orderMenu);
@@ -252,7 +339,7 @@ return item.map((post,index)=>{
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{color: tenant.profileColor}}>Orders</div>
+        <div className="left" style={{color: profileColor}}>Orders</div>
 
         <TopBar />
       </div>
@@ -261,9 +348,9 @@ return item.map((post,index)=>{
         <div className="outerordertable">
           <div className="ordertable">
           <div className="orderheader">
-            <div className="orderleft" style={{color: tenant.profileColor}}>All Orders</div>
+            <div className="orderleft" style={{color: profileColor}}>All Orders</div>
             <div className="orderright">
-              <button className="downloadbutton" style={{color: tenant.profileColor, borderColor: tenant.profileColor}} onClick={generatePdf}>
+              <button className="downloadbutton" style={{color: profileColor, borderColor: profileColor}} onClick={generatePdf}>
                 Download as PDF
               </button>
             </div>
@@ -289,14 +376,14 @@ return item.map((post,index)=>{
                   >
                     <FontAwesomeIcon
                       className="closebuttonicon"
-                      style={{color: tenant.profileColor}}
+                      style={{color: profileColor}}
                       icon={faCircleXmark}
                     />
                   </button>
                 </div>
 
                 <div className="innermodalbox">
-                  <div className="ordermodaltitle" style={{color: tenant.profileColor}}>{tenant.name}</div>
+                  <div className="ordermodaltitle" style={{color: profileColor}}>{profileName}</div>
                   <div className="ordermodalsubtitle">
                     <div className="ordermodaldate">
                       <div className="ordertime">
@@ -306,14 +393,15 @@ return item.map((post,index)=>{
                         />
                         {ordertime.toLocaleTimeString("en-US")}{" "}
                         <span className="space">/</span>{" "}
-                        <span className="orderdate" style={{color: tenant.profileColor}}>
+                        <span className="orderdate" style={{color: profileColor}}>
                           {" "}
                           {ordertime.toLocaleDateString("en-ID", dateOptions)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="ordermodalstatus">
+<div style={{display:"flex",flexDirection:"column"}}>
+<div className="ordermodalstatus">
                       <div className="statustext">STATUS</div>
                       <div className="statuscoloredtext">
                         {orderStatus == 1 ? (
@@ -330,7 +418,23 @@ return item.map((post,index)=>{
                           <div className="modalrejectedstatus">REJECTED</div>
                         ) : null}
                       </div>
+                      
                     </div>
+                
+                    {orderStatus == 6 ? (
+                          <div className="ordermodalinputlabelrejected">
+                            {" "}
+                            <div className="ordermodalinputlabel">
+                              Reasons for rejecting
+                            </div>
+                            <div className="rejectreasontext">
+                              {rejectReason}
+                            </div>
+                          </div>
+                        ) : null}
+                
+</div>
+                   
                   </div>
                   <div className="ordermodalitems">
                     <div className="ordermodalform">
@@ -364,23 +468,33 @@ return item.map((post,index)=>{
                           disabled={true}
                         />
                         <div className="ordermodalinputlabel">Table</div>
-                        <input
-                          type="text"
-                          value={orderTable}
-                          className="ordermodalinputfile"
-                          disabled={true}
-                        />
-                        {orderStatus == 6 ? (
-                          <>
-                            {" "}
-                            <div className="ordermodalinputlabel">
-                              Reasons for rejecting
+                        {tableRetrieved &&
+                              tableData.map((item) => {
+                                return item.map((posts, index) => {
+                                  if (posts.table.id == orderTable) {
+                                    return (
+                                      <span>
+                                        <input
+                                          type="text"
+                                          className="ordermodalinputfile"
+                                          value={posts.table.index}
+                                        />
+                                      </span>
+                                    );
+                                  }
+                                });
+                              })}
+
+<div className="ordermodalinputlabel">
+                              Guest
                             </div>
-                            <div className="rejectreasontext">
-                              {rejectReason}
-                            </div>
-                          </>
-                        ) : null}
+                            <input
+                              type="text"
+                              value={orderGuest}
+                              className="ordermodalinputfile"
+                            />
+
+                        
                       </form>
                     </div>
 
@@ -511,7 +625,25 @@ return item.map((post,index)=>{
                     <div className="ordertext">
                       {moment(post.order_time).fromNow()}
                     </div>
-                    <div className="ordertablenumber">{post.order_table}</div>
+                    <div className="ordertablenumber">{tableRetrieved &&
+                                      
+                                           
+                                      tableData.map((item) => {
+                                        return item.map(
+                                          (posts, index) => {
+                                            if (
+                                              posts.table.id ===
+                                             post.order_table
+                                            ) {
+                                              return (
+                                                <span>                                                  
+                                                  {posts.table.index}
+                                                </span>
+                                              );
+                                            }
+                                          }
+                                        );
+                                      })}</div>
                     <div className="acceptreject">
                       {post.order_status == 1 ? (
                         <div className="proceed">PROCEED</div>
@@ -535,6 +667,7 @@ return item.map((post,index)=>{
                           handlePassinginfo(
                             post.order_status,
                             post.order_table,
+                            post.user_guest,
                             post.order_time,
                             post.order_menu,
                             post.order_item,
@@ -582,7 +715,7 @@ return item.map((post,index)=>{
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
      

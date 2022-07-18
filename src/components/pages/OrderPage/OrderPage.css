@@ -373,7 +373,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 800px;
-  height: 480px;
+  height: 510px;
   display: grid;
   grid-template-rows: 1fr 1fr 1fr 1fr;
   border: none;
@@ -475,7 +475,16 @@
   color: #424242;
   margin-left: 3%;
 }
-
+.ordermodalinputlabelrejected{
+  display: flex;
+  flex-direction: column;
+  text-align: end;
+  width: 100%;
+  margin-top: 3%;
+  margin-bottom: -3%;
+  padding-right: 4%;
+  box-sizing: border-box;
+}
 .ordermodalinputfile {
   width: 270px;
   height: 35px;
@@ -499,7 +508,7 @@
   font-weight: 700;
   font-size: 11px;
   line-height: 14px;
-  color: #1f1f1f;
+  color: #f10c0c;
 }
 
 .ordermenutitle {

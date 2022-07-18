@@ -28,9 +28,10 @@ import { useOutlineSelectStyles } from "./select/index";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import { debounce } from "lodash";
 
 function TablesPage({ tenant }) {
-  const localUrl = process.env.REACT_APP_TABLEURL;
+  const tableUrl = process.env.REACT_APP_TABLEURL;
   const [tableData, setTableData] = useState([]);
   const [tableRetrieved, setTableRetrieved] = useState(false);
 
@@ -43,7 +44,7 @@ function TablesPage({ tenant }) {
 
     if (mounted) {
       if (tenant.tenant_id != undefined) {
-        const url = localUrl + "/" + tenant.tenant_id;
+        const url = tableUrl + "/" + tenant.tenant_id;
 
         fetch(url, {
           method: "GET",
@@ -75,6 +76,7 @@ function TablesPage({ tenant }) {
       socket.on("duplicate table", (data) => handleDuplicateTable(data));
       socket.on("add waiter call", (data) => handlCallTable(data));
       socket.on("remove waiter call", (data) => handlCallTable(data));
+      socket.on("update user", (data) => handleUserUpdated(data));
     }
   });
 
@@ -89,7 +91,7 @@ function TablesPage({ tenant }) {
 
   function handleOrderAdded() {
     if (tableRetrieved) {
-      const url = localUrl + "/" + tenant.tenant_id;
+      const url = tableUrl + "/" + tenant.tenant_id;
 
       fetch(url, {
         method: "GET",
@@ -135,7 +137,7 @@ function TablesPage({ tenant }) {
   }
 
   function handlCallTable(user) {
-    const url = localUrl + "/" + tenant.tenant_id;
+    const url = tableUrl + "/" + tenant.tenant_id;
 
     fetch(url, {
       method: "GET",
@@ -151,6 +153,67 @@ function TablesPage({ tenant }) {
         }
       });
   }
+
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
+
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
+    }
+  }
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor);
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
 
   const orderUrl = process.env.REACT_APP_ORDERURL;
   const [tableOrderData, setTableOrderData] = useState([]);
@@ -194,7 +257,7 @@ function TablesPage({ tenant }) {
   const iconComponent = (props) => {
     return (
       <ExpandMoreRoundedIcon
-        // style={{color:tenant.profileColor}}
+        // style={{color:profileColor}}
         className={props.className + " " + outlineSelectClasses.icon}
       />
     );
@@ -209,12 +272,10 @@ function TablesPage({ tenant }) {
 
   async function handlePassinginfo(id) {
     const url = orderUrl + "/table/retrieve/" + tenant.tenant_id;
-    console.log(url);
     const payload = JSON.stringify({
       // order_id: id,
       order_table: id,
     });
-    console.log(payload);
     await fetch(url, {
       method: "POST",
       body: payload,
@@ -229,10 +290,6 @@ function TablesPage({ tenant }) {
           setTableOrderRetrieved(() => false);
         }
       });
-  }
-
-  if (tableOrderRetrieved) {
-    console.log(tableOrderData[0].length);
   }
 
   async function handlepasswaiterinfo(table) {
@@ -276,14 +333,14 @@ function TablesPage({ tenant }) {
       });
   }
 
-  async function handleaddtable() {
+  const handleaddtable = debounce(async () => {
     setAddTableNotif(true);
     setTimeout(() => {
       setAddTableNotif(false);
     }, 3000);
 
-    const url = localUrl + "/create/" + tenant.tenant_id;
-    fetch(url, {
+    const url = tableUrl + "/create/" + tenant.tenant_id;
+    await fetch(url, {
       method: "POST",
       headers: { "content-type": "application/JSON" },
     })
@@ -294,7 +351,7 @@ function TablesPage({ tenant }) {
           setTableData([result.data]);
         }
       });
-  }
+  }, 500);
 
   function handleedittable() {
     setEditTable(true);
@@ -316,7 +373,7 @@ function TablesPage({ tenant }) {
       setRemoveTableNotif(false);
     }, 3000);
 
-    const url = localUrl + "/remove/" + tenant.tenant_id;
+    const url = tableUrl + "/remove/" + tenant.tenant_id;
     const payload = JSON.stringify({
       table_id: b,
     });
@@ -338,7 +395,7 @@ function TablesPage({ tenant }) {
   async function handleduplicatetable() {
     setDuplicateTableOpen(false);
 
-    const url = localUrl + "/duplicate/" + tenant.tenant_id;
+    const url = tableUrl + "/duplicate/" + tenant.tenant_id;
     const payload = JSON.stringify({
       or_table: startval,
       de_table: endval,
@@ -368,7 +425,7 @@ function TablesPage({ tenant }) {
         tableData.map((post) => {
           return post.map((posts, index) => {
             if (posts.table.id == removeval) {
-              const url = localUrl + "/remove/content/" + tenant.tenant_id;
+              const url = tableUrl + "/remove/content/" + tenant.tenant_id;
               const payload = JSON.stringify({
                 table_id: removeval,
                 order_table: posts.table.id,
@@ -414,6 +471,7 @@ function TablesPage({ tenant }) {
 
   const [page, setPage] = useState(0);
   const rowsPerPage = 1;
+  const [index, setIndex] = useState(1);
 
   function TablePaginationActions(props) {
     const { count, page, onPageChange } = props;
@@ -479,7 +537,7 @@ function TablesPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{ color: tenant.profileColor }}>
+        <div className="left" style={{ color: profileColor }}>
           Tables
         </div>
 
@@ -488,7 +546,7 @@ function TablesPage({ tenant }) {
 
       <Modal open={tableOrderOpen}>
         <Box className="ordermodalbox">
-          <div>
+          <>
             {tableOrderRetrieved == true &&
               (rowsPerPage > 0
                 ? tableOrderData.map((item) => {
@@ -516,13 +574,19 @@ function TablesPage({ tenant }) {
                         >
                           <FontAwesomeIcon
                             className="closebuttonicon"
+                            style={{ color: profileColor }}
                             icon={faCircleXmark}
                           />
                         </button>
                       </div>
 
                       <div className="innermodalbox">
-                        <div className="ordermodaltitle">{tenant.name}</div>
+                        <div
+                          className="ordermodaltitle"
+                          style={{ color: profileColor }}
+                        >
+                          {tenant.name}
+                        </div>
                         <div className="ordermodalsubtitle">
                           <div className="ordermodaldate">
                             <div className="ordertime">
@@ -532,7 +596,10 @@ function TablesPage({ tenant }) {
                               />
                               {ordertime.toLocaleTimeString("en-US")}{" "}
                               <span className="space">/</span>{" "}
-                              <span className="orderdate">
+                              <span
+                                className="orderdate"
+                                style={{ color: profileColor }}
+                              >
                                 {ordertime.toLocaleDateString(
                                   "en-ID",
                                   dateOptions
@@ -588,12 +655,33 @@ function TablesPage({ tenant }) {
                               className="ordermodalinputfile"
                             />
                             <div className="ordermodalinputlabel">Table</div>
+                            {tableRetrieved &&
+                              tableData.map((item) => {
+                                return item.map((posts, index) => {
+                                  if (posts.table.id == post.order_table) {
+                                    return (
+                                      <span>
+                                        <input
+                                          type="text"
+                                          className="ordermodalinputfile"
+                                          value={posts.table.index}
+                                        />
+                                      </span>
+                                    );
+                                  }
+                                });
+                              })}
+
+<div className="ordermodalinputlabel">
+                              Guest
+                            </div>
                             <input
                               type="text"
-                              value={post.order_table}
+                              value={post.user_guest}
                               className="ordermodalinputfile"
                             />
                           </div>
+
 
                           <div className="ordermenuitemcontainer">
                             <div className="ordermenutitle">Order Items</div>
@@ -697,7 +785,7 @@ function TablesPage({ tenant }) {
                 />
               </div>
             ) : null}
-          </div>
+          </>
         </Box>
       </Modal>
 
@@ -803,7 +891,7 @@ function TablesPage({ tenant }) {
           <div className="duplicateinnerbox">
             <div
               className="duplicatetablemodaltitle"
-              style={{ color: tenant.profileColor }}
+              style={{ color: profileColor }}
             >
               Duplicate Table
             </div>
@@ -891,7 +979,7 @@ function TablesPage({ tenant }) {
               </div>
               <div>
                 <button
-                  style={{ background: tenant.profileColor }}
+                  style={{ background: profileColor }}
                   className="modalconfirmbutton"
                   onClick={handleduplicatetable}
                 >
@@ -908,7 +996,7 @@ function TablesPage({ tenant }) {
           <div className="duplicateinnerbox">
             <div
               className="duplicatetablemodaltitle"
-              style={{ color: tenant.profileColor }}
+              style={{ color: profileColor }}
             >
               Remove Table Content
             </div>
@@ -953,7 +1041,7 @@ function TablesPage({ tenant }) {
               </div>
               <div>
                 <button
-                  style={{ background: tenant.profileColor }}
+                  style={{ background: profileColor }}
                   className="modalconfirmbutton"
                   onClick={handleRemoveTableContent}
                 >
@@ -968,7 +1056,7 @@ function TablesPage({ tenant }) {
       {tableRetrieved ? (
         <div className="tablescontainer">
           <div
-            style={{ background: tenant.profileColor }}
+            style={{ background: profileColor }}
             className={
               addtablenotif ||
               removetablenotif ||
@@ -1008,7 +1096,7 @@ function TablesPage({ tenant }) {
                         <div className="emptygrid">
                           <div className={edittable ? "emptytable" : "null"}>
                             <button
-                              style={{ color: tenant.profileColor }}
+                              style={{ color: profileColor }}
                               className="deletetablebutton"
                               type="button"
                               onClick={() =>
@@ -1047,7 +1135,7 @@ function TablesPage({ tenant }) {
                           style={
                             posts.table.isWaiterCalled
                               ? null
-                              : { background: tenant.profileColor }
+                              : { background: profileColor }
                           }
                           className={
                             posts.table.isWaiterCalled
@@ -1147,7 +1235,7 @@ function TablesPage({ tenant }) {
           <div className="tablebuttoncontainer">
             <div className="addtablecontainer">
               <button
-                style={edittable ? null : { background: tenant.profileColor }}
+                style={edittable ? null : { background: profileColor }}
                 className={edittable ? "addtableinactive" : "addtableactive"}
                 disabled={edittable ? true : false}
                 onClick={() => {
@@ -1163,10 +1251,10 @@ function TablesPage({ tenant }) {
                 style={
                   duplicatetableOpen
                     ? {
-                        borderColor: tenant.profileColor,
-                        color: tenant.profileColor,
+                        borderColor: profileColor,
+                        color: profileColor,
                       }
-                    : { background: tenant.profileColor }
+                    : { background: profileColor }
                 }
                 className={
                   edittable
@@ -1185,10 +1273,10 @@ function TablesPage({ tenant }) {
                 style={
                   removetableOpen
                     ? {
-                        borderColor: tenant.profileColor,
-                        color: tenant.profileColor,
+                        borderColor: profileColor,
+                        color: profileColor,
                       }
-                    : { background: tenant.profileColor }
+                    : { background: profileColor }
                 }
                 className={
                   edittable
@@ -1204,13 +1292,34 @@ function TablesPage({ tenant }) {
             </div>
 
             <div className="edittablecontainer">
-              <button
-                style={{ background: tenant.profileColor }}
-                className="edittablebutton"
-                onClick={edittable ? handlesavetable : handleedittable}
-              >
-                {edittable ? "Save Table" : "Edit Table"}
-              </button>
+              {edittable ? (
+                <button
+                  style={{ background: profileColor }}
+                  className="edittablebutton"
+                  onClick={handlesavetable}
+                >
+                  Save Table
+                </button>
+              ) : (
+                <button
+                  style={
+                    tableRetrieved &&
+                    tableData.some((item) => item.length > 0) === true
+                      ? { background: profileColor }
+                      : { background: "#c4c4c4" }
+                  }
+                  disabled={
+                    tableRetrieved &&
+                    tableData.some((item) => item.length > 0) === true
+                      ? false
+                      : true
+                  }
+                  className="edittablebutton"
+                  onClick={handleedittable}
+                >
+                  Edit Table
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1224,7 +1333,7 @@ function TablesPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
     </div>

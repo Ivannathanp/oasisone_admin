@@ -25,6 +25,7 @@ function DashboardPage({ tenant }) {
   const [tableRetrieved, setTableRetrieved] = useState(false);
   const [availableTable, setAvailableTable] = useState(0);
   const [filledTable, setFilledTable] = useState(0);
+  const [profileColor, setProfileColor] = useState();
 
   // socket connection
   const socket = useContext(SocketContext);
@@ -45,6 +46,7 @@ function DashboardPage({ tenant }) {
       socket.on("delete category", (data) => handleCategoryRemoved(data));
       socket.on("add order", (data) => handleOrderAdded(data));
       socket.on("update order", (data) => handleOrderUpdated(data));
+      socket.on("update user", (data) => handleUserUpdated(data));
     }
   });
 
@@ -407,10 +409,68 @@ function DashboardPage({ tenant }) {
     history.push("/promo");
   }
 
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
+    }
+  }
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileColor(tenantData[0].profileColor)
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
+
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{ color: tenant.profileColor }}>
+        <div className="left" style={{ color: profileColor }}>
           Dashboard
         </div>
 
@@ -719,11 +779,29 @@ function DashboardPage({ tenant }) {
                               <div className="orderdetail">
                                 <div className="orderdetailtime">
                                   {" "}
-                                  {moment(post.order_time).fromNow()}-{" "}
+                                  {moment(post.order_time).fromNow()}&nbsp;-{" "}
                                 </div>
                                 <div className="tableID">
-                                  {" "}
-                                  Table {post.order_table}
+                                  {tableRetrieved &&
+                                      
+                                           
+                                                tableData.map((item) => {
+                                                  return item.map(
+                                                    (posts, index) => {
+                                                      if (
+                                                        posts.table.id ==
+                                                       post.order_table
+                                                      ) {
+                                                        return (
+                                                          <span>
+                                                            Table&nbsp;
+                                                            {posts.table.index}
+                                                          </span>
+                                                        );
+                                                      }
+                                                    }
+                                                  );
+                                                })}
                                 </div>
                               </div>
                               <div className="orderbuttoncontainer">

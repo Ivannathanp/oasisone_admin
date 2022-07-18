@@ -32,7 +32,7 @@ const UP = -1;
 const DOWN = 1;
 
 function InventoryPage({ tenant }) {
-  const localUrl = process.env.REACT_APP_MENUURL;
+  const inventoryUrl = process.env.REACT_APP_MENUURL;
   const imageUrl = process.env.REACT_APP_IMAGEURL;
 
   const [inventoryData, setInventoryData] = useState([]);
@@ -71,7 +71,7 @@ function InventoryPage({ tenant }) {
 
   useEffect(() => {
     if (tenant.tenant_id != undefined) {
-      const url = localUrl + "/category/" + tenant.tenant_id;
+      const url = inventoryUrl + "/category/" + tenant.tenant_id;
 
       fetch(url, {
         method: "GET",
@@ -99,6 +99,7 @@ function InventoryPage({ tenant }) {
       socket.on("add order", (data) => handleOrderAdded(data));
       socket.on("update category", (data) => handleCategoryUpdated(data));
       socket.on("delete category", (data) => handleCategoryRemoved(data));
+      socket.on("update user", (data) => handleUserUpdated(data));
     }
   });
 
@@ -129,7 +130,7 @@ function InventoryPage({ tenant }) {
 
   function handleOrderAdded() {
     if (inventoryRetrieved) {
-      const url = localUrl + "/category/" + tenant.tenant_id;
+      const url = inventoryUrl + "/category/" + tenant.tenant_id;
 
       fetch(url, {
         method: "GET",
@@ -147,6 +148,67 @@ function InventoryPage({ tenant }) {
         });
     }
   }
+
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
+
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
+    }
+  }
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor)
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
 
   function handlePassInfoShow(
     name,
@@ -194,7 +256,7 @@ function InventoryPage({ tenant }) {
   }
 
   const debouncedSearch = debounce(async (i, v, posts) => {
-    const url = localUrl + "/edit/" + tenant.tenant_id;
+    const url = inventoryUrl + "/edit/" + tenant.tenant_id;
     await fetch(url, {
       method: "POST",
       body: JSON.stringify({
@@ -270,7 +332,7 @@ function InventoryPage({ tenant }) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
                 posts.quantity = j;
-                const url = localUrl + "/edit/" + tenant.tenant_id;
+                const url = inventoryUrl + "/edit/" + tenant.tenant_id;
                 fetch(url, {
                   method: "POST",
                   body: JSON.stringify({
@@ -359,17 +421,19 @@ function InventoryPage({ tenant }) {
   }
 
   async function handleAddCategory(name) {
-    const url = localUrl + "/category/create/" + tenant.tenant_id;
+    const url = inventoryUrl + "/category/create/" + tenant.tenant_id;
+    const payload = JSON.stringify({
+      cat_name: name,
+    });
+    console.log(url,payload)
     fetch(url, {
       method: "POST",
-      body: JSON.stringify({
-        cat_name: name,
-      }),
+      body: payload,
       headers: { "content-type": "application/JSON" },
     })
       .then((response) => response.json())
       .then((result) => {
-        if (result.status !== "FAILED") {
+        if (result.status === "SUCCESS") {
           if (socket) {
             setCategoryAdded(true);
 
@@ -391,7 +455,7 @@ function InventoryPage({ tenant }) {
 
   async function handleEditCategory() {
     if (editcategory) {
-      const url = localUrl + "/category/edit/index/" + tenant.tenant_id;
+      const url = inventoryUrl + "/category/edit/index/" + tenant.tenant_id;
 
       setEditCategory(false);
       setCategoryEditted(true);
@@ -423,7 +487,7 @@ function InventoryPage({ tenant }) {
   }
 
   async function handleRemoveCategory(id) {
-    const url = localUrl + "/category/delete/" + tenant.tenant_id + "/" + id;
+    const url = inventoryUrl + "/category/delete/" + tenant.tenant_id + "/" + id;
     fetch(url, {
       method: "POST",
       headers: { "content-type": "application/JSON" },
@@ -440,7 +504,7 @@ function InventoryPage({ tenant }) {
   }
 
   async function handleAddItem() {
-    const url = localUrl + "/create/" + tenant.tenant_id;
+    const url = inventoryUrl + "/create/" + tenant.tenant_id;
     const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
     var input = document.querySelector('input[type="file"]');
     const file = input.files[0];
@@ -511,7 +575,7 @@ function InventoryPage({ tenant }) {
   }
 
   async function handleEditItem() {
-    const url = localUrl + "/edit/" + tenant.tenant_id;
+    const url = inventoryUrl + "/edit/" + tenant.tenant_id;
     const menuUrl = imageUrl + "/menu/" + tenant.tenant_id + "/" + itemName;
     var input = document.querySelector('input[type="file"]');
 
@@ -692,7 +756,7 @@ function InventoryPage({ tenant }) {
   }
 
   async function handleRemoveItem() {
-    const url = localUrl + "/delete/" + tenant.tenant_id + "/" + itemID;
+    const url = inventoryUrl + "/delete/" + tenant.tenant_id + "/" + itemID;
     fetch(url, {
       method: "POST",
       headers: { "content-type": "application/JSON" },
@@ -745,7 +809,7 @@ function InventoryPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{ color: tenant.profileColor }}>
+        <div className="left" style={{ color: profileColor }}>
           Inventory
         </div>
 
@@ -779,7 +843,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
-                    style={{ color: tenant.profileColor }}
+                    style={{ color: profileColor }}
                     onClick={() => {
                       setAddCategoryOpen(false);
                     }}
@@ -788,7 +852,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
-                    style={{ background: tenant.profileColor }}
+                    style={{ background: profileColor }}
                     type="submit"
                     onClick={() => handleAddCategory(newCategoryName)}
                     className="savebutton"
@@ -875,7 +939,7 @@ function InventoryPage({ tenant }) {
                         <div className="imagebuttoncontainer">
                           <div
                             className="promoimagebutton"
-                            style={{ background: tenant.profileColor }}
+                            style={{ background: profileColor }}
                           >
                             <label for="file-input">
                               <FontAwesomeIcon
@@ -887,6 +951,7 @@ function InventoryPage({ tenant }) {
                             <input
                               id="file-input"
                               type="file"
+                              accept=".png, .jpg"
                               name="menu"
                               className="productinputfile"
                               onChange={(handleChange, imageHandler)}
@@ -906,7 +971,7 @@ function InventoryPage({ tenant }) {
                     <div className="recommendcontainer">
                       <div
                         className="recommendtext"
-                        style={{ color: tenant.profileColor }}
+                        style={{ color: profileColor }}
                       >
                         Do you recommend this product?
                       </div>
@@ -926,7 +991,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
-                    style={{ color: tenant.profileColor }}
+                    style={{ color: profileColor }}
                     onClick={() => {
                       setAdditemopen(false);
                       setProductImage();
@@ -949,7 +1014,7 @@ function InventoryPage({ tenant }) {
                       itemPrice == undefined ||
                       productImage == undefined
                         ? { background: "#c4c4c4" }
-                        : { background: tenant.profileColor }
+                        : { background: profileColor }
                     }
                     disabled={
                       itemName == "" ||
@@ -1059,7 +1124,7 @@ function InventoryPage({ tenant }) {
                         <div className="imagebuttoncontainer">
                           <div
                             className="promoimagebutton"
-                            style={{ background: tenant.profileColor }}
+                            style={{ background: profileColor }}
                           >
                             <label for="file-input">
                               <FontAwesomeIcon
@@ -1094,7 +1159,7 @@ function InventoryPage({ tenant }) {
                     <div className="recommendcontainer">
                       <div
                         className="recommendtext"
-                        style={{ color: tenant.profileColor }}
+                        style={{ color: profileColor }}
                       >
                         Do you recommend this product?
                       </div>
@@ -1115,7 +1180,7 @@ function InventoryPage({ tenant }) {
 
                 <div className="modalbutton">
                   <button
-                    style={{ color: tenant.profileColor }}
+                    style={{ color: profileColor }}
                     onClick={() => {
                       setEditItemOpen(false);
                       setProductImage();
@@ -1127,7 +1192,7 @@ function InventoryPage({ tenant }) {
                     Cancel
                   </button>
                   <button
-                    style={{ background: tenant.profileColor }}
+                    style={{ background: profileColor }}
                     type="submit"
                     onClick={() => handleRemoveItem()}
                     className="removebutton"
@@ -1139,7 +1204,7 @@ function InventoryPage({ tenant }) {
                     style={
                       ValidCategoryName
                         ? {
-                            background: tenant.profileColor,
+                            background: profileColor,
                           }
                         : { background: "#c4c4c4" }
                     }
@@ -1161,14 +1226,14 @@ function InventoryPage({ tenant }) {
                   <img src={removecat} className="removecatimage" />
                   <div
                     className="removecatmodaltitle"
-                    style={{ color: tenant.profileColor }}
+                    style={{ color: profileColor }}
                   >
                     Remove Category
                   </div>
                 </div>
                 <div className="removecatmodaltext">
                   Are you sure to remove the{" "}
-                  <span style={{ color: tenant.profileColor }}>
+                  <span style={{ color: profileColor }}>
                     "{categoryName}"
                   </span>{" "}
                   category in your menu?
@@ -1189,7 +1254,7 @@ function InventoryPage({ tenant }) {
                   </div>
                   <div>
                     <button
-                      style={{ background: tenant.profileColor }}
+                      style={{ background: profileColor }}
                       className="modalconfirmbutton"
                       onClick={() => handleRemoveCategory(categoryID)}
                     >
@@ -1202,7 +1267,7 @@ function InventoryPage({ tenant }) {
           </Modal>
 
           <div
-            style={{ background: tenant.profileColor }}
+            style={{ background: profileColor }}
             className={
               categoryAdded ||
               categoryEditted ||
@@ -1253,7 +1318,7 @@ function InventoryPage({ tenant }) {
                                     style={
                                       index + 2 > inventoryData[0].length
                                         ? null
-                                        : { color: tenant.profileColor }
+                                        : { color: profileColor }
                                     }
                                     className={
                                       index + 2 > inventoryData[0].length
@@ -1273,7 +1338,7 @@ function InventoryPage({ tenant }) {
                                     style={
                                       index + 1 <= 1
                                         ? null
-                                        : { color: tenant.profileColor }
+                                        : { color: profileColor }
                                     }
                                     className={
                                       index + 1 <= 1
@@ -1290,7 +1355,7 @@ function InventoryPage({ tenant }) {
                               </div>
                               <div className="categoryremove">
                                 <button
-                                  style={{ color: tenant.profileColor }}
+                                  style={{ color: profileColor }}
                                   className="buttonremove"
                                   onClick={() => {
                                     setRemoveCategoryOpen(() => true);
@@ -1306,7 +1371,7 @@ function InventoryPage({ tenant }) {
 
                           <div className="additem">
                             <button
-                              style={{ color: tenant.profileColor }}
+                              style={{ color: profileColor }}
                               className="add"
                               onClick={() => {
                                 setAdditemopen(true);
@@ -1320,7 +1385,7 @@ function InventoryPage({ tenant }) {
 
                         <div
                           className="catmenucontainer"
-                          style={{ borderColor: tenant.profileColor }}
+                          style={{ borderColor: profileColor }}
                         >
                           {item.category.menu.length == 0 && (
                             <div className="emptymenu"> No item</div>
@@ -1362,7 +1427,7 @@ function InventoryPage({ tenant }) {
                                 <div
                                   style={
                                     post.quantity > 0
-                                      ? { background: tenant.profileColor }
+                                      ? { background: profileColor }
                                       : null
                                   }
                                   className={
@@ -1390,7 +1455,7 @@ function InventoryPage({ tenant }) {
                                       <FontAwesomeIcon
                                         style={
                                           post.quantity > 0
-                                            ? { color: tenant.profileColor }
+                                            ? { color: profileColor }
                                             : null
                                         }
                                         className={
@@ -1433,7 +1498,7 @@ function InventoryPage({ tenant }) {
                                       <FontAwesomeIcon
                                         style={
                                           post.quantity > 0
-                                            ? { color: tenant.profileColor }
+                                            ? { color: profileColor }
                                             : null
                                         }
                                         className={
@@ -1449,7 +1514,7 @@ function InventoryPage({ tenant }) {
 
                                 <div className="editbutton">
                                   <button
-                                    style={{ color: tenant.profileColor }}
+                                    style={{ color: profileColor }}
                                     className="edit"
                                     onClick={() => {
                                       setItemID(post.id);
@@ -1483,9 +1548,10 @@ function InventoryPage({ tenant }) {
           <div className="buttongrid">
             <div className="inventorybuttoncontainer"></div>
             <div className="inventorybuttoncontainer">
+             
               <button
                 style={
-                  editcategory ? null : { background: tenant.profileColor }
+                  editcategory ? null : { background: profileColor }
                 }
                 className={editcategory ? "buttonaddinactive" : "buttonadd"}
                 disabled={editcategory ? true : false}
@@ -1494,14 +1560,24 @@ function InventoryPage({ tenant }) {
               >
                 + Add New Category
               </button>
-              <button
-                style={{ background: tenant.profileColor }}
-                className="buttonedit"
+              {
+                editcategory? (<button
+                  style={ { background: profileColor }}
+                    className="buttonedit"
+                    type="button"
+                    onClick={handleEditCategory}
+                  >
+                    Save Category
+                  </button>) : (<button
+              style={ inventoryRetrieved && inventoryData.some(item => item.length > 0)===true? { background: profileColor } : { background: "#c4c4c4" }}
+                disabled={inventoryRetrieved && inventoryData.some(item => item.length > 0)===true? false : true}
+              className="buttonedit"
                 type="button"
                 onClick={handleEditCategory}
               >
-                {editcategory ? "Save Category" : "Edit Category"}
-              </button>
+               Edit Category
+              </button>)
+              }
             </div>
           </div>
         </div>
@@ -1515,7 +1591,7 @@ function InventoryPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
     </div>

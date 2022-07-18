@@ -25,12 +25,46 @@ import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
 
 function OrderStatusPage({ tenant }) {
-  const localUrl = process.env.REACT_APP_ORDERURL;
+  const orderUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
   const [acceptance, setAcceptance] = useState([]);
   const [menuData, setMenuData] = useState([]);
   const [menuRetrieved, setMenuRetrieved] = useState(false);
+
+
+  const tablelUrl = process.env.REACT_APP_TABLEURL;
+  const [tableData, setTableData] = useState([]);
+  const [tableRetrieved, setTableRetrieved] = useState(false);
+
+  // Get Table Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = tablelUrl + "/" + tenant.tenant_id;
+
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTableData([result.data]);
+              setTableRetrieved(() => true);
+            } else {
+              setTableRetrieved(() => false);
+            }
+          });
+      }
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [tableRetrieved]);
 
   // Get Order Data
   useEffect(() => {
@@ -38,7 +72,7 @@ function OrderStatusPage({ tenant }) {
 
     if (mounted) {
       if (tenant.tenant_id != undefined) {
-        const url = localUrl + "/retrieve/" + tenant.tenant_id;
+        const url = orderUrl + "/retrieve/" + tenant.tenant_id;
 
         fetch(url, {
           method: "GET",
@@ -67,7 +101,8 @@ function OrderStatusPage({ tenant }) {
   useEffect(() => {
     if (socket) {
       socket.on("add order", (data) => handleOrderAdded(data));
-      socket.on("update order", (data) => handleOrderUpdated(data));
+      socket.on("update order", (data) => handleOrderAdded(data));
+      socket.on("update user", (data) => handleUserUpdated(data));
     }
   });
 
@@ -80,14 +115,66 @@ function OrderStatusPage({ tenant }) {
     }
   }
 
-  function handleOrderUpdated(user) {
-    if (orderRetrieved) {
-      let newData = orderData.splice();
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
 
-      newData.push(user);
-      setOrderData(newData);
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
     }
   }
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor)
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
 
   function handleacceptincrement(i, v, j) {
     orderData.map((item) => {
@@ -95,7 +182,7 @@ function OrderStatusPage({ tenant }) {
         if (post.order_id == i) {
           post.order_status = v + 1;
 
-          const url = localUrl + "/edit/" + tenant.tenant_id + "/" + i;
+          const url = orderUrl + "/edit/" + tenant.tenant_id + "/" + i;
           fetch(url, {
             method: "POST",
             body: JSON.stringify({
@@ -133,7 +220,7 @@ function OrderStatusPage({ tenant }) {
     }, 5000);
     setRejectReason(false);
 
-    const url = localUrl + "/reject/" + tenant.tenant_id + "/" + id;
+    const url = orderUrl + "/reject/" + tenant.tenant_id + "/" + id;
     fetch(url, {
       method: "POST",
       body: JSON.stringify({
@@ -213,7 +300,7 @@ function OrderStatusPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{color: tenant.profileColor}}>Order Status Screen</div>
+        <div className="left" style={{color: profileColor}}>Order Status Screen</div>
 
         <TopBar />
       </div>
@@ -221,7 +308,7 @@ function OrderStatusPage({ tenant }) {
         <div className="orderstatusoutercontainer">
           <div className="orderstatuscontainer">
             {rejectOrdermodal()}
-            <div  style={{background: tenant.profileColor}} className={removeitemnotif ? "notification" : "hidden"}>
+            <div  style={{background: profileColor}} className={removeitemnotif ? "notification" : "hidden"}>
               <div className="notificationtextcontainer">
                 <div className="notificationtext">Order Removed</div>
               </div>
@@ -257,11 +344,29 @@ function OrderStatusPage({ tenant }) {
                           <div className="orderID">{post.order_id}</div>
                           <div className="orderdetail">
                             <div className="orderstatustime">
-                              {moment(post.order_time).fromNow()}-{" "}
+                              {moment(post.order_time).fromNow()}&nbsp;-{" "}
                             </div>
-                            <div className="tableID" style={{color: tenant.profileColor}}>
-                              {" "}
-                              Table {post.order_table}
+                            <div className="tableID" style={{color: profileColor}}>
+                            {tableRetrieved &&
+                                      
+                                           
+                                      tableData.map((item) => {
+                                        return item.map(
+                                          (posts, index) => {
+                                            if (
+                                              posts.table.id ==
+                                             post.order_table
+                                            ) {
+                                              return (
+                                                <span style={{alignContent: "center"}}>
+                                                  Table&nbsp;
+                                                  {posts.table.index}
+                                                </span>
+                                              );
+                                            }
+                                          }
+                                        );
+                                      })}
                             </div>
                           </div>
                           <div className="menucontainer">
@@ -442,7 +547,7 @@ function OrderStatusPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
     </div>

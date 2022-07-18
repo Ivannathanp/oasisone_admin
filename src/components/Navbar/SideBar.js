@@ -26,6 +26,7 @@ function SideBar({ logoutUser, tenant }) {
   const [tenantData, setTenantData] = useState([]);
   const [tenantRetrieved, setTenantRetrieved] = useState(false);
   const [profileName, setProfileName] = useState(tenantData);
+  const [profileColor, setProfileColor] = useState();
 
   // Get Tenant Data
   useEffect(() => {
@@ -60,6 +61,7 @@ function SideBar({ logoutUser, tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor)
       }
     }
     return () => {
@@ -89,7 +91,7 @@ function SideBar({ logoutUser, tenant }) {
 
   return (
     <>
-      <nav className="sidebar"  style={{background: tenant.profileColor}}>
+      <nav className="sidebar"  style={{background: profileColor}}>
         <div className="sidebar-container">
           <div className="sidebar-header">
             {profileName}

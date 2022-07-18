@@ -8,23 +8,38 @@
   justify-items: center;
   align-items: center;
   align-content: center;
+
 }
 
 .inventorycontainergrid {
   width: 100%;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  margin-bottom: 3%;
+}
 
-  overflow: scroll;
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #e2e0e0;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-radius: 10px;
 }
 
 .innerinventorycontainergrid {
   width: 100%;
   min-width: min-content;
-  height: 740px;
-  column-count: 2;
-}
+  height: 750px;
 
-.inventorycontainergrid::-webkit-scrollbar {
-  display: none;
+  column-count: 2;
 }
 
 .inventorynotification {
@@ -50,10 +65,9 @@
   display: inline-block;
   /* Optional */
   position: static;
-  margin-bottom: 2%;
+  margin-bottom: 3%;
   border-radius: 3px;
   color: #424242;
-  padding: 15px;
   box-sizing: border-box;
 }
 
@@ -680,7 +694,7 @@ input[class~="productinputfile"] {
 }
 
 .inputquantityfile {
-  width: 20px;
+  width: 28px;
   background-color: transparent;
   border: 0px solid;
   outline: none;

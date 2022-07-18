@@ -15,12 +15,11 @@ import removecat from "../../icons/RemoveCat.svg";
 import Compressor from "compressorjs";
 
 function PromoPage({ tenant }) {
-  const localUrl = process.env.REACT_APP_PROMOURL;
+  const promoUrl = process.env.REACT_APP_PROMOURL;
   const imageUrl = process.env.REACT_APP_IMAGEURL;
 
   // socket connection
   const socket = useContext(SocketContext);
-
   const [promoImage, setPromoImage] = useState();
 
   //promo banner modal
@@ -61,8 +60,8 @@ function PromoPage({ tenant }) {
 
     if (mounted) {
       if (tenant.tenant_id != undefined) {
-        const url = localUrl + "/retrieve/" + tenant.tenant_id;
-
+        const url = promoUrl + "/retrieve/" + tenant.tenant_id;
+console.log(url)
         fetch(url, {
           method: "GET",
           headers: { "content-type": "application/JSON" },
@@ -87,8 +86,9 @@ function PromoPage({ tenant }) {
   useEffect(() => {
     if (socket) {
       socket.on("add promo", (data) => handleAddPromo(data));
-      socket.on("update promo", (data) => handleUpdatePromo(data));
-      socket.on("delete promo", (data) => handleDeletePromo(data));
+      socket.on("update promo", (data) => handleAddPromo(data));
+      socket.on("delete promo", (data) => handleAddPromo(data));
+      socket.on("update user", (data) => handleUserUpdated(data));
     }
   });
 
@@ -99,25 +99,69 @@ function PromoPage({ tenant }) {
       newData.push(user);
       setPromoData(newData);
     }
-  }
+  } 
 
-  function handleUpdatePromo(user) {
-    if (promoRetrieved) {
-      let newData = promoData.splice();
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
 
-      newData.push(user);
-      setPromoData(newData);
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
     }
   }
 
-  function handleDeletePromo(user) {
-    if (promoRetrieved) {
-      let newData = promoData.splice();
+  useEffect(() => {
+    let mounted = true;
 
-      newData.push(user);
-      setPromoData(newData);
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor)
+      }
     }
-  }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
+
 
   async function imageHandler(e) {
     const reader = new FileReader();
@@ -134,7 +178,7 @@ function PromoPage({ tenant }) {
 
     var inputs = document.querySelector('input[type="file"]');
     if (inputs.files[0] == undefined) {
-      const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
+      const url = promoUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
       const payload = JSON.stringify({
         promo_name: promoName,
         promo_start: startDate,
@@ -180,7 +224,7 @@ function PromoPage({ tenant }) {
         },
       });
 
-      const url = localUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
+      const url = promoUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
       const payload = JSON.stringify({
         promo_name: promoName,
         promo_start: startDate,
@@ -216,13 +260,13 @@ function PromoPage({ tenant }) {
   }
 
   async function HandleCreatePromo() {
-    const url = localUrl + "/create/" + tenant.tenant_id;
+    const url = promoUrl + "/create/" + tenant.tenant_id;
     setPromoAddNotif(true);
     setTimeout(() => {
       setPromoAddNotif(false);
     }, 3000);
 
-    const promoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
+    const imagePromoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
     var input = document.querySelector('input[type="file"]');
 
     const file = input.files[0];
@@ -234,7 +278,7 @@ function PromoPage({ tenant }) {
 
         formData.append("promo", result, result.name);
 
-        fetch(promoUrl, {
+        fetch(imagePromoUrl, {
           method: "POST",
           body: formData,
         })
@@ -287,7 +331,7 @@ function PromoPage({ tenant }) {
     setPromoID();
     setPromoName();
     setRemovePromoBanner(false);
-    const url = localUrl + "/delete/" + tenant.tenant_id + "/" + ID;
+    const url = promoUrl + "/delete/" + tenant.tenant_id + "/" + ID;
 
     setPromoRemoveNotif(true);
     setTimeout(() => {
@@ -326,7 +370,7 @@ function PromoPage({ tenant }) {
                   <div className="promobannerbuttoncontainer">
                     <div
                       className="promoimagebutton"
-                      style={{ background: tenant.profileColor }}
+                      style={{ background: profileColor }}
                     >
                       <label html-for="file-input">
                         <FontAwesomeIcon
@@ -339,7 +383,7 @@ function PromoPage({ tenant }) {
                         type="file"
                         name="promo"
                         accept=".png, .jpg"
-                        style={{ background: tenant.profileColor }}
+                        style={{ background: profileColor }}
                         className="promoinputfile"
                         onChange={imageHandler}
                       />
@@ -412,7 +456,7 @@ function PromoPage({ tenant }) {
                   setStartDate();
                   setEndDate();
                 }}
-                style={{ color: tenant.profileColor }}
+                style={{ color: profileColor }}
                 className="cancelbutton"
               >
                 Cancel
@@ -442,7 +486,7 @@ function PromoPage({ tenant }) {
                   startDate == undefined ||
                   endDate == undefined
                     ? { background: "#c4c4c4" }
-                    : { background: tenant.profileColor }
+                    : { background: profileColor }
                 }
                 className="savebutton"
               >
@@ -464,14 +508,14 @@ function PromoPage({ tenant }) {
               <img src={removecat} className="removecatimage" />
               <div
                 className="removecatmodaltitle"
-                style={{ color: tenant.profileColor }}
+                style={{ color: profileColor }}
               >
                 Remove Promo
               </div>
             </div>
             <div className="removecatmodaltext">
               Are you sure to remove the{" "}
-              <span style={{ color: tenant.profileColor }}>"{promoName}"</span>{" "}
+              <span style={{ color: profileColor }}>"{promoName}"</span>{" "}
               promo?
             </div>
 
@@ -490,7 +534,7 @@ function PromoPage({ tenant }) {
               </div>
               <div>
                 <button
-                  style={{ background: tenant.profileColor }}
+                  style={{ background: profileColor }}
                   className="modalconfirmbutton"
                   onClick={() => HandleDeletePromo(promoID)}
                 >
@@ -507,7 +551,7 @@ function PromoPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{ color: tenant.profileColor }}>
+        <div className="left" style={{ color: profileColor }}>
           Promo Banner
         </div>
 
@@ -517,7 +561,7 @@ function PromoPage({ tenant }) {
         promoData.length != 0 ? (
           <div className="promocontainer">
             <div
-              style={{ background: tenant.profileColor }}
+              style={{ background: profileColor }}
               className={
                 promoaddnotif || promoeditnotif || promoremovenotif
                   ? "promonotification"
@@ -566,7 +610,7 @@ function PromoPage({ tenant }) {
                           <div className="right-column">
                             <div
                               className="promotitle"
-                              style={{ color: tenant.profileColor }}
+                              style={{ color: profileColor }}
                             >
                               {item.name}
                             </div>
@@ -574,7 +618,7 @@ function PromoPage({ tenant }) {
                               Promo ends at
                               <span
                                 className="promodate"
-                                style={{ color: tenant.profileColor }}
+                                style={{ color: profileColor }}
                               >
                                 {endDate.toLocaleDateString(
                                   "en-ID",
@@ -591,7 +635,7 @@ function PromoPage({ tenant }) {
                             <div className="promobutton">
                               <button
                                 className="buttonpromoedit"
-                                style={{ background: tenant.profileColor }}
+                                style={{ background: profileColor }}
                                 onClick={() => {
                                   setpromobanneropen(() => true);
                                   setPromoImage(() => item.promoImage);
@@ -610,7 +654,7 @@ function PromoPage({ tenant }) {
                                 or
                                 <button
                                   type="button"
-                                  style={{ color: tenant.profileColor }}
+                                  style={{ color: profileColor }}
                                   className="buttonremove"
                                   onClick={() => {
                                     setRemovePromoBanner(true);
@@ -632,7 +676,7 @@ function PromoPage({ tenant }) {
 
             <div className="addpromobutton">
               <button
-                style={{ background: tenant.profileColor }}
+                style={{ background: profileColor }}
                 className="buttonadd"
                 type="button"
                 onClick={() => {
@@ -649,7 +693,7 @@ function PromoPage({ tenant }) {
             {PromoModal()}{" "}
             <div className="addpromobutton">
               <button
-                style={{ background: tenant.profileColor }}
+                style={{ background: profileColor }}
                 className="buttonadd"
                 type="button"
                 onClick={() => {
@@ -672,7 +716,7 @@ function PromoPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
     </div>

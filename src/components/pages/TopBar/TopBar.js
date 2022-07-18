@@ -10,6 +10,7 @@ function TopBar({ tenant }) {
   const [tenantRetrieved, setTenantRetrieved] = useState(false);
   const [profileName, setProfileName] = useState();
   const [profileImage, setProfileImage] = useState();
+  const [profileColor, setProfileColor] = useState();
 
   // Get Tenant Data
   useEffect(() => {
@@ -67,6 +68,7 @@ function TopBar({ tenant }) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
         setProfileImage(tenantData[0].profileImage);
+        setProfileColor(tenantData[0].profileColor)
       }
     }
     return () => {
@@ -79,7 +81,7 @@ function TopBar({ tenant }) {
       <div className="imagecontainer">
         <img src={profileImage + "?time" + new Date()} className="image" />
       </div>
-      <div className="toptext" style={{ color: tenant.profileColor }}>
+      <div className="toptext" style={{ color: profileColor }}>
         {profileName}
       </div>
     </div>

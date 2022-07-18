@@ -24,7 +24,7 @@ function CustomerPage({ tenant }) {
   const rowsPerPage = 7;
   const [index, setIndex] = useState(1);
 
-  const localUrl = process.env.REACT_APP_ORDERURL;
+  const orderUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
 
@@ -34,7 +34,7 @@ function CustomerPage({ tenant }) {
 
     if (mounted) {
       if (tenant.tenant_id != undefined) {
-        const url = localUrl + "/retrieve/" + tenant.tenant_id;
+        const url = orderUrl + "/retrieve/" + tenant.tenant_id;
 
         fetch(url, {
           method: "GET",
@@ -64,6 +64,7 @@ function CustomerPage({ tenant }) {
     if (socket) {
       socket.on("add order", (data) => handleOrderAdded(data));
       socket.on("update order", (data) => handleOrderAdded(data));
+      socket.on("update user", (data) => handleUserUpdated(data));
     }
   });
 
@@ -77,6 +78,67 @@ function CustomerPage({ tenant }) {
       setOrderData(newData);
     }
   }
+
+  const localUrl = process.env.REACT_APP_TENANTURL;
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
+
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant.tenant_id != undefined) {
+        const url = localUrl + "/user/" + tenant.tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenant, tenantRetrieved]);
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
+    }
+  }
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor)
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved, tenantData]);
 
   const generatePdf = () => {
     const doc = new jsPDF();
@@ -112,9 +174,9 @@ function CustomerPage({ tenant }) {
     // we use a date string to generate our filename.
     const dateStr = date[0] + date[1] + date[2] + date[3] + date[4];
     // ticket title. and margin-top + margin-left
-    doc.text(`${tenant.name} Customer Report.`, 14, 15);
+    doc.text(`${profileName} Customer Report.`, 14, 15);
     // we define the name of our PDF file.
-    doc.save(`${tenant.name}_customerreport.pdf`);
+    doc.save(`${profileName}_customerreport.pdf`);
   };
 
   function TablePaginationActions(props) {
@@ -192,7 +254,7 @@ function CustomerPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left"  style={{color: tenant.profileColor}}>Customer</div>
+        <div className="left"  style={{color: profileColor}}>Customer</div>
 
         <TopBar />
       </div>
@@ -202,9 +264,9 @@ function CustomerPage({ tenant }) {
           <div className="outercustomertable">
             <div className="customertable">
               <div className="customerheader">
-                <div className="customerleft"  style={{color: tenant.profileColor}}>All Customer</div>
+                <div className="customerleft"  style={{color: profileColor}}>All Customer</div>
                 <div className="customerright">
-                  <button className="downloadbutton"  style={{borderColor: tenant.profileColor, color: tenant.profileColor}} onClick={generatePdf}>
+                  <button className="downloadbutton"  style={{borderColor: profileColor, color: profileColor}} onClick={generatePdf}>
                     Download as PDF{" "}
                   </button>
                 </div>
@@ -266,7 +328,7 @@ function CustomerPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
     </div>

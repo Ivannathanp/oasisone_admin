@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../TopBar/TopBar.css";
 import "./QrPage.css";
 import logo from "../../icons/Logo.png";
@@ -16,6 +16,8 @@ function QrPage({ tenant }) {
   const [tenantData, setTenantData] = useState([]);
   const [tenantRetrieved, setTenantRetrieved] = useState(false);
   const [qrCode, setQrCode] = useState();
+  const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
 
   // Get Tenant Data
   useEffect(() => {
@@ -44,11 +46,36 @@ function QrPage({ tenant }) {
     };
   }, [tenant, tenantRetrieved]);
 
+  // socket connection
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("update user", (data) => handleUserUpdated(data));
+    }
+  });
+
+  function handleUserUpdated(user) {
+    if (tenantRetrieved) {
+      let newData = tenantData.slice();
+
+      let i = tenantData.findIndex((u) => u.tenant_id === user.tenant_id);
+
+      if (newData.length > i) {
+        newData[i] = user;
+      }
+
+      setTenantData(newData);
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
 
     if (mounted) {
       if (tenantRetrieved === true) {
+        setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor);
         setQrCode(tenantData[0].qrCode);
       }
     }
@@ -70,30 +97,37 @@ function QrPage({ tenant }) {
     document.body.removeChild(aEl);
   }
 
-  if(tenantRetrieved){
+  if (tenantRetrieved) {
   }
   return (
     <div className="qrcontainer">
       <div className="topbar">
-        <div className="left"  style={{color: tenant.profileColor}}>Print QR Codes</div>
+        <div className="left" style={{ color: profileColor }}>
+          Print QR Codes
+        </div>
 
         <TopBar />
       </div>
-{tenantRetrieved? (<div className="printqrsection">
-        <div className="qrgrid">
-          <div className="qrimage">
-            <QRCode id="qrCodeEl" size={300} value={qrCode} />
-          </div>
-          <div className="qrsettings">
-            
-            <div className="downloadqr">
-              <button  style={{background: tenant.profileColor}} className="downloadqrbutton" onClick={downloadQRCode}>
-                Download as PNG
-              </button>
+      {tenantRetrieved ? (
+        <div className="printqrsection">
+          <div className="qrgrid">
+            <div className="qrimage">
+              <QRCode id="qrCodeEl" size={300} value={qrCode} />
+            </div>
+            <div className="qrsettings">
+              <div className="downloadqr">
+                <button
+                  style={{ background: profileColor }}
+                  className="downloadqrbutton"
+                  onClick={downloadQRCode}
+                >
+                  Download as PNG
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>): (
+      ) : (
         <div
           style={{
             display: "flex",
@@ -103,10 +137,9 @@ function QrPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
-      
     </div>
   );
 }

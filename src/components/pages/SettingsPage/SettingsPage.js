@@ -71,6 +71,7 @@ function SettingsPage({ tenant }) {
 
   const [color, setColor] = useState();
   const [profileName, setProfileName] = useState();
+  const [profileColor, setProfileColor] = useState();
   const [profileEmail, setProfileEmail] = useState();
   const [helpMessage, setHelpMessage] = useState();
   const [taxchargeedit, setTaxChargeEdit] = useState(false);
@@ -91,6 +92,7 @@ function SettingsPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
+        setProfileColor(tenantData[0].profileColor)
         setProfileEmail(tenantData[0].email);
         setTextPhone(tenantData[0].phoneNumber);
         setColor(tenantData[0].profileColor);
@@ -479,8 +481,8 @@ function SettingsPage({ tenant }) {
           style={
             selected
               ? {
-                  background: tenant.profileColor,
-                  borderColor: tenant.profileColor,
+                  background: profileColor,
+                  borderColor: profileColor,
                   color: "#fff",
                 }
               : null
@@ -762,7 +764,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="openhourmodalbutton">
               <button
-                style={{ color: tenant.profileColor }}
+                style={{ color: profileColor }}
                 onClick={() => {
                   setDay();
                   setOpenHourEdit((state) => !state);
@@ -774,7 +776,7 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
-                style={{ background: tenant.profileColor }}
+                style={{ background: profileColor }}
                 type="submit"
                 onClick={handlesavehour}
                 className="savebutton"
@@ -860,7 +862,7 @@ function SettingsPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{ color: tenant.profileColor }}>
+        <div className="left" style={{ color: profileColor }}>
           Settings
         </div>
 
@@ -914,7 +916,7 @@ function SettingsPage({ tenant }) {
                       <div className="imagebuttoncontainer">
                         <div
                           className="promoimagebutton"
-                          style={{ background: tenant.profileColor }}
+                          style={{ background: profileColor }}
                         >
                           <label htmlFor="file-input">
                             <FontAwesomeIcon
@@ -940,7 +942,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="editprofilemodalbutton">
               <button
-                style={{ color: tenant.profileColor }}
+                style={{ color: profileColor }}
                 onClick={() => setEditprofile(false)}
                 className="cancelbutton"
               >
@@ -948,7 +950,7 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
-                style={{ background: tenant.profileColor }}
+                style={{ background: profileColor }}
                 type="submit"
                 onClick={HandleSaveProfile}
                 className="savebutton"
@@ -1003,7 +1005,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="editprofilemodalbutton">
               <button
-                style={{ color: tenant.profileColor }}
+                style={{ color: profileColor }}
                 onClick={() => setHelpEmail(false)}
                 className="cancelbutton"
               >
@@ -1011,7 +1013,7 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
-                style={{ background: tenant.profileColor }}
+                style={{ background: profileColor }}
                 type="submit"
                 onClick={HandleSentEmail}
                 className="savebutton"
@@ -1068,7 +1070,7 @@ function SettingsPage({ tenant }) {
                       <div className="imagebuttoncontainer">
                         <div
                           className="promoimagebutton"
-                          style={{ background: tenant.profileColor }}
+                          style={{ background: profileColor }}
                         >
                           <label htmlFor="file-input">
                             <FontAwesomeIcon
@@ -1094,7 +1096,7 @@ function SettingsPage({ tenant }) {
             </form>
             <div className="editprofilemodalbutton">
               <button
-                style={{ color: tenant.profileColor }}
+                style={{ color: profileColor }}
                 onClick={() => setEditprofile(false)}
                 className="cancelbutton"
               >
@@ -1102,7 +1104,7 @@ function SettingsPage({ tenant }) {
               </button>
 
               <button
-                style={{ background: tenant.profileColor }}
+                style={{ background: profileColor }}
                 type="submit"
                 onClick={HandleSaveProfile}
                 className="savebutton"
@@ -1117,7 +1119,7 @@ function SettingsPage({ tenant }) {
       {tenantRetrieved ? (
         <div className="settingsoutercontainer">
           <div
-            style={{ background: tenant.profileColor }}
+            style={{ background: profileColor }}
             className={
               settingsavednotif || emailsendnotif
                 ? "settingsnotification"
@@ -1162,7 +1164,7 @@ function SettingsPage({ tenant }) {
                     </div>
                     <div className="editprofile">
                       <button
-                        style={{ background: tenant.profileColor }}
+                        style={{ background: profileColor }}
                         className="editprofilebutton"
                         onClick={() => setEditprofile(true)}
                       >
@@ -1179,10 +1181,10 @@ function SettingsPage({ tenant }) {
                           style={
                             PhoneTextEdit
                               ? {
-                                  borderColor: tenant.profileColor,
-                                  color: tenant.profileColor,
+                                  borderColor: profileColor,
+                                  color: profileColor,
                                 }
-                              : { background: tenant.profileColor }
+                              : { background: profileColor }
                           }
                           className={
                             PhoneTextEdit
@@ -1217,10 +1219,10 @@ function SettingsPage({ tenant }) {
                           style={
                             LocationTextEdit
                               ? {
-                                  borderColor: tenant.profileColor,
-                                  color: tenant.profileColor,
+                                  borderColor: profileColor,
+                                  color: profileColor,
                                 }
-                              : { background: tenant.profileColor }
+                              : { background: profileColor }
                           }
                           className={
                             LocationTextEdit
@@ -1256,10 +1258,10 @@ function SettingsPage({ tenant }) {
                           style={
                             AddressTextEdit
                               ? {
-                                  borderColor: tenant.profileColor,
-                                  color: tenant.profileColor,
+                                  borderColor: profileColor,
+                                  color: profileColor,
                                 }
-                              : { background: tenant.profileColor }
+                              : { background: profileColor }
                           }
                           className={
                             AddressTextEdit
@@ -1295,10 +1297,10 @@ function SettingsPage({ tenant }) {
                           style={
                             OpenTimeEdit
                               ? {
-                                  borderColor: tenant.profileColor,
-                                  color: tenant.profileColor,
+                                  borderColor: profileColor,
+                                  color: profileColor,
                                 }
-                              : { background: tenant.profileColor }
+                              : { background: profileColor }
                           }
                           className={
                             OpenTimeEdit
@@ -1333,7 +1335,7 @@ function SettingsPage({ tenant }) {
                                   </>
                                 )}
                                 <FontAwesomeIcon
-                                  style={{ color: tenant.profileColor }}
+                                  style={{ color: profileColor }}
                                   icon={faPencil}
                                   className={
                                     OpenTimeEdit ? "edithouricon" : "hidden"
@@ -1378,7 +1380,7 @@ function SettingsPage({ tenant }) {
                                 color: "#424242",
                                 background: "transparent",
                               }
-                            : { background: tenant.profileColor }
+                            : { background: profileColor }
                         }
                       >
                         {tenantRetrieved && (
@@ -1401,7 +1403,7 @@ function SettingsPage({ tenant }) {
                       </div>
                       <div className="taxedit">
                         <button
-                          style={{ color: tenant.profileColor }}
+                          style={{ color: profileColor }}
                           type="button"
                           className="taxeditbutton"
                           onClick={handleTaxChargeEdit}
@@ -1424,7 +1426,7 @@ function SettingsPage({ tenant }) {
                                 color: "#424242",
                                 background: "transparent",
                               }
-                            : { background: tenant.profileColor }
+                            : { background: profileColor }
                         }
                       >
                         <input
@@ -1443,7 +1445,7 @@ function SettingsPage({ tenant }) {
                       </div>
                       <div className="taxedit">
                         <button
-                          style={{ color: tenant.profileColor }}
+                          style={{ color: profileColor }}
                           type="button"
                           className="taxeditbutton"
                           onClick={handleServiceChargeEdit}
@@ -1467,7 +1469,7 @@ function SettingsPage({ tenant }) {
                     <div style={{ width: "90%" }}>
                       <div className="helpbuttoncontainer">
                         <button
-                          style={{ background: tenant.profileColor }}
+                          style={{ background: profileColor }}
                           onClick={() => setHelpEmail(true)}
                           className="helpbutton"
                         >
@@ -1478,7 +1480,7 @@ function SettingsPage({ tenant }) {
                           Email
                         </button>
                         {/* <button
-                          style={{ background: tenant.profileColor }}
+                          style={{ background: profileColor }}
                           onClick={()=>setHelpCall(true)}
                           className="helpbutton2"
                         >
@@ -1506,7 +1508,7 @@ function SettingsPage({ tenant }) {
             alignItems: "center",
           }}
         >
-          <ThreeDots color={tenant.profileColor} height={80} width={80} />
+          <ThreeDots color={profileColor} height={80} width={80} />
         </div>
       )}
     </div>
