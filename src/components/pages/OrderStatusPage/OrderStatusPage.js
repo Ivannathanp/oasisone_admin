@@ -375,7 +375,7 @@ function OrderStatusPage({ tenant }) {
                                 <div className="menudetails">
                                   <div className="menuimagecontainer">
                                     <img
-                                      src={require("../../icons/Gurame Asam Manis.png")}
+                                      src={posts.menuImage}
                                       className="menuimage"
                                     />
                                   </div>
