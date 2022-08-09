@@ -17,7 +17,18 @@
   align-content: center;
   justify-content: center;
 }
-
+.contractinnercontainer {
+  background-color: #fff;
+  width: 660px;
+  height: 360px;
+  border-radius: 30px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
 .registerinnercontainer {
   background-color: #fff;
   width: 740px;
@@ -30,6 +41,24 @@
   justify-content: center;
 }
 
+.return {
+  display: flex;
+  align-items: center;
+  align-content: center;
+
+  position: absolute;
+  top: 25px;
+  left: 25px;
+}
+.contractbackbutton {
+  outline: none;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+}
 .containertitle {
   display: flex;
   align-items: center;
@@ -45,6 +74,15 @@
 .containerforms {
   display: flex;
   justify-content: center;
+}
+.contracttext {
+  display: flex;
+  justify-content: center;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  text-align: center;
+  padding: 20px;
 }
 
 .marginedinputform {

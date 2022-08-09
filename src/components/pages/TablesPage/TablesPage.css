@@ -137,7 +137,6 @@
   width: 173px;
   height: 173px;
   border-radius: 5px;
-  background-color: #f10c0c;
   margin-bottom: 20%;
   border: none;
 }
@@ -566,7 +565,6 @@
   height: 38px;
   border: 1px solid #e52c32;
   margin-right: 5%;
-
   background-color: transparent;
   border-radius: 30px;
   font-family: "Nunito Sans", sans-serif;
@@ -582,7 +580,6 @@
   height: 38px;
   margin-right: 5%;
   border: 0px solid;
-  background-color: #e52c32;
   border-radius: 30px;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 700;
@@ -597,8 +594,6 @@
   height: 38px;
   border: none;
   margin-right: 5%;
-
-  background-color: #e52c32;
   border-radius: 30px;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 700;

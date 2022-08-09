@@ -63,7 +63,7 @@ function TopBar({ tenant }) {
 
   useEffect(() => {
     let mounted = true;
-
+    
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);

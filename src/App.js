@@ -21,7 +21,8 @@ import Qr from "./components/pages/QrPage/QrPage";
 import Customer from "./components/pages/CustomerPage/CustomerPage";
 import Settings from "./components/pages/SettingsPage/SettingsPage";
 import MissingRoute from "./components/pages/MissingRoute";
-import RedirectDashboard from "./components/pages/RedirectDashboard";
+import RenewContract from "./components/pages/LoginPage/RenewContractPage";
+import NoContract from "./components/pages/LoginPage/NoContractPage";
 
 import { io } from "socket.io-client";
 import { SocketContext } from "./components/socketContext";
@@ -90,7 +91,9 @@ function App({ checked, tenant }) {
           <div className="app">
             <Switch>
               <Route exact path="/" component={Login} />
-
+              <AuthRoute exact path="/404" component={RenewContract}/>
+              <AuthRoute exact path="/505" component={NoContract}/>
+              
               <BasicRoute exact path="/login/:userEmail?" component={Login} />
 
               <BasicRoute

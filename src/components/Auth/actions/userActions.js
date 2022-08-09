@@ -1,7 +1,11 @@
+import React, { useEffect, useState } from "react";
 import { sessionService } from "redux-react-session";
+import moment from "moment";
 
 // the remote endpoint and local
 const currentUrl = "https://backend.oasis-one.com/";
+const contractUrl = process.env.REACT_APP_CONTRACTURL;
+let currentDate = new Date();
 
 export const loginUser = (
   credentials,
@@ -9,19 +13,22 @@ export const loginUser = (
   setFieldError,
   setSubmitting
 ) => {
-  //make checks and get some data
+  // //make checks and get some data
 
+
+  
   return () => {
     fetch(`${currentUrl}api/tenant/signin`, {
       method: "POST",
-      mode: 'cors',
-      body: JSON.stringify({email: credentials.email, password: credentials.password}),
+      mode: "cors",
+      body: JSON.stringify({
+        email: credentials.email,
+        password: credentials.password,
+      }),
       headers: { "content-type": "application/JSON" },
     })
-
-    .then((response) => response.json())
+      .then((response) => response.json())
       .then((result) => {
-        
         if (result.status === "FAILED") {
           const { message } = result;
 
@@ -35,8 +42,10 @@ export const loginUser = (
             setFieldError("email", message);
           }
         } else if (result.status === "SUCCESS") {
-    
           const token = result.data[0].tenant_id;
+
+          
+
 
           sessionService
             .saveSession(token)
@@ -44,17 +53,47 @@ export const loginUser = (
               sessionService
                 .saveUser(result.data[0])
                 .then(() => {
-                  history.push("/dashboard");
+                 
+ // Get Contract Data
+ const url = contractUrl + "/retrieve/" + token;
+
+ fetch(url, {
+   method: "GET",
+   headers: { "content-type": "application/JSON" },
+ })
+   .then((response) => response.json())
+   .then((result) => {
+     if (result.status === "SUCCESS") {
+      let a = moment(result.data.start_Date).add(
+        result.data.contract_Period,
+        "years"
+      );
+
+      let b = moment(currentDate);
+
+      if (moment(a).isSameOrBefore(b)) {
+        history.push("/404");
+      } else {
+        history.push("/dashboard");
+      }
+     } else {
+      history.push("/505");
+     }
+   });
+                  
+
+                  // history.push("/dashboard");
                 })
                 .catch((err) => console.error(err));
             })
             .catch((err) => console.error(err));
-        }
-
+          }
+    
         //complete submission
         setSubmitting(false);
-      })
-      .catch((err) => console.error(err));
+          
+      })  .catch((err) => console.error(err));
+     
   };
 };
 
@@ -67,15 +106,16 @@ export const signupUser = (
   return (dispatch) => {
     fetch(`${currentUrl}api/tenant/signup`, {
       method: "POST",
-      mode: 'cors',
-      body: JSON.stringify({name: credentials.name, email: credentials.email, password: credentials.password}),
+      mode: "cors",
+      body: JSON.stringify({
+        name: credentials.name,
+        email: credentials.email,
+        password: credentials.password,
+      }),
       headers: { "content-type": "application/JSON" },
     })
-    .then((response) => response.json())
+      .then((response) => response.json())
       .then((result) => {
-
-  
-
         if (result.status === "FAILED") {
           const { message } = result;
 
@@ -119,12 +159,11 @@ export const forgetpassword = (
   return () => {
     fetch(`${currentUrl}api/tenant/passwordresetrequest`, {
       method: "POST",
-      body: JSON.stringify({email: credentials.email}),
+      body: JSON.stringify({ email: credentials.email }),
       headers: { "content-type": "application/JSON" },
-    }) .then((response) => response.json())
-        .then((result) => {
-        
-
+    })
+      .then((response) => response.json())
+      .then((result) => {
         if (result.status === "FAILED") {
           const { message } = data;
 
@@ -159,12 +198,11 @@ export const resetPassword = (
   return () => {
     fetch(`${currentUrl}api/tenant/passwordreset`, {
       method: "POST",
-      body: JSON.stringify({password: credentials.password}),
+      body: JSON.stringify({ password: credentials.password }),
       headers: { "content-type": "application/JSON" },
-    }) .then((response) => response.json())
-       .then((result) => {
-
-
+    })
+      .then((response) => response.json())
+      .then((result) => {
         if (result.status === "FAILED") {
           const { message } = data;
 

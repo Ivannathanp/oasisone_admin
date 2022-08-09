@@ -61,7 +61,7 @@ function PromoPage({ tenant }) {
     if (mounted) {
       if (tenant.tenant_id != undefined) {
         const url = promoUrl + "/retrieve/" + tenant.tenant_id;
-console.log(url)
+
         fetch(url, {
           method: "GET",
           headers: { "content-type": "application/JSON" },
@@ -178,6 +178,7 @@ console.log(url)
 
     var inputs = document.querySelector('input[type="file"]');
     if (inputs.files[0] == undefined) {
+
       const url = promoUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
       const payload = JSON.stringify({
         promo_name: promoName,
@@ -200,10 +201,12 @@ console.log(url)
           }
         });
     } else {
-      const promoUrl =
-        imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
+
+      const imagePromoUrl =
+        imageUrl + "/promo/" + tenant.tenant_id + "/" + promoID;
 
       const file = inputs.files[0];
+
       new Compressor(file, {
         quality: 0.5,
 
@@ -212,7 +215,7 @@ console.log(url)
 
           formData.append("promo", result, result.name);
 
-          fetch(promoUrl, {
+          fetch(imagePromoUrl, {
             method: "POST",
             body: formData,
           })
@@ -235,11 +238,11 @@ console.log(url)
           "/promo/render/" +
           tenant.tenant_id +
           "/" +
-          promoName +
+          promoID +
           ".jpg",
       });
 
-      await fetch(url, {
+      fetch(url, {
         method: "POST",
         body: payload,
         headers: { "content-type": "application/JSON" },
@@ -266,43 +269,15 @@ console.log(url)
       setPromoAddNotif(false);
     }, 3000);
 
-    const imagePromoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + promoName;
-    var input = document.querySelector('input[type="file"]');
-
-    const file = input.files[0];
-    new Compressor(file, {
-      quality: 0.5,
-
-      success(result) {
-        let formData = new FormData();
-
-        formData.append("promo", result, result.name);
-
-        fetch(imagePromoUrl, {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((result) => {})
-          .catch((error) => {
-            console.error("Error Upload Logo:", error);
-          });
-      },
-    });
-
+   
     const payload = JSON.stringify({
       promo_name: promoName,
       promo_start: startDate,
       promo_end: endDate,
       promo_details: promoDetails,
-      promo_image:
-        imageUrl +
-        "/promo/render/" +
-        tenant.tenant_id +
-        "/" +
-        promoName +
-        ".jpg",
     });
+
+    
 
     fetch(url, {
       method: "POST",
@@ -311,19 +286,66 @@ console.log(url)
     })
       .then((response) => response.json())
       .then((result) => {
+
+        let length = result.data.length - 1
+
+        const imagePromoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + result.data[length].id;
+        var input = document.querySelector('input[type="file"]');
+    
+        const file = input.files[0];
+        new Compressor(file, {
+          quality: 0.5,
+    
+          success(result) {
+            let formData = new FormData();
+    
+            formData.append("promo", result, result.name);
+    
+            fetch(imagePromoUrl, {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((result) => {})
+              .catch((error) => {
+                console.error("Error Upload Logo:", error);
+              });
+          },
+        });
+
+        
+
+        const url = promoUrl + "/edit/" + tenant.tenant_id + "/" +  result.data[length].id;
+        const payload2 = JSON.stringify({
+          promo_image:
+            imageUrl +
+            "/promo/render/" +
+            tenant.tenant_id +
+            "/" +
+            result.data[length].id +
+            ".jpg",
+        });
+
+      fetch(url, {
+        method: "POST",
+        body: payload2,
+        headers: { "content-type": "application/JSON" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (socket) {
+            socket.emit("update promo", result.data);
+            setPromoData([result.data]);
+            setPromoRetrieved(() => true);
+          }
+        });
+
         setpromobanneropen(false);
-        setPromoData([result.data]);
-
-        setPromoRetrieved(() => true);
-
         setPromoImage();
         setPromoName();
         setPromoDetails();
         setStartDate();
         setEndDate();
-        if (socket) {
-          socket.emit("add promo", result.data);
-        }
       });
   }
 

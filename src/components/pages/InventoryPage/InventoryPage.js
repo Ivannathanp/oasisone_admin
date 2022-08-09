@@ -425,7 +425,7 @@ function InventoryPage({ tenant }) {
     const payload = JSON.stringify({
       cat_name: name,
     });
-    console.log(url,payload)
+
     fetch(url, {
       method: "POST",
       body: payload,

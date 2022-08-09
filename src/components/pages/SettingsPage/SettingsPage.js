@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import "./SettingsPage.css";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { connect } from "react-redux";
@@ -92,7 +94,7 @@ function SettingsPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
-        setProfileColor(tenantData[0].profileColor)
+        setProfileColor(tenantData[0].profileColor);
         setProfileEmail(tenantData[0].email);
         setTextPhone(tenantData[0].phoneNumber);
         setColor(tenantData[0].profileColor);
@@ -154,7 +156,7 @@ function SettingsPage({ tenant }) {
           let formData = new FormData();
 
           formData.append("avatar", result, result.name);
-
+          
           fetch(profileUrl, {
             method: "POST",
             body: formData,
@@ -264,7 +266,16 @@ function SettingsPage({ tenant }) {
   async function handleAddressTextEdit() {
     setAddressTextEdit(() => !AddressTextEdit);
 
-    if (AddressTextEdit == true) {
+    if (textAddress == "") {
+      if(tenantData && tenantData[0].address !== ""){
+        setTextAddress(tenantData[0].address)
+      } else {
+        setTextAddress("please input detail address");
+      }
+
+    }
+
+    if (AddressTextEdit == true && textAddress !== "") {
       const editUrl = localUrl + "/edit/" + tenant.tenant_id;
 
       fetch(editUrl, {
@@ -286,7 +297,16 @@ function SettingsPage({ tenant }) {
   async function handleLocationTextEdit() {
     setLocationTextEdit(() => !LocationTextEdit);
 
-    if (LocationTextEdit == true) {
+    if (textLocation == "") {
+      if(tenantData && tenantData[0].location !== ""){
+        setTextLocation(tenantData[0].location)
+      } else {
+        setTextLocation("please input location");
+      }
+
+    }
+
+    if (LocationTextEdit == true && textLocation !== "") {
       const editUrl = localUrl + "/edit/" + tenant.tenant_id;
 
       fetch(editUrl, {
@@ -306,7 +326,15 @@ function SettingsPage({ tenant }) {
   async function handlePhoneTextEdit() {
     setPhoneTextEdit(() => !PhoneTextEdit);
 
-    if (PhoneTextEdit == true) {
+    if (textPhone == "") {
+      if(tenantData && tenantData[0].phoneNumber !== ""){
+        setTextPhone(tenantData[0].phoneNumber)
+      } else {
+        setTextPhone("please input phone number");
+      }
+
+    }
+    if (PhoneTextEdit == true && textPhone !== "") {
       const editUrl = localUrl + "/edit/" + tenant.tenant_id;
 
       fetch(editUrl, {
@@ -1198,9 +1226,10 @@ function SettingsPage({ tenant }) {
                         </button>
                       </div>
                     </div>
+
                     <form>
                       {tenantRetrieved == true && (
-                        <textarea
+                        <input
                           disabled={PhoneTextEdit ? false : true}
                           value={textPhone}
                           className={
@@ -1208,10 +1237,13 @@ function SettingsPage({ tenant }) {
                               ? "profilelocationactive"
                               : "profilelocation"
                           }
+                          type="text"
+                          onClick={() => setTextPhone("")}
                           onChange={(e) => setTextPhone(e.target.value)}
                         />
                       )}
                     </form>
+
                     <div className="profileaddressheader">
                       <div className="profiletitle">Location</div>
                       <div className="editcontainer">
@@ -1246,6 +1278,7 @@ function SettingsPage({ tenant }) {
                               ? "profilelocationactive"
                               : "profilelocation"
                           }
+                          onClick={() => setTextLocation("")}
                           onChange={(e) => setTextLocation(e.target.value)}
                         />
                       )}
@@ -1285,6 +1318,7 @@ function SettingsPage({ tenant }) {
                               ? "profileaddressactive"
                               : "profileaddress"
                           }
+                          onClick={() => setTextAddress("")}
                           onChange={(e) => setTextAddress(e.target.value)}
                         />
                       )}

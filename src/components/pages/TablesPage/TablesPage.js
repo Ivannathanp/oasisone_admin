@@ -1053,7 +1053,7 @@ function TablesPage({ tenant }) {
         </Box>
       </Modal>
 
-      {tableRetrieved ? (
+      {tableRetrieved && tenantRetrieved ? (
         <div className="tablescontainer">
           <div
             style={{ background: profileColor }}

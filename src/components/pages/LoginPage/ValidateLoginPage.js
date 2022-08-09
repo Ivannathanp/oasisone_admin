@@ -1,10 +1,12 @@
-import React from "react";
+import React,{useEffect, useState} from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Link, useHistory, useParams } from "react-router-dom";
 import "./LoginPage.css";
 import { BallTriangle } from "react-loader-spinner";
 import { PassTextField, TextField } from "../../Forms/FormLib";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
 
 //auth
 import { connect } from "react-redux";
@@ -14,11 +16,16 @@ function ValidateLoginPage({loginUser}) {
   let history = useHistory();
   const { userEmail } = useParams();
 
+   
+
   return (
     <div className="backgroundcontainer">
       <div className="innercontainer">
         <div className="containertitle">Login For Oasis One</div>
         <div className="containerforms">
+
+
+
           <Formik
             initialValues={{ email: userEmail, password: "" }}
             validationSchema={Yup.object().shape({
@@ -32,7 +39,8 @@ function ValidateLoginPage({loginUser}) {
                 .max(30, "Password is too long"),
             })}
             onSubmit={(values, { setSubmitting, setFieldError }) => {
-              loginUser(values, history, setFieldError, setSubmitting);
+                loginUser(values, history, setFieldError, setSubmitting);
+              
             }}
           >
             {({ errors, touched, isSubmitting }) => (

@@ -14,12 +14,13 @@
 .inventorycontainergrid {
   width: 100%;
   overflow-y: hidden;
-  overflow-x: scroll;
+  overflow-x: auto;
   margin-bottom: 3%;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
+  height: 8px;
 }
 
 /* Track */
@@ -79,7 +80,7 @@
 
 .catmenucontainer {
   width: 530px;
-  border: 3px solid #e52c32;
+  border: 3px solid;
   margin-top: 2%;
   border-radius: 20px;
   display: flex;
@@ -380,7 +381,6 @@ input[class~="productinputfile"] {
 .savebutton {
   width: 150px;
   height: 40px;
-  background-color: #df3030;
   border: 0px solid;
   border-radius: 5px;
   outline: none;
@@ -420,7 +420,6 @@ input[class~="productinputfile"] {
 .removebutton {
   width: 150px;
   height: 40px;
-  background-color: #df3030;
   border: 0px solid;
   border-radius: 5px;
   outline: none;
@@ -522,7 +521,6 @@ input[class~="productinputfile"] {
 .catupbuttonactive {
   background-color: transparent;
   border: 0px;
-  color: #e52c32;
 }
 
 .catdownbutton {
@@ -534,7 +532,6 @@ input[class~="productinputfile"] {
 .catdownbuttonactive {
   background-color: transparent;
   border: 0px;
-  color: #e52c32;
 }
 .additem {
   display: flex;
@@ -552,7 +549,6 @@ input[class~="productinputfile"] {
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 14px;
-  color: #e52c32;
   background-color: transparent;
   border: 0px;
 }
@@ -633,7 +629,6 @@ input[class~="productinputfile"] {
   width: 90px;
   height: 30px;
   border-radius: 20px;
-  background-color: #e52c32;
   display: grid;
   justify-content: center;
   align-items: center;
@@ -644,7 +639,6 @@ input[class~="productinputfile"] {
 .decrement {
   width: 20px;
   height: 20px;
-  color: #e52c32;
   background-color: #fff;
   border-radius: 50px;
   display: flex;
@@ -670,7 +664,6 @@ input[class~="productinputfile"] {
 
 .negativeactive {
   width: 20px;
-  color: #e52c32;
   background-color: #fff;
   outline: none;
   border: 0px solid;
@@ -710,8 +703,6 @@ input[class~="productinputfile"] {
 .increment {
   width: 20px;
   height: 20px;
-  color: #e52c32;
-
   background-color: #fff;
   border-radius: 50px;
   display: flex;
@@ -738,7 +729,6 @@ input[class~="productinputfile"] {
 
 .plusactive {
   width: 20px;
-  color: #e52c32;
   background-color: #fff;
   outline: none;
   border: 0px solid;
@@ -784,7 +774,6 @@ input[class~="productinputfile"] {
   height: 41px;
   border-radius: 100px;
   border: 0px solid;
-  background-color: #f10c0c;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 700;
   font-size: 14px;
@@ -823,7 +812,6 @@ input[class~="productinputfile"] {
 }
 
 .cartbuttontext {
-  color: #e52c32;
   font-size: 10px;
 }
 .disabledcartbuttontext {

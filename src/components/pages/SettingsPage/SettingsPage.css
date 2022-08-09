@@ -129,7 +129,6 @@
 }
 
 .editprofilebutton {
-  background-color: #df3030;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 500;
   font-size: 14px;
@@ -173,17 +172,15 @@
   width: 70px;
   height: 30px;
   background-color: transparent;
-  border: 1px solid #df3030;
+  border: 1px solid;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: #df3030;
   border-radius: 5px;
 }
 .editbuttoncontaineractive {
   width: 70px;
   height: 30px;
-  background-color: #df3030;
   border: 0px solid;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
@@ -342,7 +339,6 @@
 .percentagetext {
   width: 85px;
   height: 35px;
-  background-color: #df3030;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -573,7 +569,6 @@ input[class~="messageinput"] {
   align-items: center;
   width: 102px;
   height: 35px;
-  background-color: #df3030;
   border: none;
   outline: none;
   box-shadow: none;

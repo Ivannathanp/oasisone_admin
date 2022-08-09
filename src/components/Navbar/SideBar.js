@@ -90,117 +90,117 @@ function SideBar({ logoutUser, tenant }) {
   }
 
   return (
-    <>
-      <nav className="sidebar"  style={{background: profileColor}}>
-        <div className="sidebar-container">
-          <div className="sidebar-header">
-            {profileName}
-          </div>
-          <ul className="side-menu">
-            <li className="side-item">
-              <NavLink
-                to="/dashboard"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <DashboardOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Dashboard</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/orders"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <ShoppingCartOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Orders</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/orderstatus"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <InsertChartOutlinedOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Order Status Screen</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/promo"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <ImageOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Promo Banner</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/inventory"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <Inventory2OutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Inventory</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/tables"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <TableChartOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Tables</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/qr"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <QrCodeOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Print QR Codes</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/customer"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <PeopleOutlinedIcon className="icons" />
-                <span style={{ color: "#fff" }}>Customer</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="/settings"
-                activeClassName="is-active"
-                className="side-links"
-              >
-                <SettingsOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Settings</span>
-              </NavLink>
-            </li>
-            <li className="side-item">
-              <NavLink
-                to="#"
-                className="side-links"
-                onClick={() => logoutUser(history)}
-              >
-                <ExitToAppOutlinedIcon className="icons2" />
-                <span style={{ color: "#fff" }}>Logout</span>
-              </NavLink>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </>
+    tenantRetrieved && tenantData && (<nav className="sidebar"  style={{background: profileColor}}>
+    <div className="sidebar-container">
+      <div className="sidebar-header">
+        {profileName}
+      </div>
+      <ul className="side-menu">
+        <li className="side-item">
+          <NavLink
+            to="/dashboard"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <DashboardOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Dashboard</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/orders"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <ShoppingCartOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Orders</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/orderstatus"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <InsertChartOutlinedOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Order Status Screen</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/promo"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <ImageOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Promo Banner</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/inventory"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <Inventory2OutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Inventory</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/tables"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <TableChartOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Tables</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/qr"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <QrCodeOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Print QR Codes</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/customer"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <PeopleOutlinedIcon className="icons" />
+            <span style={{ color: "#fff" }}>Customer</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="/settings"
+            activeClassName="is-active"
+            className="side-links"
+          >
+            <SettingsOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Settings</span>
+          </NavLink>
+        </li>
+        <li className="side-item">
+          <NavLink
+            to="#"
+            className="side-links"
+            onClick={() => logoutUser(history)}
+          >
+            <ExitToAppOutlinedIcon className="icons2" />
+            <span style={{ color: "#fff" }}>Logout</span>
+          </NavLink>
+        </li>
+      </ul>
+    </div>
+  </nav>)
+    
+  
   );
 }
 
