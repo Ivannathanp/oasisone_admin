@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import "./PromoPage.css";
-import logo from "../../icons/Logo.png";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import inputimage from "../../icons/Edit Profile Pict.png";
 import DatePicker from "../../datepicker/components/date_picker/date_picker";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,8 +8,9 @@ import { faXmark, faPencil } from "@fortawesome/free-solid-svg-icons";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
-import removecat from "../../icons/RemoveCat.svg";
 import Compressor from "compressorjs";
+import removecat from "../../icons/RemoveCat.svg";
+import "./PromoPage.css";
 
 function PromoPage({ tenant }) {
   const promoUrl = process.env.REACT_APP_PROMOURL;
@@ -99,7 +97,7 @@ function PromoPage({ tenant }) {
       newData.push(user);
       setPromoData(newData);
     }
-  } 
+  }
 
   const localUrl = process.env.REACT_APP_TENANTURL;
   const [tenantData, setTenantData] = useState([]);
@@ -154,14 +152,13 @@ function PromoPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
-        setProfileColor(tenantData[0].profileColor)
+        setProfileColor(tenantData[0].profileColor);
       }
     }
     return () => {
       mounted = false;
     };
   }, [tenantRetrieved, tenantData]);
-
 
   async function imageHandler(e) {
     const reader = new FileReader();
@@ -178,7 +175,6 @@ function PromoPage({ tenant }) {
 
     var inputs = document.querySelector('input[type="file"]');
     if (inputs.files[0] == undefined) {
-
       const url = promoUrl + "/edit/" + tenant.tenant_id + "/" + promoID;
       const payload = JSON.stringify({
         promo_name: promoName,
@@ -201,7 +197,6 @@ function PromoPage({ tenant }) {
           }
         });
     } else {
-
       const imagePromoUrl =
         imageUrl + "/promo/" + tenant.tenant_id + "/" + promoID;
 
@@ -269,15 +264,12 @@ function PromoPage({ tenant }) {
       setPromoAddNotif(false);
     }, 3000);
 
-   
     const payload = JSON.stringify({
       promo_name: promoName,
       promo_start: startDate,
       promo_end: endDate,
       promo_details: promoDetails,
     });
-
-    
 
     fetch(url, {
       method: "POST",
@@ -286,21 +278,25 @@ function PromoPage({ tenant }) {
     })
       .then((response) => response.json())
       .then((result) => {
+        let length = result.data.length - 1;
 
-        let length = result.data.length - 1
-
-        const imagePromoUrl = imageUrl + "/promo/" + tenant.tenant_id + "/" + result.data[length].id;
+        const imagePromoUrl =
+          imageUrl +
+          "/promo/" +
+          tenant.tenant_id +
+          "/" +
+          result.data[length].id;
         var input = document.querySelector('input[type="file"]');
-    
+
         const file = input.files[0];
         new Compressor(file, {
           quality: 0.5,
-    
+
           success(result) {
             let formData = new FormData();
-    
+
             formData.append("promo", result, result.name);
-    
+
             fetch(imagePromoUrl, {
               method: "POST",
               body: formData,
@@ -313,9 +309,8 @@ function PromoPage({ tenant }) {
           },
         });
 
-        
-
-        const url = promoUrl + "/edit/" + tenant.tenant_id + "/" +  result.data[length].id;
+        const url =
+          promoUrl + "/edit/" + tenant.tenant_id + "/" + result.data[length].id;
         const payload2 = JSON.stringify({
           promo_image:
             imageUrl +
@@ -326,19 +321,19 @@ function PromoPage({ tenant }) {
             ".jpg",
         });
 
-      fetch(url, {
-        method: "POST",
-        body: payload2,
-        headers: { "content-type": "application/JSON" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          if (socket) {
-            socket.emit("update promo", result.data);
-            setPromoData([result.data]);
-            setPromoRetrieved(() => true);
-          }
-        });
+        fetch(url, {
+          method: "POST",
+          body: payload2,
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (socket) {
+              socket.emit("update promo", result.data);
+              setPromoData([result.data]);
+              setPromoRetrieved(() => true);
+            }
+          });
 
         setpromobanneropen(false);
         setPromoImage();
@@ -537,8 +532,7 @@ function PromoPage({ tenant }) {
             </div>
             <div className="removecatmodaltext">
               Are you sure to remove the{" "}
-              <span style={{ color: profileColor }}>"{promoName}"</span>{" "}
-              promo?
+              <span style={{ color: profileColor }}>"{promoName}"</span> promo?
             </div>
 
             <div className="removecatmodalbuttoncontainer">

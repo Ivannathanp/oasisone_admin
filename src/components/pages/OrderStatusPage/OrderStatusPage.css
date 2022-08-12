@@ -1,14 +1,13 @@
-.orderstatusoutercontainer{
+.orderstatusoutercontainer {
   margin-left: 4%;
   margin-right: 4%;
   margin-top: 5%;
   align-items: center;
   height: 75vh;
   position: relative;
-
 }
 
-.orderstatuscontainer::-webkit-scrollbar{
+.orderstatuscontainer::-webkit-scrollbar {
   display: none;
 }
 
@@ -17,10 +16,8 @@
   grid-row-gap: 3%;
   grid-column-gap: 3%;
   grid-template-columns: repeat(3, 1fr);
-overflow: scroll;
+  overflow: scroll;
 }
-
-
 
 .orderstatuscard {
   width: 370px;
@@ -29,12 +26,11 @@ overflow: scroll;
   border: 0.5px solid #9b9b9b;
   border-radius: 11px;
   position: relative;
-
 }
-.closeordericon{
-position: absolute;
-top: 10px;
-right: 15px;
+.closeordericon {
+  position: absolute;
+  top: 10px;
+  right: 15px;
 }
 
 .orderscreen {
@@ -103,11 +99,11 @@ right: 15px;
   margin: 6% 8% 2% 8%;
   height: 180px;
   overflow-y: scroll;
-  border-bottom: 1px solid #D8D8D8;
+  border-bottom: 1px solid #d8d8d8;
 }
 
-.menucontainer::-webkit-scrollbar{
-    display: none;
+.menucontainer::-webkit-scrollbar {
+  display: none;
 }
 
 .menudetails {
@@ -126,16 +122,15 @@ right: 15px;
   width: 100%;
   height: 100%;
   object-fit: cover;
-   border-radius: 10px;
-
+  border-radius: 10px;
 }
-.menutext{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-bottom: 1px solid #D8D8D8;
+.menutext {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid #d8d8d8;
 }
-.nobordermenutext{
+.nobordermenutext {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -168,49 +163,47 @@ right: 15px;
   font-weight: 400;
   font-size: 14px;
 }
-.quant{
-    font-family: "Nunito Sans", sans-serif;
-    font-weight: 600;
-    font-size: 14px; 
+.quant {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
 }
-.totalcontainer{
-    display: flex;
-    flex-direction: row;
-    margin: 6% 8% 2% 8%;
+.totalcontainer {
+  display: flex;
+  flex-direction: row;
+  margin: 6% 8% 2% 8%;
 }
-.total{
-    flex: 1;
+.total {
+  flex: 1;
 }
-.totalquant{
-    font-family: "Nunito Sans", sans-serif;
+.totalquant {
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
   color: #979797;
   margin-bottom: 5%;
 }
-.totalprice{
-    font-family: "Nunito Sans", sans-serif;
+.totalprice {
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 16px;
   color: #424242;
-
 }
 
-.buttoncontainer{
-    display:flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-
+.buttoncontainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .proceedstatusbutton {
   background-color: transparent;
-  border: 1px solid #4678BC;
+  border: 1px solid #4678bc;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
-  color: #4678BC;
+  color: #4678bc;
   border-radius: 5px;
   padding: 15px 30px;
   width: 130px;
@@ -222,12 +215,12 @@ right: 15px;
 
 .servestatusbutton {
   background-color: transparent;
-  border: 1px solid #FFA800;
+  border: 1px solid #ffa800;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
-  color: #FFA800;
+  color: #ffa800;
   border-radius: 5px;
   padding: 15px 30px;
   width: 130px;
@@ -239,12 +232,12 @@ right: 15px;
 
 .completestatusbutton {
   background-color: transparent;
-  border: 1px solid #1DAB33;
+  border: 1px solid #1dab33;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
-  color: #1DAB33;
+  color: #1dab33;
   border-radius: 5px;
   padding: 15px 30px;
   width: 130px;
@@ -267,15 +260,15 @@ right: 15px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-color: #1DAB33;
+  background-color: #1dab33;
   border: none;
 }
 
-.icon{
-    margin-right: 10%;
+.icon {
+  margin-right: 10%;
 }
 
-.rejectorderbox{
+.rejectorderbox {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -291,11 +284,11 @@ right: 15px;
   background-color: #fffaf4;
 }
 
-.radiogroupcontainer{
+.radiogroupcontainer {
   margin-top: 5%;
 }
 
-.notification{
+.notification {
   display: flex;
   justify-content: center;
   flex-direction: row;
@@ -305,49 +298,48 @@ right: 15px;
   right: 0px;
   width: 227px;
   height: 49px;
-  background-color: #E52C32;
+  background-color: #e52c32;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 15px;
 }
-.hidden{
+.hidden {
   display: none;
 }
-.notificationtextcontainer{
-display: flex;
-width: 100%;
+.notificationtextcontainer {
+  display: flex;
+  width: 100%;
   justify-content: flex-start;
   align-content: center;
   align-items: center;
   margin-left: 8%;
 }
-.notificationtext{
-   font-family: "Nunito Sans", sans-serif;
+.notificationtext {
+  font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 19px;
   color: #fff;
 }
-.notificationclose{
-position: absolute;
-top: 5px;
-right: 8px;
+.notificationclose {
+  position: absolute;
+  top: 5px;
+  right: 8px;
 }
-.notifclosebutton{
-display: flex;
-justify-content: center;
+.notifclosebutton {
+  display: flex;
+  justify-content: center;
   align-content: center;
   align-items: center;
-width: 16px;
-height: 16px;
-outline: none;
-background-color: transparent;
-border: 1px solid #fff;
-border-radius: 30px;
-box-shadow: none;
-color: #fff;
-font-size: 8px;
-padding: 0;
-
+  width: 16px;
+  height: 16px;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid #fff;
+  border-radius: 30px;
+  box-shadow: none;
+  color: #fff;
+  font-size: 8px;
+  padding: 0;
 }

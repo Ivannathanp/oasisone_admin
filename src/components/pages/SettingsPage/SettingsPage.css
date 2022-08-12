@@ -55,7 +55,6 @@
 .settingscontent {
   display: grid;
   grid-template-columns: 1fr 1fr;
-
 }
 
 .settingsinsidegrid {
@@ -64,7 +63,7 @@
   margin-left: 5%;
 }
 
-.taxandservicecontainer{
+.taxandservicecontainer {
   margin-bottom: 10%;
 }
 
@@ -190,7 +189,7 @@
 }
 .profileaddress {
   display: grid;
-  margin: -2% 0 4% 2% ;
+  margin: -2% 0 4% 2%;
   grid-template-columns: 2fr 0.5fr;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
@@ -211,7 +210,7 @@
 }
 .profileaddressactive {
   display: grid;
-  margin: -2% 0 4% 2% ;
+  margin: -2% 0 4% 2%;
   grid-template-columns: 2fr 0.5fr;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
@@ -232,7 +231,7 @@
 }
 .profilelocation {
   display: grid;
-  margin: -2% 0 4% 2% ;
+  margin: -2% 0 4% 2%;
   grid-template-columns: 2fr 0.5fr;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
@@ -252,7 +251,7 @@
 
 .profilelocationactive {
   display: grid;
-  margin: -2% 0 4% 2% ;
+  margin: -2% 0 4% 2%;
   grid-template-columns: 2fr 0.5fr;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 600;
@@ -279,7 +278,7 @@
 .profileopen {
   display: flex;
   flex-direction: column;
-  margin: -1% 0 4% 2% ;
+  margin: -1% 0 4% 2%;
 }
 .opentext {
   display: grid;
@@ -314,7 +313,6 @@
   height: 160px;
   border-radius: 15px;
   background-color: #fff;
-
 }
 
 .taxcontents {
@@ -365,7 +363,7 @@
   line-height: 19px;
   color: #df3030;
 }
-.helpbox{
+.helpbox {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -380,7 +378,7 @@
   border-radius: 20px;
   background-color: #fff;
 }
-.helpinnermodalbox{
+.helpinnermodalbox {
   display: flex;
   flex-direction: column;
   width: 100%;

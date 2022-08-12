@@ -1,21 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import "./LoginPage.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faLock,
-  faEye,
-  faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
 import { BallTriangle } from "react-loader-spinner";
 import { PassTextField } from "../../Forms/FormLib";
-
-//auth
 import { connect } from "react-redux";
 import { resetPassword } from "../../Auth/actions/userActions";
 import { useHistory, useParams } from "react-router-dom";
+import "./LoginPage.css";
 
 function PasswordResetPage({ resetPassword }) {
   let history = useHistory();
@@ -51,7 +42,6 @@ function PasswordResetPage({ resetPassword }) {
               <Form>
                 <div className="passinputform">
                   <PassTextField
-                    //label="New Password"
                     name="newPassword"
                     placeholder="Enter New password"
                   />
@@ -59,7 +49,6 @@ function PasswordResetPage({ resetPassword }) {
 
                 <div className="passinputform">
                   <PassTextField
-                    //label="Confirm New Password"
                     name="confirmNewPassword"
                     placeholder="Confirm New Password"
                   />
@@ -67,10 +56,7 @@ function PasswordResetPage({ resetPassword }) {
 
                 <div className="buttongroup">
                   {!isSubmitting && (
-                    <button
-                      type="submit"
-                      className="loginbutton"
-                    >
+                    <button type="submit" className="loginbutton">
                       Proceed
                     </button>
                   )}

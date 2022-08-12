@@ -1,5 +1,3 @@
-//Dashboard cannot be accessed unless logged in
-
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 

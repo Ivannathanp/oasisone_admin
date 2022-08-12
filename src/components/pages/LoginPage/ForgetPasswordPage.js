@@ -2,23 +2,13 @@ import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Link, useHistory, useParams } from "react-router-dom";
-import "./LoginPage.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faLock,
-  faEye,
-  faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
 import { BallTriangle } from "react-loader-spinner";
 import { TextField } from "../../Forms/FormLib";
-
-//auth
 import { connect } from "react-redux";
 import { forgetpassword } from "../../Auth/actions/userActions";
+import "./LoginPage.css";
 
 function ForgetPasswordPage({ forgetpassword }) {
-  const [show, setShow] = useState(false);
   let history = useHistory();
   const { userEmail } = useParams();
 
@@ -30,7 +20,7 @@ function ForgetPasswordPage({ forgetpassword }) {
           <Formik
             initialValues={{
               email: userEmail,
-              redirectUrl: "http://oasis-one.com:4000/passwordreset",
+              redirectUrl: "http://admin.oasis-one.com/passwordreset",
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string()

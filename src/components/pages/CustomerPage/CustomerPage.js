@@ -1,16 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
 import TablePagination from "../../Pagination/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
-import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
-import "../TopBar/TopBar.css";
-import "./CustomerPage.css";
-import logo from "../../icons/Logo.png";
-import NumberFormat from "react-number-format";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
 import { connect } from "react-redux";
 import TopBar from "../TopBar/TopBar";
 import moment from "moment";
@@ -18,12 +10,13 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import "../TopBar/TopBar.css";
+import "./CustomerPage.css";
 
 function CustomerPage({ tenant }) {
   const [page, setPage] = useState(0);
   const rowsPerPage = 7;
   const [index, setIndex] = useState(1);
-
   const orderUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
@@ -69,9 +62,7 @@ function CustomerPage({ tenant }) {
   });
 
   function handleOrderAdded(user) {
-
     if (orderRetrieved) {
-
       let newData = orderData.splice();
 
       newData.push(user);
@@ -132,7 +123,7 @@ function CustomerPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
-        setProfileColor(tenantData[0].profileColor)
+        setProfileColor(tenantData[0].profileColor);
       }
     }
     return () => {
@@ -254,7 +245,9 @@ function CustomerPage({ tenant }) {
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left"  style={{color: profileColor}}>Customer</div>
+        <div className="left" style={{ color: profileColor }}>
+          Customer
+        </div>
 
         <TopBar />
       </div>
@@ -264,9 +257,15 @@ function CustomerPage({ tenant }) {
           <div className="outercustomertable">
             <div className="customertable">
               <div className="customerheader">
-                <div className="customerleft"  style={{color: profileColor}}>All Customer</div>
+                <div className="customerleft" style={{ color: profileColor }}>
+                  All Customer
+                </div>
                 <div className="customerright">
-                  <button className="downloadbutton"  style={{borderColor: profileColor, color: profileColor}} onClick={generatePdf}>
+                  <button
+                    className="downloadbutton"
+                    style={{ borderColor: profileColor, color: profileColor }}
+                    onClick={generatePdf}
+                  >
                     Download as PDF{" "}
                   </button>
                 </div>
@@ -287,7 +286,7 @@ function CustomerPage({ tenant }) {
                   : orderData
                 ).map((post, i) => {
                   const orderDate = new Date(post.order_time);
-                  
+
                   return (
                     <div className={i != 7 ? "bordered" : "noborder"}>
                       <div className="customerrendergrid">

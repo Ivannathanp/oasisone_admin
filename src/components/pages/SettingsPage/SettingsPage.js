@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import "./SettingsPage.css";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { connect } from "react-redux";
@@ -26,6 +23,7 @@ import { sessionService } from "redux-react-session";
 import { ThreeDots } from "react-loader-spinner";
 import emailjs from "@emailjs/browser";
 import Compressor from "compressorjs";
+import "./SettingsPage.css";
 
 function SettingsPage({ tenant }) {
   const form = useRef();
@@ -156,7 +154,7 @@ function SettingsPage({ tenant }) {
           let formData = new FormData();
 
           formData.append("avatar", result, result.name);
-          
+
           fetch(profileUrl, {
             method: "POST",
             body: formData,
@@ -267,12 +265,11 @@ function SettingsPage({ tenant }) {
     setAddressTextEdit(() => !AddressTextEdit);
 
     if (textAddress == "") {
-      if(tenantData && tenantData[0].address !== ""){
-        setTextAddress(tenantData[0].address)
+      if (tenantData && tenantData[0].address !== "") {
+        setTextAddress(tenantData[0].address);
       } else {
         setTextAddress("please input detail address");
       }
-
     }
 
     if (AddressTextEdit == true && textAddress !== "") {
@@ -298,12 +295,11 @@ function SettingsPage({ tenant }) {
     setLocationTextEdit(() => !LocationTextEdit);
 
     if (textLocation == "") {
-      if(tenantData && tenantData[0].location !== ""){
-        setTextLocation(tenantData[0].location)
+      if (tenantData && tenantData[0].location !== "") {
+        setTextLocation(tenantData[0].location);
       } else {
         setTextLocation("please input location");
       }
-
     }
 
     if (LocationTextEdit == true && textLocation !== "") {
@@ -327,12 +323,11 @@ function SettingsPage({ tenant }) {
     setPhoneTextEdit(() => !PhoneTextEdit);
 
     if (textPhone == "") {
-      if(tenantData && tenantData[0].phoneNumber !== ""){
-        setTextPhone(tenantData[0].phoneNumber)
+      if (tenantData && tenantData[0].phoneNumber !== "") {
+        setTextPhone(tenantData[0].phoneNumber);
       } else {
         setTextPhone("please input phone number");
       }
-
     }
     if (PhoneTextEdit == true && textPhone !== "") {
       const editUrl = localUrl + "/edit/" + tenant.tenant_id;

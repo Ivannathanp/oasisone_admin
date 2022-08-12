@@ -1,27 +1,14 @@
 import React, { useState } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Link, useHistory } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faLock,
-  faEye,
-  faEyeSlash,
-  faEnvelope,
-  faLocationDot,
-  faPhone,
-} from "@fortawesome/free-solid-svg-icons";
 import { BallTriangle } from "react-loader-spinner";
-import "./LoginPage.css";
-
-//auth
 import { connect } from "react-redux";
 import { signupUser } from "../../Auth/actions/userActions";
 import { PassTextField, TextField } from "../../Forms/FormLib";
+import "./LoginPage.css";
 
 function RegisterPage({ signupUser }) {
-  const [show, setShow] = useState(false);
   let history = useHistory();
   const [ErrorMessage, seterrormessage] = useState();
 
@@ -44,10 +31,6 @@ function RegisterPage({ signupUser }) {
               email: Yup.string()
                 .email("Invalid e-mail address")
                 .required("Required"),
-              // address: Yup.string().required("Required"),
-              // phonenumber: Yup.number()
-              //   .typeError("Enter valid phone number")
-              //   .required("Required"),
               password: Yup.string()
                 .min(8, "Password is too short - should be 8 chars minimum")
                 .matches(/(?=.*[0-9])/, "Password must contain a number.")
@@ -69,31 +52,8 @@ function RegisterPage({ signupUser }) {
           >
             {({ errors, touched, isSubmitting }) => (
               <Form>
-                {/* <div className="inputcontainer">
-              <FontAwesomeIcon icon={faLocationDot} className="loginicons" />
-              <TextField
-                label="Address"
-                name="address"
-                type="text"
-                placeholder="Enter your address"
-         
-              />
-               
-            </div> */}
-
-                {/* <div className="inputcontainer">
-              <FontAwesomeIcon icon={faPhone} className="loginicons" />
-              <TextField
-                label="Phone Number"
-                name="phonenumber"
-                type="text"
-                placeholder="Enter your phone"
-        
-              />
-            </div> */}
                 <div className="marginedinputform">
                   <TextField
-                    //label="Email"
                     name="name"
                     type="text"
                     placeholder="Name"
@@ -102,7 +62,6 @@ function RegisterPage({ signupUser }) {
 
                 <div className="marginedinputform">
                   <TextField
-                    //label="Email"
                     name="email"
                     type="text"
                     placeholder="Email"
@@ -111,7 +70,6 @@ function RegisterPage({ signupUser }) {
 
                 <div className="passinputform">
                   <PassTextField
-                    //label="Password"
                     name="password"
                     placeholder="Password"
                   />
@@ -119,7 +77,6 @@ function RegisterPage({ signupUser }) {
 
                 <div className="passinputform">
                   <PassTextField
-                    //label="Confirm Password"
                     name="confirmPassword"
                     placeholder="Confirm Password"
                   />

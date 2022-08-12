@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { sessionService } from "redux-react-session";
 import moment from "moment";
 
@@ -13,10 +12,7 @@ export const loginUser = (
   setFieldError,
   setSubmitting
 ) => {
-  // //make checks and get some data
 
-
-  
   return () => {
     fetch(`${currentUrl}api/tenant/signin`, {
       method: "POST",
@@ -44,56 +40,48 @@ export const loginUser = (
         } else if (result.status === "SUCCESS") {
           const token = result.data[0].tenant_id;
 
-          
-
-
           sessionService
             .saveSession(token)
             .then(() => {
               sessionService
                 .saveUser(result.data[0])
                 .then(() => {
-                 
- // Get Contract Data
- const url = contractUrl + "/retrieve/" + token;
+                  // Get Contract Data
+                  const url = contractUrl + "/retrieve/" + token;
 
- fetch(url, {
-   method: "GET",
-   headers: { "content-type": "application/JSON" },
- })
-   .then((response) => response.json())
-   .then((result) => {
-     if (result.status === "SUCCESS") {
-      let a = moment(result.data.start_Date).add(
-        result.data.contract_Period,
-        "years"
-      );
+                  fetch(url, {
+                    method: "GET",
+                    headers: { "content-type": "application/JSON" },
+                  })
+                    .then((response) => response.json())
+                    .then((result) => {
+                      if (result.status === "SUCCESS") {
+                        let a = moment(result.data.start_Date).add(
+                          result.data.contract_Period,
+                          "years"
+                        );
 
-      let b = moment(currentDate);
+                        let b = moment(currentDate);
 
-      if (moment(a).isSameOrBefore(b)) {
-        history.push("/404");
-      } else {
-        history.push("/dashboard");
-      }
-     } else {
-      history.push("/505");
-     }
-   });
-                  
-
-                  // history.push("/dashboard");
+                        if (moment(a).isSameOrBefore(b)) {
+                          history.push("/404");
+                        } else {
+                          history.push("/dashboard");
+                        }
+                      } else {
+                        history.push("/505");
+                      }
+                    });
                 })
                 .catch((err) => console.error(err));
             })
             .catch((err) => console.error(err));
-          }
-    
+        }
+
         //complete submission
         setSubmitting(false);
-          
-      })  .catch((err) => console.error(err));
-     
+      })
+      .catch((err) => console.error(err));
   };
 };
 

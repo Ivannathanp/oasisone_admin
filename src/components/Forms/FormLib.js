@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { ErrorMessage, useField } from "formik";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faUser,
-  faLock,
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";

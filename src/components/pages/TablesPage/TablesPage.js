@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import "../TopBar/TopBar.css";
-import "./TablesPage.css";
 import PropTypes from "prop-types";
 import TablePagination from "../../Pagination/index";
 import Customer from "../../icons/Customer.png";
@@ -11,10 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleRight,
   faAngleLeft,
-  faCalendar,
   faXmark,
   faRightLong,
-  faListSquares,
 } from "@fortawesome/free-solid-svg-icons";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
@@ -29,6 +25,8 @@ import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
 import { debounce } from "lodash";
+import "../TopBar/TopBar.css";
+import "./TablesPage.css";
 
 function TablesPage({ tenant }) {
   const tableUrl = process.env.REACT_APP_TABLEURL;
@@ -672,16 +670,13 @@ function TablesPage({ tenant }) {
                                 });
                               })}
 
-<div className="ordermodalinputlabel">
-                              Guest
-                            </div>
+                            <div className="ordermodalinputlabel">Guest</div>
                             <input
                               type="text"
                               value={post.user_guest}
                               className="ordermodalinputfile"
                             />
                           </div>
-
 
                           <div className="ordermenuitemcontainer">
                             <div className="ordermenutitle">Order Items</div>

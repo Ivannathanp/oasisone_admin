@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import "../TopBar/TopBar.css";
-import "./InventoryPage.css";
 import NumberFormat from "react-number-format";
-import recommended from "../../icons/Recommend.png";
-import removecat from "../../icons/RemoveCat.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleDown,
@@ -27,6 +23,10 @@ import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
 import { debounce } from "lodash";
 import Compressor from "compressorjs";
+import recommended from "../../icons/Recommend.png";
+import removecat from "../../icons/RemoveCat.svg";
+import "../TopBar/TopBar.css";
+import "./InventoryPage.css";
 
 const UP = -1;
 const DOWN = 1;

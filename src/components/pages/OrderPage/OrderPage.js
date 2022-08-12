@@ -5,12 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
-import "../TopBar/TopBar.css";
-import "./OrderPage.css";
 import NumberFormat from "react-number-format";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import recommended from "../../icons/Recommend.png";
 import { connect } from "react-redux";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -18,12 +15,14 @@ import moment from "moment";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import recommended from "../../icons/Recommend.png";
+import "../TopBar/TopBar.css";
+import "./OrderPage.css";
 
 function OrderPage({ tenant }) {
   const orderUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
-
   const tablelUrl = process.env.REACT_APP_TABLEURL;
   const [tableData, setTableData] = useState([]);
   const [tableRetrieved, setTableRetrieved] = useState(false);

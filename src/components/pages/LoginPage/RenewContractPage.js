@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { useHistory, NavLink } from "react-router-dom";
-import "../SettingsPage/SettingsPage.css";
+import { useHistory } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { connect } from "react-redux";
@@ -8,14 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faEnvelope,
-  faPencil,
-  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { SocketContext } from "../../socketContext";
-import { sessionService } from "redux-react-session";
-import { ThreeDots } from "react-loader-spinner";
 import emailjs from "@emailjs/browser";
 import { logoutUser } from "../../Auth/actions/userActions";
+import "../SettingsPage/SettingsPage.css";
 
 function RenewContractPage({ logoutUser, tenant }) {
   const form = useRef();
@@ -61,7 +57,6 @@ function RenewContractPage({ logoutUser, tenant }) {
   });
 
   const [helpemail, setHelpEmail] = useState(false);
-  const [color, setColor] = useState();
   const [profileName, setProfileName] = useState();
   const [profileColor, setProfileColor] = useState();
   const [profileEmail, setProfileEmail] = useState();

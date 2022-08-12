@@ -22,7 +22,7 @@ export default () => ({
     },
 
     "& > div": {
-      display: "inline-flex", // this shows the icon in the SelectInput but not the dropdown
+      display: "inline-flex",
     },
   },
   icon: {

@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import "../TopBar/TopBar.css";
-import "./QrPage.css";
-import logo from "../../icons/Logo.png";
-import qrcode from "../../icons/qrcode.png";
-import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { connect } from "react-redux";
 import QRCode from "qrcode.react";
 import TopBar from "../TopBar/TopBar";
-import ReactToPrint from "react-to-print";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import "../TopBar/TopBar.css";
+import "./QrPage.css";
 
 function QrPage({ tenant }) {
   const localUrl = process.env.REACT_APP_TENANTURL;

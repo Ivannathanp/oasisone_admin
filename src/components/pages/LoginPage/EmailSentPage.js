@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "./LoginPage.css";
-
-//React router
 import { useHistory, useParams } from "react-router-dom";
+import "./LoginPage.css";
 
 function EmailSentPage() {
   let history = useHistory();

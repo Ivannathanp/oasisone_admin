@@ -1,8 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import "../TopBar/TopBar.css";
-import "./DashboardPage.css";
-import logo from "../../icons/Logo.png";
-import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import NumberFormat from "react-number-format";
@@ -16,6 +12,8 @@ import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import "../TopBar/TopBar.css";
+import "./DashboardPage.css";
 
 function DashboardPage({ tenant }) {
   let history = useHistory();
@@ -412,7 +410,7 @@ function DashboardPage({ tenant }) {
   const localUrl = process.env.REACT_APP_TENANTURL;
   const [tenantData, setTenantData] = useState([]);
   const [tenantRetrieved, setTenantRetrieved] = useState(false);
-  
+
   // Get Tenant Data
   useEffect(() => {
     let mounted = true;
@@ -459,7 +457,7 @@ function DashboardPage({ tenant }) {
 
     if (mounted) {
       if (tenantRetrieved === true) {
-        setProfileColor(tenantData[0].profileColor)
+        setProfileColor(tenantData[0].profileColor);
       }
     }
     return () => {
@@ -779,29 +777,26 @@ function DashboardPage({ tenant }) {
                               <div className="orderdetail">
                                 <div className="orderdetailtime">
                                   {" "}
-                                  {moment(post.order_time).fromNow()}&nbsp;-{" "}
+                                  {moment(
+                                    post.order_time
+                                  ).fromNow()}&nbsp;-{" "}
                                 </div>
                                 <div className="tableID">
                                   {tableRetrieved &&
-                                      
-                                           
-                                                tableData.map((item) => {
-                                                  return item.map(
-                                                    (posts, index) => {
-                                                      if (
-                                                        posts.table.id ==
-                                                       post.order_table
-                                                      ) {
-                                                        return (
-                                                          <span>
-                                                            Table&nbsp;
-                                                            {posts.table.index}
-                                                          </span>
-                                                        );
-                                                      }
-                                                    }
-                                                  );
-                                                })}
+                                    tableData.map((item) => {
+                                      return item.map((posts, index) => {
+                                        if (
+                                          posts.table.id == post.order_table
+                                        ) {
+                                          return (
+                                            <span>
+                                              Table&nbsp;
+                                              {posts.table.index}
+                                            </span>
+                                          );
+                                        }
+                                      });
+                                    })}
                                 </div>
                               </div>
                               <div className="orderbuttoncontainer">

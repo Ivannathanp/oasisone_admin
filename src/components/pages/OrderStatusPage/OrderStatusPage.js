@@ -1,38 +1,25 @@
 import React, { useState, useEffect, useContext } from "react";
-import "../TopBar/TopBar.css";
-import "./OrderStatusPage.css";
-import logo from "../../icons/Logo.png";
-import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import NumberFormat from "react-number-format";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { connect } from "react-redux";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import removecat from "../../icons/RemoveCat.svg";
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-} from "@material-ui/core";
-import recommended from "../../icons/Recommend.png";
 import { CustomizedRadios } from "./Radio/RadioButton";
-import { ModeComment } from "@material-ui/icons";
 import moment from "moment";
 import TopBar from "../TopBar/TopBar";
 import { ThreeDots } from "react-loader-spinner";
 import { SocketContext } from "../../socketContext";
+import recommended from "../../icons/Recommend.png";
+import removecat from "../../icons/RemoveCat.svg";
+import "../TopBar/TopBar.css";
+import "./OrderStatusPage.css";
 
 function OrderStatusPage({ tenant }) {
   const orderUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
   const [acceptance, setAcceptance] = useState([]);
-  const [menuData, setMenuData] = useState([]);
-  const [menuRetrieved, setMenuRetrieved] = useState(false);
-
-
   const tablelUrl = process.env.REACT_APP_TABLEURL;
   const [tableData, setTableData] = useState([]);
   const [tableRetrieved, setTableRetrieved] = useState(false);
@@ -168,7 +155,7 @@ function OrderStatusPage({ tenant }) {
     if (mounted) {
       if (tenantRetrieved === true) {
         setProfileName(tenantData[0].name);
-        setProfileColor(tenantData[0].profileColor)
+        setProfileColor(tenantData[0].profileColor);
       }
     }
     return () => {
@@ -194,10 +181,9 @@ function OrderStatusPage({ tenant }) {
             .then((response) => response.json())
             .then((result) => {
               if (result.status === "SUCCESS") {
-                if(socket){
+                if (socket) {
                   socket.emit("update order", result.data);
                 }
-               
               }
             });
         }
@@ -232,10 +218,9 @@ function OrderStatusPage({ tenant }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "SUCCESS") {
-          if(socket){
+          if (socket) {
             socket.emit("update order", result.data);
           }
-
         }
       });
 
@@ -295,12 +280,12 @@ function OrderStatusPage({ tenant }) {
     );
   }
 
-
-
   return (
     <div className="container">
       <div className="topbar">
-        <div className="left" style={{color: profileColor}}>Order Status Screen</div>
+        <div className="left" style={{ color: profileColor }}>
+          Order Status Screen
+        </div>
 
         <TopBar />
       </div>
@@ -308,7 +293,10 @@ function OrderStatusPage({ tenant }) {
         <div className="orderstatusoutercontainer">
           <div className="orderstatuscontainer">
             {rejectOrdermodal()}
-            <div  style={{background: profileColor}} className={removeitemnotif ? "notification" : "hidden"}>
+            <div
+              style={{ background: profileColor }}
+              className={removeitemnotif ? "notification" : "hidden"}
+            >
               <div className="notificationtextcontainer">
                 <div className="notificationtext">Order Removed</div>
               </div>
@@ -346,27 +334,25 @@ function OrderStatusPage({ tenant }) {
                             <div className="orderstatustime">
                               {moment(post.order_time).fromNow()}&nbsp;-{" "}
                             </div>
-                            <div className="tableID" style={{color: profileColor}}>
-                            {tableRetrieved &&
-                                      
-                                           
-                                      tableData.map((item) => {
-                                        return item.map(
-                                          (posts, index) => {
-                                            if (
-                                              posts.table.id ==
-                                             post.order_table
-                                            ) {
-                                              return (
-                                                <span style={{alignContent: "center"}}>
-                                                  Table&nbsp;
-                                                  {posts.table.index}
-                                                </span>
-                                              );
-                                            }
-                                          }
-                                        );
-                                      })}
+                            <div
+                              className="tableID"
+                              style={{ color: profileColor }}
+                            >
+                              {tableRetrieved &&
+                                tableData.map((item) => {
+                                  return item.map((posts, index) => {
+                                    if (posts.table.id == post.order_table) {
+                                      return (
+                                        <span
+                                          style={{ alignContent: "center" }}
+                                        >
+                                          Table&nbsp;
+                                          {posts.table.index}
+                                        </span>
+                                      );
+                                    }
+                                  });
+                                })}
                             </div>
                           </div>
                           <div className="menucontainer">

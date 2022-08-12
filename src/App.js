@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SideBar from "./components/Navbar/SideBar";
 import Login from "./components/pages/LoginPage/ValidateLoginPage";
 import Register from "./components/pages/LoginPage/RegisterPage";
@@ -23,14 +18,12 @@ import Settings from "./components/pages/SettingsPage/SettingsPage";
 import MissingRoute from "./components/pages/MissingRoute";
 import RenewContract from "./components/pages/LoginPage/RenewContractPage";
 import NoContract from "./components/pages/LoginPage/NoContractPage";
-
-import { io } from "socket.io-client";
-import { SocketContext } from "./components/socketContext";
-import "./App.css";
-//Auth & redux
 import AuthRoute from "./components/Auth/routes/AuthRoute";
 import BasicRoute from "./components/Auth/routes/BasicRoute";
 import { connect } from "react-redux";
+import { io } from "socket.io-client";
+import { SocketContext } from "./components/socketContext";
+import "./App.css";
 
 function App({ checked, tenant }) {
   {
@@ -91,9 +84,9 @@ function App({ checked, tenant }) {
           <div className="app">
             <Switch>
               <Route exact path="/" component={Login} />
-              <AuthRoute exact path="/404" component={RenewContract}/>
-              <AuthRoute exact path="/505" component={NoContract}/>
-              
+              <AuthRoute exact path="/404" component={RenewContract} />
+              <AuthRoute exact path="/505" component={NoContract} />
+
               <BasicRoute exact path="/login/:userEmail?" component={Login} />
 
               <BasicRoute
