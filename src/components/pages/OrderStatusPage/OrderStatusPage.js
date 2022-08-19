@@ -206,14 +206,11 @@ function OrderStatusPage({ tenant }) {
       .then((result) => {
         if (result.status === "SUCCESS") {
           var results = result.data;
-          console.log("Hi", results);
 
           for (var a = 0; a < results.length; a++) {
-            console.log(result.data[a].order_status);
 
             // Only auto completes the paid orders in that table
             if (result.data[a].order_status === 4) {
-              console.log(result.data[a].order_id);
 
               orderData.map((item) => {
                 return item.map((post, index) => {

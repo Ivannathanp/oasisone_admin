@@ -28,7 +28,6 @@ function ForgetPasswordPage({ forgetpassword }) {
                 .required("Required"),
             })}
             onSubmit={(values, { setSubmitting, setFieldError }) => {
-              console.log(values)
               forgetpassword(values, history, setFieldError, setSubmitting);
             }}
           >

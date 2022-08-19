@@ -34,7 +34,7 @@ export const loginUser = (
             setFieldError("password", message);
           } else if (message.includes("password")) {
             setFieldError("password", message);
-          } else if (message.toLowerCase().includes("email")) {
+          } else if (message.includes("email")) {
             setFieldError("email", message);
           }
         } else if (result.status === "SUCCESS") {
@@ -147,21 +147,19 @@ export const forgetpassword = (
   return () => {
     fetch(`${currentUrl}api/tenant/passwordresetrequest`, {
       method: "POST",
-      body: JSON.stringify({ email: credentials.email }),
+      body: JSON.stringify({ email: credentials.email, redirectUrl: credentials.redirectUrl }),
       headers: { "content-type": "application/JSON" },
     })
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "FAILED") {
-          const { message } = data;
+          const { message } = result;
 
           //check for specific error
           if (
-            message.toLowerCase().includes("user") ||
-            message.toLowerCase().includes("password") ||
-            message.toLowerCase().includes("email")
+            message.includes("email")
           ) {
-            setFieldError("email", result.status);
+            setFieldError("email", message);
           }
         } else if (result.status === "PENDING") {
           const { email } = credentials;
@@ -182,20 +180,19 @@ export const resetPassword = (
   setSubmitting
 ) => {
   //make checks and get some data
-
   return () => {
     fetch(`${currentUrl}api/tenant/passwordreset`, {
       method: "POST",
-      body: JSON.stringify({ password: credentials.password }),
+      body: JSON.stringify({userID: credentials.userID, resetString: credentials.resetString, newPassword: credentials.newPassword }),
       headers: { "content-type": "application/JSON" },
     })
       .then((response) => response.json())
       .then((result) => {
         if (result.status === "FAILED") {
-          const { message } = data;
+          const { message } = result;
 
           //check for specific error
-          if (message.toLowerCase().includes("password")) {
+          if (message.includes("password")) {
             setFieldError("newPassword", message);
           }
         } else if (result.status === "SUCCESS") {
