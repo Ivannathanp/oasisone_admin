@@ -559,13 +559,12 @@ function InventoryPage({ tenant }) {
 
             socket.emit("add category", result.data);
             setInventoryData([result.data]);
-            
-   
             setItemval([result.data]);
             setItemPrice();
             setAdditemopen(false);
             setProductImage();
             setItemIsRecommended();
+            setItemDescription()
             setValidCategoryName(true);
           }
         } else {
@@ -1082,7 +1081,7 @@ function InventoryPage({ tenant }) {
                                 return post.map((posts, index) => {
                                   return (
                                     <MenuItem value={posts.category.id}>
-                                      {" "}
+                                      
                                       {posts.category.name}
                                     </MenuItem>
                                   );
@@ -1232,10 +1231,10 @@ function InventoryPage({ tenant }) {
                   </div>
                 </div>
                 <div className="removecatmodaltext">
-                  Are you sure to remove the{" "}
+                  Are you sure to remove the
                   <span style={{ color: profileColor }}>
                     "{categoryName}"
-                  </span>{" "}
+                  </span>
                   category in your menu?
                 </div>
 
@@ -1288,7 +1287,7 @@ function InventoryPage({ tenant }) {
                   ? "New Menu Added"
                   : menuEditted
                   ? "Menu Edited"
-                  : " Menu Removed"}{" "}
+                  : " Menu Removed"}
               </div>
             </div>
 
@@ -1299,6 +1298,7 @@ function InventoryPage({ tenant }) {
             </div>
           </div>
 
+<div className="inventoryinnersection">
           <div className="inventorycontainergrid">
             <div className="innerinventorycontainergrid">
               {itemval != [] &&
@@ -1579,6 +1579,7 @@ function InventoryPage({ tenant }) {
               </button>)
               }
             </div>
+          </div>
           </div>
         </div>
       ) : (

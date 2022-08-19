@@ -38,8 +38,8 @@ function EmailSentPage() {
               display: "flex",
             }}
           >
-            {" "}
-            {/* <Link className="resetbutton" to={`/login/${userEmail}`}>Proceed</Link>{" "} */}
+            
+            {/* <Link className="resetbutton" to={`/login/${userEmail}`}>Proceed</Link> */}
           </button>
         </div>
       )}

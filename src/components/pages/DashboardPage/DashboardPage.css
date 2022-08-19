@@ -2,12 +2,12 @@
   width: 100%;
   background-color: #fffaf4;
   height: 100vh;
-  overflow: scroll;
+  /* overflow: scroll; */
 }
 
-.container::-webkit-scrollbar {
+/* .container::-webkit-scrollbar {
   display: none;
-}
+} */
 
 .dashboardsection {
   display: grid;
@@ -283,6 +283,15 @@
   color: #424242;
 }
 
+.dashboardordergrid {
+  width: 100%;
+  display: grid;
+  grid-template-areas: "a a";
+  align-items: flex-start;
+  grid-gap: 20px;
+  padding: 4% 4%;
+}
+
 .dashboardordercontainer {
   border: 3px solid #ff9598;
   border-radius: 19px;
@@ -294,13 +303,6 @@
 
 .dashboardordercontainer::-webkit-scrollbar {
   display: none;
-}
-
-.ordergrid {
-  display: grid;
-  grid-template-areas: "a a";
-  align-items: center;
-  grid-gap: 20px;
 }
 
 .orderdetails {

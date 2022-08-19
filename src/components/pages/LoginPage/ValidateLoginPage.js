@@ -59,8 +59,8 @@ function ValidateLoginPage({ loginUser }) {
                 <div className="buttongroup">
                   {!isSubmitting && (
                     <button type="submit" className="loginbutton">
-                      {" "}
-                      Login{" "}
+                      
+                      Login
                     </button>
                   )}
                   {isSubmitting && (
@@ -69,7 +69,7 @@ function ValidateLoginPage({ loginUser }) {
                 </div>
 
                 <div className="middlerow">
-                  Don't have an account?{" "}
+                  Don't have an account?
                   <Link to="/register" className="link">
                     &nbsp;Register
                   </Link>

@@ -264,6 +264,8 @@ function PromoPage({ tenant }) {
       setPromoAddNotif(false);
     }, 3000);
 
+    setpromobanneropen(false);
+    
     const payload = JSON.stringify({
       promo_name: promoName,
       promo_start: startDate,
@@ -335,7 +337,7 @@ function PromoPage({ tenant }) {
             }
           });
 
-        setpromobanneropen(false);
+
         setPromoImage();
         setPromoName();
         setPromoDetails();
@@ -531,7 +533,7 @@ function PromoPage({ tenant }) {
               </div>
             </div>
             <div className="removecatmodaltext">
-              Are you sure to remove the{" "}
+              Are you sure to remove the
               <span style={{ color: profileColor }}>"{promoName}"</span> promo?
             </div>
 
@@ -644,7 +646,7 @@ function PromoPage({ tenant }) {
                               </span>
                             </div>
                             <div className="promotext2">
-                              Promo info{" "}
+                              Promo info
                               <div className="promoinfo">{item.details}</div>
                             </div>
 
@@ -706,7 +708,7 @@ function PromoPage({ tenant }) {
           </div>
         ) : (
           <div className="form">
-            {PromoModal()}{" "}
+            {PromoModal()}
             <div className="addpromobutton">
               <button
                 style={{ background: profileColor }}

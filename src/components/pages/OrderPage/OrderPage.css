@@ -565,10 +565,25 @@
 }
 
 .orderdetailmenuprice {
+  display:flex;
+  align-items: center;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   font-size: 10px;
   color: #424242;
+}
+.orderquantity {
+  flex: 1;
+  text-align: right;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  margin-right: 5%;
+}
+.orderquantitytext {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 10px;
 }
 
 .ordertotalsummary {

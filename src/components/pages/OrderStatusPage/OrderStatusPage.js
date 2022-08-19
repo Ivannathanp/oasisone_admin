@@ -192,6 +192,64 @@ function OrderStatusPage({ tenant }) {
     });
   }
 
+  function handlemultiplecompleteorder(i, v, j) {
+    const url = orderUrl + "/table/retrieve/" + tenant.tenant_id;
+    const payload = JSON.stringify({
+      order_table: j,
+    });
+    fetch(url, {
+      method: "POST",
+      body: payload,
+      headers: { "content-type": "application/JSON" },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "SUCCESS") {
+          var results = result.data;
+          console.log("Hi", results);
+
+          for (var a = 0; a < results.length; a++) {
+            console.log(result.data[a].order_status);
+
+            // Only auto completes the paid orders in that table
+            if (result.data[a].order_status === 4) {
+              console.log(result.data[a].order_id);
+
+              orderData.map((item) => {
+                return item.map((post, index) => {
+                  if (post.order_id == result.data[a].order_id) {
+                    const url =
+                      orderUrl +
+                      "/edit/" +
+                      tenant.tenant_id +
+                      "/" +
+                      result.data[a].order_id;
+                    fetch(url, {
+                      method: "POST",
+                      body: JSON.stringify({
+                        order_status: 5,
+                        order_table: result.data[a].order_table,
+                      }),
+                      headers: { "content-type": "application/JSON" },
+                    })
+                      .then((response) => response.json())
+                      .then((result) => {
+                        if (result.status === "SUCCESS") {
+                          if (socket) {
+                            socket.emit("update order", result.data);
+                          }
+                        }
+                      });
+                  }
+                  setAcceptance({ post });
+                });
+              });
+            }
+          }
+        }
+      });
+  }
+
   const [rejectOrder, setRejectOrder] = useState(false);
   const [rejectID, setRejectID] = useState();
   const [rejectReason, setRejectReason] = useState(false);
@@ -332,7 +390,7 @@ function OrderStatusPage({ tenant }) {
                           <div className="orderID">{post.order_id}</div>
                           <div className="orderdetail">
                             <div className="orderstatustime">
-                              {moment(post.order_time).fromNow()}&nbsp;-{" "}
+                              {moment(post.order_time).fromNow()}&nbsp;-
                             </div>
                             <div
                               className="tableID"
@@ -393,10 +451,9 @@ function OrderStatusPage({ tenant }) {
                                         />
                                       </div>
                                       <div className="menuquant">
-                                        Qty:{" "}
+                                        Qty:
                                         <span className="quant">
-                                          {" "}
-                                          {posts.orderQty}{" "}
+                                          {posts.orderQty}
                                         </span>
                                       </div>
                                     </div>
@@ -481,11 +538,16 @@ function OrderStatusPage({ tenant }) {
                                   className="completedstatusbutton"
                                   type="button"
                                   onClick={() => {
-                                    handleacceptincrement(
+                                    handlemultiplecompleteorder(
                                       post.order_id,
                                       post.order_status,
                                       post.order_table
                                     );
+                                    // handleacceptincrement(
+                                    // post.order_id,
+                                    // post.order_status,
+                                    // post.order_table
+                                    // );
                                   }}
                                 >
                                   <FontAwesomeIcon

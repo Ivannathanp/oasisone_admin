@@ -106,7 +106,7 @@ function RenewContractPage({ logoutUser, tenant }) {
               <FontAwesomeIcon
                 icon={faArrowLeft}
                 style={{ marginRight: "10%" }}
-              />{" "}
+              />
               Back
             </button>
           </div>

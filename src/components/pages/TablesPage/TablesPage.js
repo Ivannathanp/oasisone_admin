@@ -216,7 +216,6 @@ function TablesPage({ tenant }) {
   const orderUrl = process.env.REACT_APP_ORDERURL;
   const [tableOrderData, setTableOrderData] = useState([]);
   const [tableOrderRetrieved, setTableOrderRetrieved] = useState(false);
-
   const waiterUrl = process.env.REACT_APP_WAITERURL;
   const [waiterData, setWaiterData] = useState([]);
   const [waiterDataRetrieved, setWaiterDataRetrieved] = useState(false);
@@ -492,7 +491,6 @@ function TablesPage({ tenant }) {
           disabled={page === 0}
           className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
         >
-          {" "}
           <FontAwesomeIcon
             icon={faAngleLeft}
             style={page === 0 ? { color: "#BEBEBE" } : { color: "#949494" }}
@@ -592,8 +590,8 @@ function TablesPage({ tenant }) {
                                 fontSize="small"
                                 className="timeicon"
                               />
-                              {ordertime.toLocaleTimeString("en-US")}{" "}
-                              <span className="space">/</span>{" "}
+                              {ordertime.toLocaleTimeString("en-US")}
+                              <span className="space">/</span>
                               <span
                                 className="orderdate"
                                 style={{ color: profileColor }}
@@ -708,6 +706,12 @@ function TablesPage({ tenant }) {
                                         thousandSeparator=","
                                         displayType="text"
                                       />
+                                      <div className="orderquantity">
+                                        Qty:
+                                        <span className="orderquantitytext">
+                                          {post.orderQty}
+                                        </span>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -1192,7 +1196,7 @@ function TablesPage({ tenant }) {
                                     ? "customerwaiterimage"
                                     : "null"
                                 }
-                              />{" "}
+                              />
                               {posts.table.customerCount} Customer
                             </div>
                           </div>

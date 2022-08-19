@@ -107,7 +107,7 @@ function NoContractPage({ logoutUser, tenant }) {
               <FontAwesomeIcon
                 icon={faArrowLeft}
                 style={{ marginRight: "10%" }}
-              />{" "}
+              />
               Back
             </button>
           </div>

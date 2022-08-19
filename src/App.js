@@ -75,7 +75,7 @@ function App({ checked, tenant }) {
 
       return () => newSocket.close();
     }
-  }, [tenant]);
+  }, [tenant, socketRetrieved]);
 
   return (
     <SocketContext.Provider value={socket}>
@@ -94,6 +94,7 @@ function App({ checked, tenant }) {
                 path="/emailsent/:userEmail?/:reset?"
                 component={EmailSent}
               />
+              
               <BasicRoute
                 exact
                 path="/passwordreset/:userID/:resetString"

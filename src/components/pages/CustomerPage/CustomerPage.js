@@ -191,7 +191,7 @@ function CustomerPage({ tenant }) {
           disabled={page === 0}
           className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
         >
-          {" "}
+          
           <FontAwesomeIcon
             icon={faAngleLeft}
             style={page === 0 ? { color: "#BEBEBE" } : { color: "#949494" }}
@@ -266,7 +266,7 @@ function CustomerPage({ tenant }) {
                     style={{ borderColor: profileColor, color: profileColor }}
                     onClick={generatePdf}
                   >
-                    Download as PDF{" "}
+                    Download as PDF
                   </button>
                 </div>
               </div>
@@ -296,7 +296,7 @@ function CustomerPage({ tenant }) {
                           {post.user_phonenumber}
                         </div>
                         <div className="customertext">
-                          {orderDate.toLocaleDateString("en-ID", dateOptions)} |{" "}
+                          {orderDate.toLocaleDateString("en-ID", dateOptions)} |
                           {moment(post.order_time).fromNow()}
                         </div>
                       </div>

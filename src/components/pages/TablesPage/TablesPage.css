@@ -39,7 +39,7 @@
 
 .tablecontainergrid {
   display: grid;
-  grid-row-gap: 5%;
+  grid-row-gap: 10%;
   grid-column-gap: 5%;
   grid-template-columns: repeat(5, 1fr);
   margin: 5% 5% 2% 5%;
@@ -54,7 +54,7 @@
 
 .innergrid {
   width: 100%;
-  height: 100%;
+  height: 173px;
   display: flex;
   justify-content: space-evenly;
   margin: 0 0 -10% 0;

@@ -20,7 +20,7 @@ function ForgetPasswordPage({ forgetpassword }) {
           <Formik
             initialValues={{
               email: userEmail,
-              redirectUrl: "http://admin.oasis-one.com/passwordreset",
+              redirectUrl: "https://admin.oasis-one.com/passwordreset",
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string()
@@ -28,6 +28,7 @@ function ForgetPasswordPage({ forgetpassword }) {
                 .required("Required"),
             })}
             onSubmit={(values, { setSubmitting, setFieldError }) => {
+              console.log(values)
               forgetpassword(values, history, setFieldError, setSubmitting);
             }}
           >
@@ -48,8 +49,8 @@ function ForgetPasswordPage({ forgetpassword }) {
                       type="submit"
                       className="loginbutton"
                     >
-                      {" "}
-                      Submit{" "}
+                      
+                      Submit
                     </button>
                   )}
                   {isSubmitting && (
@@ -58,7 +59,7 @@ function ForgetPasswordPage({ forgetpassword }) {
                 </div>
 
                 <div className="middlerow">
-                  Already have an account?{" "}
+                  Already have an account?
                   <Link to="/login" className="link">
                     &nbsp;Login
                   </Link>

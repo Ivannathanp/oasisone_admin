@@ -85,8 +85,8 @@ function RegisterPage({ signupUser }) {
                 <div className="buttongroup">
                   {!isSubmitting && (
                     <button type="submit" className="loginbutton">
-                      {" "}
-                      Register{" "}
+                      
+                      Register
                     </button>
                   )}
                   {isSubmitting && (
@@ -95,7 +95,7 @@ function RegisterPage({ signupUser }) {
                 </div>
 
                 <div className="middlerow">
-                  Already have an account?{" "}
+                  Already have an account?
                   <Link to="/login" className="link">
                     &nbsp;Login
                   </Link>

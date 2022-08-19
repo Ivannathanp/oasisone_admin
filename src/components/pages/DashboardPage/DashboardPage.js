@@ -570,7 +570,7 @@ function DashboardPage({ tenant }) {
           <div className="orderscreen">
             Order Screen
             <div className="dashboardordercontainer">
-              <div className="ordergrid">
+              <div className="dashboardordergrid">
                 <Modal open={orderOpen}>
                   <Box className="ordermodalbox">
                     <div className="modalclose">
@@ -594,10 +594,10 @@ function DashboardPage({ tenant }) {
                               fontSize="small"
                               className="timeicon"
                             />
-                            {ordertime.toLocaleTimeString("en-US")}{" "}
-                            <span className="space">/</span>{" "}
+                            {ordertime.toLocaleTimeString("en-US")}
+                            <span className="space">/</span>
                             <span className="orderdate">
-                              {" "}
+                              
                               {ordertime.toLocaleDateString(
                                 "en-ID",
                                 dateOptions
@@ -667,7 +667,7 @@ function DashboardPage({ tenant }) {
                             />
                             {orderStatus == 6 ? (
                               <>
-                                {" "}
+                                
                                 <div className="ordermodalinputlabel">
                                   Reasons for rejecting
                                 </div>
@@ -709,6 +709,12 @@ function DashboardPage({ tenant }) {
                                       thousandSeparator=","
                                       displayType="text"
                                     />
+                                     <div className="orderquantity">
+                                        Qty:
+                                        <span className="orderquantitytext">                                        
+                                          {post.orderQty}
+                                        </span>
+                                      </div>
                                   </div>
                                 </div>
                               </div>
@@ -776,10 +782,10 @@ function DashboardPage({ tenant }) {
                               <div className="orderID">{post.order_id}</div>
                               <div className="orderdetail">
                                 <div className="orderdetailtime">
-                                  {" "}
+                                  
                                   {moment(
                                     post.order_time
-                                  ).fromNow()}&nbsp;-{" "}
+                                  ).fromNow()}&nbsp;-
                                 </div>
                                 <div className="tableID">
                                   {tableRetrieved &&

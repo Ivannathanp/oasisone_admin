@@ -293,7 +293,7 @@ return item.map((post,index)=>{
           disabled={page === 0}
           className={page === 0 ? "leftdisabledbutton" : "leftdisplaybutton"}
         >
-          {" "}
+          
           <FontAwesomeIcon
             icon={faAngleLeft}
             style={page === 0 ? { color: "#BEBEBE" } : { color: "#949494" }}
@@ -390,10 +390,10 @@ return item.map((post,index)=>{
                           fontSize="small"
                           className="timeicon"
                         />
-                        {ordertime.toLocaleTimeString("en-US")}{" "}
-                        <span className="space">/</span>{" "}
+                        {ordertime.toLocaleTimeString("en-US")}
+                        <span className="space">/</span>
                         <span className="orderdate" style={{color: profileColor}}>
-                          {" "}
+                          
                           {ordertime.toLocaleDateString("en-ID", dateOptions)}
                         </span>
                       </div>
@@ -422,7 +422,7 @@ return item.map((post,index)=>{
                 
                     {orderStatus == 6 ? (
                           <div className="ordermodalinputlabelrejected">
-                            {" "}
+                            
                             <div className="ordermodalinputlabel">
                               Reasons for rejecting
                             </div>
@@ -524,7 +524,14 @@ return item.map((post,index)=>{
                                   thousandSeparator=","
                                   displayType="text"
                                 />
+                                <div className="orderquantity">
+                                        Qty:
+                                        <span className="orderquantitytext">                                        
+                                          {post.orderQty}
+                                        </span>
+                                      </div>
                               </div>
+                              
                             </div>
                           </div>
                         ))}
@@ -596,7 +603,7 @@ return item.map((post,index)=>{
                     <div className="ordertext">{i + index}</div>
                     <div className="ordertext">{post.order_id}</div>
                     <div className="ordertext">
-                      {" "}
+                      
                       <NumberFormat
                         value={post.order_total}
                         prefix="Rp. "
