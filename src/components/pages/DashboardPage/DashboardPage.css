@@ -1,5 +1,5 @@
 .container {
-  width: 100%;
+  width: 100vw;
   background-color: #fffaf4;
   height: 100vh;
   /* overflow: scroll; */

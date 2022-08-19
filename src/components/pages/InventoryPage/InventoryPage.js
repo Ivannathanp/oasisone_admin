@@ -119,6 +119,7 @@ function InventoryPage({ tenant }) {
       setItemval(newData);
     }
   }
+
   function handleCategoryRemoved(user) {
     if (inventoryRetrieved) {
       let newData = inventoryData.splice();
@@ -255,7 +256,7 @@ function InventoryPage({ tenant }) {
     setItemval([newItems]);
   }
 
-  const debouncedSearch = debounce(async (i, v, posts) => {
+  const debounceDelay = debounce(async (i, v, posts) => {
     const url = inventoryUrl + "/edit/" + tenant.tenant_id;
     await fetch(url, {
       method: "POST",
@@ -273,7 +274,7 @@ function InventoryPage({ tenant }) {
             if (socket) {
               socket.emit("update category", result.data);
             }
-          }, [1000]);
+          }, [6000]);
         }
       });
   }, 500);
@@ -287,7 +288,7 @@ function InventoryPage({ tenant }) {
             post.category.menu.map((posts, index) => {
               if (posts.id === v) {
                 posts.quantity = parseInt(posts.quantity) + 5;
-                debouncedSearch(i, v, posts.quantity);
+                debounceDelay(i, v, posts.quantity);
               }
             });
           }
@@ -307,9 +308,9 @@ function InventoryPage({ tenant }) {
 
                 if (posts.quantity <= 0) {
                   posts.quantity = 0;
-                  debouncedSearch(i, v, 0);
+                  debounceDelay(i, v, 0);
                 } else {
-                  debouncedSearch(i, v, posts.quantity);
+                  debounceDelay(i, v, posts.quantity);
                 }
               }
             });
