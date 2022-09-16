@@ -1089,6 +1089,7 @@ function TablesPage({ tenant }) {
             {tableRetrieved == true &&
               tableData.map((post) => {
                 return post.map((posts, index) => {
+                  console.log(posts)
                   if (posts.table.status == "EMPTY") {
                     return (
                       <div className="innergrid">

@@ -60,7 +60,7 @@ function App({ checked, tenant }) {
   useEffect(() => {
     if (tenant.tenant_id != undefined) {
       const newSocket = io(
-        "https://backend.oasis-one.com",
+        "http://localhost:5000",
         { transports: ["polling"] },
 
         {

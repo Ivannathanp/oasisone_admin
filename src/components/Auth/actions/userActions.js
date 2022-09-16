@@ -2,7 +2,7 @@ import { sessionService } from "redux-react-session";
 import moment from "moment";
 
 // the remote endpoint and local
-const currentUrl = "https://backend.oasis-one.com/";
+const currentUrl = "http://localhost:5000/";
 const contractUrl = process.env.REACT_APP_CONTRACTURL;
 let currentDate = new Date();
 
